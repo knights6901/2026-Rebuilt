@@ -62,6 +62,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
+    
+    // PID velocity controllers
     private final PIDController xController = new PIDController(2, 0, 0);
     private final PIDController yController = new PIDController(2, 0, 0);
     private final PIDController thetaController = new PIDController(7, 0, 0.05);
@@ -176,10 +178,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-
-        xController.setTolerance(0.05);
-        yController.setTolerance(0.05);
-        thetaController.setTolerance(0.05);
     }
 
     /**
@@ -224,6 +222,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public void driveToPose(Pose2d targetPose) {
         Pose2d currentPose = this.getState().Pose;
+
+        xController.setTolerance(0.05);
+        yController.setTolerance(0.05);
+        thetaController.setTolerance(0.05);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         double xVel = -xController.calculate(currentPose.getX(), targetPose.getX());
         double yVel = -yController.calculate(currentPose.getY(), targetPose.getY());

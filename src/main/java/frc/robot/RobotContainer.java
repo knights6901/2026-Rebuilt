@@ -148,9 +148,9 @@ public class RobotContainer {
                 // operator.getLeftTriggerAxis()));
                 // operator.a().onTrue(new SlapdownCommand(slapdown));
 
-                operator.rightTrigger().whileTrue(new InstantCommand(() -> {
-                        shooter.shoot(operator.getRightTriggerAxis());
-                }));
+                // operator.rightTrigger().whileTrue(new InstantCommand(() -> {
+                //         shooter.shoot(operator.getRightTriggerAxis());
+                // }));
 
                 operator.rightBumper().whileTrue(new RunCommand(() -> {
                         Pose2d currentPose = drivetrain.getState().Pose;
