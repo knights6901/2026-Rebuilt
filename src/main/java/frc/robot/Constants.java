@@ -96,7 +96,7 @@ public final class Constants {
                 // distance from floor to hub target point
                 public final static double vertDis = 1.524;
                 // scaling to correct for damping
-                public final static double scaling = 2.024;
+                public final static double scaling = 1.82;
                 // vertical position of ball extake
                 public final static double ballExtakeHeight = 0.432;
 

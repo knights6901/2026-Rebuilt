@@ -112,6 +112,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // a mix of rao's desmos thing and conversions to rps. no clue how well it will
         // work bc load but can be tweaked a lot as needed
 
+        // if watchdog timeout save cos(pitch) as a constant and use that
+
         double rps = 0;
         rps = (Math.sqrt((g * groundDis * groundDis) / (2 * Math.cos(pitch) * Math.cos(pitch)
                 * (groundDis * Math.tan(pitch) - (vertDis - ballExtakeHeight))))) / (2 * Math.PI * 0.051);
