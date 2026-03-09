@@ -14,9 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,18 +54,9 @@ public class RobotContainer {
         }
 
         private void configureDriverBindings() {
-                // drivetrain.setDefaultCommand(drivetrain.applyRequest(() ->
-                // getDriverInput()));
-
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
-                drivetrain.setDefaultCommand(
-                                // Drivetrain will execute this command periodically
-                                drivetrain.applyRequest(() -> drive
-                                                .withVelocityX(DrivetrainConstants.MaxSpeed.times(-driver.getLeftY()))
-                                                .withVelocityY(DrivetrainConstants.MaxSpeed.times(-driver.getLeftX()))
-                                                .withRotationalRate(DrivetrainConstants.MaxAngularRate
-                                                                .times(driver.getRightX()))));
+                drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -91,6 +80,7 @@ public class RobotContainer {
                 // Reset the field-centric heading on left bumper press.
                 driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+                // Point the wheels towards the hub when holding y.
                 driver.y().whileTrue(new RunCommand(() -> {
                         Pose2d currentPose = drivetrain.getState().Pose;
                         Translation2d vectorToTarget = null;
@@ -104,6 +94,7 @@ public class RobotContainer {
                                 vectorToTarget = gameConstants.redHubLocation
                                                 .minus(currentPose.getTranslation());
                         }
+
                         Rotation2d targetAngle = vectorToTarget.getAngle();
                         drivetrain.driveToPose(new Pose2d(currentPose.getX(), currentPose.getY(),
                                         targetAngle));
@@ -121,19 +112,12 @@ public class RobotContainer {
         public void configureOperatorBindings() {
                 operator.rightBumper().whileTrue(new RunCommand(() -> {
                         Pose2d currentPose = drivetrain.getState().Pose;
-                        Distance shotGroundDistance = Meters.of(0);
+                        Translation2d hubLocation = (DriverStation.getAlliance().get() == Alliance.Blue)
+                                        ? gameConstants.blueHubLocation
+                                        : gameConstants.redHubLocation;
 
-                        if (!DriverStation.getAlliance().isPresent()) {
-                                return;
-                        }
-
-                        if (DriverStation.getAlliance().get() == Alliance.Blue) {
-                                shotGroundDistance = Meters.of(gameConstants.blueHubLocation
-                                                .getDistance(currentPose.getTranslation()));
-                        } else {
-                                shotGroundDistance = Meters.of(gameConstants.redHubLocation
-                                                .getDistance(currentPose.getTranslation()));
-                        }
+                        Distance shotGroundDistance = Meters
+                                        .of(currentPose.getTranslation().getDistance(hubLocation));
 
                         shooter.shootWithAutoAim(shooter.calculateRPS(shotGroundDistance));
                 }));
@@ -153,7 +137,6 @@ public class RobotContainer {
                 }));
 
                 operator.y().whileTrue(new InstantCommand(() -> {
-
                 }));
 
                 operator.y().whileFalse(new InstantCommand(() -> {
@@ -164,13 +147,11 @@ public class RobotContainer {
         // Generates the command request for moving the drive train based on the current
         // controller input.
         public FieldCentric getDriverInput() {
-                LinearVelocity translationX = DrivetrainConstants.MaxSpeed.times(-driver.getLeftY());
-                LinearVelocity translationY = DrivetrainConstants.MaxSpeed.times(-driver.getLeftX());
-                AngularVelocity angularRotation = DrivetrainConstants.MaxAngularRate.times(driver.getRightX());
-
-                return drive.withVelocityX(translationX)
-                                .withVelocityY(translationY)
-                                .withRotationalRate(angularRotation);
+                return drive
+                                .withVelocityX(DrivetrainConstants.MaxSpeed.times(-driver.getLeftY()))
+                                .withVelocityY(DrivetrainConstants.MaxSpeed.times(-driver.getLeftX()))
+                                .withRotationalRate(DrivetrainConstants.MaxAngularRate
+                                                .times(driver.getRightX()));
         }
 
         public Command getAutonomousCommand() {

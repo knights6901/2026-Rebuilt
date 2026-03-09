@@ -32,6 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX motorLeft = new TalonFX(LeftMotorId, "rio");
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
+    /// Initializes the shooter subsystem.
     public ShooterSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
         m_motorConfig.Slot0 = ShooterGains;
@@ -44,14 +45,18 @@ public class ShooterSubsystem extends SubsystemBase {
         motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
     }
 
+    /// Shoots with a variable RPS based on the input axis value (e.g., from a
+    /// trigger).
     public void shoot(double axis) {
         motorRight.setControl(m_request.withVelocity(shootRPS.times(axis)));
     }
 
+    /// Shoots with a preset RPS defined in Constants.
     public void shoot() {
         motorRight.setControl(m_request.withVelocity(shootRPS));
     }
 
+    /// Shoots with a specified RPS.
     public void shoot(int rps) {
         motorRight.setControl(m_request.withVelocity(rps));
     }
@@ -66,6 +71,9 @@ public class ShooterSubsystem extends SubsystemBase {
         motorRight.setControl(m_request.withVelocity(0));
     }
 
+    /// Updates the shot visualization in the dashboard by calculating the
+    /// trajectory of the ball based on the robot's current pose, velocity, and the
+    /// launch angle.
     public void updateShotVisualization(Pose2d robotPose, double v0_mag, double launchAngleDegrees) {
         // 1. Fetch robot pose (The starting point)
         double robotX = robotPose.getX();
@@ -137,6 +145,8 @@ public class ShooterSubsystem extends SubsystemBase {
         return RotationsPerSecond.of(scaling * rps);
     }
 
+    /// Clears the trajectory visualization by publishing an empty array to the same
+    /// Network Table topic.
     public void clearTrajectory() {
         NetworkTableInstance.getDefault()
                 .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
