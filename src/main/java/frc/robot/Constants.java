@@ -5,9 +5,12 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -42,9 +45,11 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Acceleration;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
@@ -83,7 +88,7 @@ public final class Constants {
                 public final static int RightMotorId = 36;
 
                 // rps at far distance is 50rps
-                // rps at clmber center is 47 rps
+                // rps at climber center is 47 rps
                 public final static int shootRPS = 47;
 
                 /// The PID settings for the shooter motors.
@@ -91,17 +96,18 @@ public final class Constants {
                                 .withKP(0.41).withKI(0).withKD(0.00165)
                                 .withKS(0).withKV(0.123);
 
-                // all in meters
-                public final static double g = 9.81;
-                // distance from floor to hub target point
-                public final static double vertDis = 1.524;
-                // scaling to correct for damping
-                public final static double scaling = 1.82;
-                // vertical position of ball extake
-                public final static double ballExtakeHeight = 0.432;
+                // The strength of gravity
+                public final static LinearAcceleration g = MetersPerSecondPerSecond.of(9.81);
 
-                // should be in degrees
-                public final static double pitch = Math.toRadians(73);
+                // The distance from floor to hub target point
+                public final static Distance hubTargetHeight = Meters.of(1.524);
+                /// The vertical position of ball extake
+                public final static Distance ballExtakeHeight = Meters.of(0.432);
+                /// The angle at which the shooter is mounted above the horizontal.
+                public final static Angle pitch = Degrees.of(73);
+
+                /// The scaling constant to correct for damping
+                public final static double scaling = 1.82;
         }
 
         public static final class IntakeConstants {

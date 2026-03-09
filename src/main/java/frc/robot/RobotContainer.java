@@ -6,12 +6,15 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +44,7 @@ public class RobotContainer {
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
         private final ShooterSubsystem shooter = new ShooterSubsystem();
-        private final IndexerSubsystem indexer = new IndexerSubsystem();
+        // private final IndexerSubsystem indexer = new IndexerSubsystem();
         private final IntakeSubsystem intake = new IntakeSubsystem();
         private final SlapdownSubsystem slapdown = new SlapdownSubsystem();
 
@@ -57,12 +60,12 @@ public class RobotContainer {
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
                 drivetrain.setDefaultCommand(
-                        // Drivetrain will execute this command periodically
-                        drivetrain.applyRequest(() -> drive
-                                        .withVelocityX(-driver.getLeftY() * DrivetrainConstants.MaxSpeed)
-                                        .withVelocityY(-driver.getLeftX() * DrivetrainConstants.MaxSpeed)
-                                        .withRotationalRate(-driver.getRightX() * DrivetrainConstants.MaxAngularRate)
-                ));
+                                // Drivetrain will execute this command periodically
+                                drivetrain.applyRequest(() -> drive
+                                                .withVelocityX(-driver.getLeftY() * DrivetrainConstants.MaxSpeed)
+                                                .withVelocityY(-driver.getLeftX() * DrivetrainConstants.MaxSpeed)
+                                                .withRotationalRate(-driver.getRightX()
+                                                                * DrivetrainConstants.MaxAngularRate)));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -116,19 +119,21 @@ public class RobotContainer {
         public void configureOperatorBindings() {
                 operator.rightBumper().whileTrue(new RunCommand(() -> {
                         Pose2d currentPose = drivetrain.getState().Pose;
-                        double shotGroundDistance = 0;
+                        Distance shotGroundDistance = Meters.of(0);
 
-                        if (DriverStation.getAlliance().isPresent() &&
-                                        DriverStation.getAlliance().get() == Alliance.Blue) {
-                                shotGroundDistance = gameConstants.blueHubLocation
-                                                .getDistance(currentPose.getTranslation());
-                        } else if (DriverStation.getAlliance().isPresent() &&
-                                        DriverStation.getAlliance().get() == Alliance.Red) {
-                                shotGroundDistance = gameConstants.redHubLocation
-                                                .getDistance(currentPose.getTranslation());
+                        if (!DriverStation.getAlliance().isPresent()) {
+                                return;
                         }
 
-                        shooter.shootWithAutoAim(shooter.calculateRPS(ShooterConstants.pitch, shotGroundDistance));
+                        if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                                shotGroundDistance = Meters.of(gameConstants.blueHubLocation
+                                                .getDistance(currentPose.getTranslation()));
+                        } else {
+                                shotGroundDistance = Meters.of(gameConstants.redHubLocation
+                                                .getDistance(currentPose.getTranslation()));
+                        }
+
+                        shooter.shootWithAutoAim(shooter.calculateRPS(shotGroundDistance));
                 }));
 
                 operator.rightTrigger().whileFalse(new InstantCommand(() -> {
@@ -146,7 +151,7 @@ public class RobotContainer {
                 }));
 
                 operator.y().whileTrue(new InstantCommand(() -> {
-                        
+
                 }));
 
                 operator.y().whileFalse(new InstantCommand(() -> {

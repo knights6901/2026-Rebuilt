@@ -1,10 +1,15 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.Constants.ShooterConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -13,8 +18,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Telemetry;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -46,8 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
         motorRight.setControl(m_request.withVelocity(rps));
     }
 
-    public void shootWithAutoAim(double calcRPS) {
-        motorRight.setControl(m_request.withVelocity(calcRPS));
+    /// Shoots with a calculated RPS for auto-aiming.
+    public void shootWithAutoAim(AngularVelocity exitVelocity) {
+        motorRight.setControl(m_request.withVelocity(exitVelocity));
     }
 
     // Disables both motors by setting their power to 0.
@@ -56,9 +67,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShotVisualization(Pose2d robotPose, double v0_mag, double launchAngleDegrees) {
-        // works but is scuffed, also it's not 100% AI anymore (i added some stuff +
-        // made it work while moving yay)
-
         // 1. Fetch robot pose (The starting point)
         double robotX = robotPose.getX();
         double robotY = robotPose.getY();
@@ -108,16 +116,25 @@ public class ShooterSubsystem extends SubsystemBase {
                 .set(trajectory);
     }
 
-    public double calculateRPS(double pitch, double groundDis) {
-        // a mix of rao's desmos thing and conversions to rps. no clue how well it will
-        // work bc load but can be tweaked a lot as needed
+    /// Calculates the required RPS to hit the target based on the given pitch and
+    /// horizontal distance to the target.
+    ///
+    /// @param groundDistance The horizontal distance from the robot to the target.
+    public AngularVelocity calculateRPS(Distance groundDistance) {
+        double dx = groundDistance.in(Meters);
+        double dy = hubTargetHeight.minus(ballExtakeHeight).in(Meters);
 
-        // if watchdog timeout save cos(pitch) as a constant and use that
+        double gVal = g.in(MetersPerSecondPerSecond);
+        double pitchRad = pitch.in(Radians);
 
-        double rps = 0;
-        rps = (Math.sqrt((g * groundDis * groundDis) / (2 * Math.cos(pitch) * Math.cos(pitch)
-                * (groundDis * Math.tan(pitch) - (vertDis - ballExtakeHeight))))) / (2 * Math.PI * 0.051);
-        return (scaling * rps);
+        double velocity = Math.sqrt(
+                (gVal * dx * dx) /
+                        (2 * Math.pow(Math.cos(pitchRad), 2) *
+                                (dx * Math.tan(pitchRad) - dy)));
+
+        double rps = velocity / (2 * Math.PI * 0.051);
+
+        return RotationsPerSecond.of(scaling * rps);
     }
 
     public void clearTrajectory() {
