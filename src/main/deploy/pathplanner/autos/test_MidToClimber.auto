@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftToClimber"
+            "pathName": "test_MidToClimber"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.69
+            "waitTime": 0.065
           }
         }
       ]
