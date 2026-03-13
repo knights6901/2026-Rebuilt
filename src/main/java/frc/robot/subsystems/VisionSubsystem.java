@@ -30,6 +30,7 @@ import frc.robot.Robot;
 
 public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera camera;
+    @SuppressWarnings("unused")
     private final PhotonPoseEstimator poseEstimator;
     private final CommandSwerveDrivetrain drivetrain;
     // not final because setting fieldLayout wasn't working without try/catch

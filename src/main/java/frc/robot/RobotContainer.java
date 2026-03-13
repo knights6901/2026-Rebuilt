@@ -6,16 +6,16 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.*;
+import frc.robot.commands.AutonAutoAimShootCommand;
+import frc.robot.commands.TeleopAutoAimShootCommand;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -61,10 +63,13 @@ public class RobotContainer {
                 configureOperatorBindings();
 
                 autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-                        stream -> isCompetition? stream.filter(auto -> auto.getName().startsWith("comp"))
-                        :stream.filter(auto -> auto.getName().startsWith("test"))
-                        );
+                                stream -> isCompetition ? stream.filter(auto -> auto.getName().startsWith("comp"))
+                                                : stream.filter(auto -> auto.getName().startsWith("test")));
+
                 SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                NamedCommands.registerCommand("autoAimShoot",
+                                new AutonAutoAimShootCommand(drivetrain, shooter, Seconds.of(3.0)));
         }
 
         private void configureDriverBindings() {
@@ -101,11 +106,11 @@ public class RobotContainer {
 
                         if (DriverStation.getAlliance().isPresent() &&
                                         DriverStation.getAlliance().get() == Alliance.Blue) {
-                                vectorToTarget = gameConstants.blueHubLocation
+                                vectorToTarget = GameConstants.blueHubLocation
                                                 .minus(currentPose.getTranslation());
                         } else if (DriverStation.getAlliance().isPresent() &&
                                         DriverStation.getAlliance().get() == Alliance.Red) {
-                                vectorToTarget = gameConstants.redHubLocation
+                                vectorToTarget = GameConstants.redHubLocation
                                                 .minus(currentPose.getTranslation());
                         }
 
@@ -123,18 +128,11 @@ public class RobotContainer {
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
 
-        public void configureOperatorBindings() {
-                operator.rightBumper().whileTrue(new RunCommand(() -> {
-                        Pose2d currentPose = drivetrain.getState().Pose;
-                        Translation2d hubLocation = (DriverStation.getAlliance().get() == Alliance.Blue)
-                                        ? gameConstants.blueHubLocation
-                                        : gameConstants.redHubLocation;
+        private void configureOperatorBindings() {
 
-                        Distance shotGroundDistance = Meters
-                                        .of(currentPose.getTranslation().getDistance(hubLocation));
+                shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
 
-                        shooter.shootWithAutoAim(shooter.calculateRPS(shotGroundDistance));
-                }));
+                operator.rightBumper().whileTrue(new TeleopAutoAimShootCommand(drivetrain, shooter));
 
                 operator.rightTrigger().whileFalse(new InstantCommand(() -> {
                         if (!operator.rightBumper().getAsBoolean()) {
@@ -144,10 +142,6 @@ public class RobotContainer {
 
                 operator.a().whileTrue(new InstantCommand(() -> {
                         shooter.shoot();
-                }));
-
-                operator.a().whileFalse(new InstantCommand(() -> {
-                        shooter.stop();
                 }));
 
                 operator.y().whileTrue(new InstantCommand(() -> {

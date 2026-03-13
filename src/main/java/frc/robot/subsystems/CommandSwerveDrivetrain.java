@@ -67,7 +67,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    
     // PID velocity controllers
     private final PIDController xController = new PIDController(2, 0, 0);
     private final PIDController yController = new PIDController(2, 0, 0);
@@ -95,6 +94,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * SysId routine for characterizing steer. This is used to find PID gains for
      * the steer motors.
      */
+    @SuppressWarnings("unused")
     private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
             new SysIdRoutine.Config(
                     null, // Use default ramp rate (1 V/s)
@@ -114,6 +114,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
      * importing the log to SysId.
      */
+    @SuppressWarnings("unused")
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
             new SysIdRoutine.Config(
                     /* This is in radians per second², but SysId only supports "volts per second" */
@@ -249,32 +250,31 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     private void configureAutoBuilder() {
-    try{
-      RobotConfig config = RobotConfig.fromGUISettings();
-      // Configure AutoBuilder last
-        AutoBuilder.configure(
-            () -> getState().Pose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            () -> getState().Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> setControl(
-                m_pathApplyRobotSpeeds.withSpeeds(speeds)
-                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
-            ),
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-            this // Reference to this subsystem to set requirements
-        );
-    } catch (Exception e) {
-      // Handle exception as needed
-      DriverStation.reportError("Failed to load path planner", e.getStackTrace());
+        try {
+            RobotConfig config = RobotConfig.fromGUISettings();
+            // Configure AutoBuilder last
+            AutoBuilder.configure(
+                    () -> getState().Pose, // Robot pose supplier
+                    this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+                    () -> getState().Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    (speeds, feedforwards) -> setControl(
+                            m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())),
+                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
+                                                    // for holonomic drive trains
+                            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    ),
+                    config, // The robot configuration
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this // Reference to this subsystem to set requirements
+            );
+        } catch (Exception e) {
+            // Handle exception as needed
+            DriverStation.reportError("Failed to load path planner", e.getStackTrace());
+        }
     }
-    }
-
 
     /**
      * Returns a command that applies the specified control request to this swerve

@@ -448,9 +448,7 @@ public final class Constants {
                 public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
         }
 
-        public static final class gameConstants {
-                // so uh these are in meters; it seems the internal coordinates are all in
-                // meters because it worked ¯\_(ツ)_/¯
+        public static final class GameConstants {
                 public static final Translation2d blueHubLocation = new Translation2d(4.03, 4.035);
                 public static final Translation2d redHubLocation = new Translation2d(12.51, 4.035);
         }
