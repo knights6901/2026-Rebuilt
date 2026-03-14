@@ -19,6 +19,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -75,8 +76,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
-    // **missing ALL of the initialization :(
-    private SwerveDrivePoseEstimator3d poseEstimator3d = new SwerveDrivePoseEstimator3d(getKinematics(), getRotation3d(), null, null);
+    private final SwerveDrivePoseEstimator3d poseEstimator3d;
+
+    // **missing ALL of the initialization :( (i moved this into the constructor hoping that I can fix the issue bc i can't even run simulation rn - ajay)
+    //private SwerveDrivePoseEstimator3d poseEstimator3d = new SwerveDrivePoseEstimator3d(getKinematics(), getRotation3d(), getModulePositions(), null);
 
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
@@ -166,6 +169,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         configureAutoBuilder();
+
+        var currentPositions = this.getState().ModulePositions;
+        Pose3d initialPose = new Pose3d(this.getState().Pose);
+        poseEstimator3d = new SwerveDrivePoseEstimator3d(getKinematics(), getRotation3d(), currentPositions, initialPose);
     }
 
     /**
@@ -193,6 +200,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         configureAutoBuilder();
+
+        var currentPositions = this.getState().ModulePositions;
+        Pose3d initialPose = new Pose3d(this.getState().Pose);
+        poseEstimator3d = new SwerveDrivePoseEstimator3d(getKinematics(), getRotation3d(), currentPositions, initialPose);
     }
 
     /**
@@ -235,6 +246,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         configureAutoBuilder();
+
+        var currentPositions = this.getState().ModulePositions;
+        Pose3d initialPose = new Pose3d(this.getState().Pose);
+        poseEstimator3d = new SwerveDrivePoseEstimator3d(getKinematics(), getRotation3d(), currentPositions, initialPose);
     }
 
     public void driveToPose(Pose2d targetPose) {
