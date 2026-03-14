@@ -97,14 +97,19 @@ public final class Constants {
 
         public static final class IntakeConstants {
                 // The motor ID of the intake motor.
-                public final static int IntakeMotorId = 103;
+                public final static int IntakeMotorId = 37;
+
+                public final static AngularVelocity IndexRPS = RotationsPerSecond.of(20);
+
+                public final static double GearRatio = 5.0;
+
+                // UNTUNED
+                // The PID settings for the intake motor.
+                public final static Slot0Configs IntakeGains = new Slot0Configs()
+                                .withKP(0.5).withKI(0).withKD(0)
+                                .withKS(0).withKV(0.15);
 
                 public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(2);
-
-                /// The PID settings for the slapdown motor.
-                public final static Slot0Configs IntakeGains = new Slot0Configs()
-                                .withKP(0.1).withKI(0).withKD(0)
-                                .withKS(0).withKV(0.1);
         }
 
         public static final class SlapdownConstants {
@@ -132,22 +137,6 @@ public final class Constants {
                 public final static Slot0Configs KickerGains = new Slot0Configs()
                                 .withKP(0.1).withKI(0).withKD(0)
                                 .withKS(0).withKV(0.1);
-        }
-
-        public static final class IndexerConstants {
-                // The motor ID of the index motor
-                public final static int IndexMotorId = 37;
-
-                // Test RPS
-                public final static AngularVelocity IndexRPS = RotationsPerSecond.of(20);
-
-                public final static double GearRatio = 5.0;
-
-                // UNTUNED
-                // The PID settings for the indexer motor.
-                public final static Slot0Configs IndexerGains = new Slot0Configs()
-                                .withKP(0.5).withKI(0).withKD(0)
-                                .withKS(0).withKV(0.15);
         }
 
         public class TunerConstants {
