@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import java.io.IOException;
 
+import org.opencv.aruco.EstimateParameters;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -31,7 +33,7 @@ import frc.robot.Robot;
 public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera camera;
     @SuppressWarnings("unused")
-    private final PhotonPoseEstimator poseEstimator;
+    private final PhotonPoseEstimator visionPoseEstimator;
     private final CommandSwerveDrivetrain drivetrain;
     // not final because setting fieldLayout wasn't working without try/catch
     private AprilTagFieldLayout fieldLayout;
@@ -43,6 +45,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     private List<Pose3d> visibleTagPoses = new ArrayList<>();
     private List<Integer> visibleTagIds = new ArrayList<>();
+
+    public Optional<EstimatedRobotPose> visionEstimatedPose = Optional.empty();
 
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
@@ -58,9 +62,9 @@ public class VisionSubsystem extends SubsystemBase {
         Transform3d robotToCam = new Transform3d(new Translation3d(0.2, 0.0, 0.45), new Rotation3d(0, 0, 0));
 
         if (fieldLayout != null) {
-            poseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
+            visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
         } else {
-            poseEstimator = null;
+            visionPoseEstimator = null;
         }
 
         if (RobotBase.isSimulation()) {
@@ -116,24 +120,27 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // take out of simulation when actually testing cam on field
-        // simulation only to not accidentally waste rio processing
-        if (Robot.isSimulation()) {
 
-            visibleTagPoses.clear();
-            visibleTagIds.clear();
+        visibleTagPoses.clear();
+        visibleTagIds.clear();
 
-            var result = camera.getLatestResult();
-            if (result.hasTargets()) {
-                List<PhotonTrackedTarget> targets = result.getTargets();
-
-                for (PhotonTrackedTarget target : targets) {
-                    Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
-                    tagPose.ifPresent(visibleTagPoses::add);
-                    visibleTagIds.add(target.getFiducialId());
-                }
-                tagPublisher.set(visibleTagPoses.toArray(new Pose3d[0]));
+        for (var result : camera.getAllUnreadResults()) {
+            visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
+            if (visionEstimatedPose.isEmpty()) {
+                visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
             }
+
+            if (result.hasTargets()) {
+            List<PhotonTrackedTarget> targets = result.getTargets();
+
+            for (PhotonTrackedTarget target : targets) {
+                Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
+                tagPose.ifPresent(visibleTagPoses::add);
+                visibleTagIds.add(target.getFiducialId());
+            }
+            tagPublisher.set(visibleTagPoses.toArray(new Pose3d[0]));
         }
+        }
+        
     }
 }

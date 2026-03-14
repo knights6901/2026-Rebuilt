@@ -38,6 +38,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -73,6 +74,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final PIDController thetaController = new PIDController(7, 0, 0.05);
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+
+    // **missing ALL of the initialization :(
+    private SwerveDrivePoseEstimator3d poseEstimator3d = new SwerveDrivePoseEstimator3d(getKinematics(), getRotation3d(), null, null);
 
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
