@@ -28,12 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.*;
-import frc.robot.subsystems.*;
-
 import frc.robot.commands.Auton20RPSShootCommand;
 import frc.robot.commands.AutonAutoAimShootCommand;
 import frc.robot.commands.AutonIntakeCommand;
 import frc.robot.commands.TeleopAutoAimShootCommand;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -64,15 +63,20 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
 
-                NamedCommands.registerCommand("autoAimShoot", new AutonAutoAimShootCommand(drivetrain, shooter).withTimeout(Seconds.of(3.0)));
-                NamedCommands.registerCommand("shoot20RPS", new Auton20RPSShootCommand(shooter));
-                NamedCommands.registerCommand("intake", new AutonIntakeCommand(intake));
-
                 autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
                                 stream -> isCompetition ? stream.filter(auto -> auto.getName().startsWith("comp"))
                                                 : stream.filter(auto -> auto.getName().startsWith("test")));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                configurePathPlannerCommands();
+        }
+
+        private void configurePathPlannerCommands() {
+                NamedCommands.registerCommand("autoAimShoot",
+                        new AutonAutoAimShootCommand(drivetrain, shooter).withTimeout(Seconds.of(3.0)));
+
+                NamedCommands.registerCommand("20RPSshot", new Auton20RPSShootCommand(shooter));
         }
 
         private void configureDriverBindings() {
