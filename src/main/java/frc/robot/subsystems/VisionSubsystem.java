@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import java.io.IOException;
 
-import org.opencv.aruco.EstimateParameters;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -29,11 +28,10 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 
 public class VisionSubsystem extends SubsystemBase {
-    private final PhotonCamera camera;
-    @SuppressWarnings("unused")
+    private final PhotonCamera photonCam;
+    private final PhotonCamera driverCam;
     private final PhotonPoseEstimator visionPoseEstimator;
     private final CommandSwerveDrivetrain drivetrain;
     // not final because setting fieldLayout wasn't working without try/catch
@@ -51,7 +49,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+        photonCam = new PhotonCamera("photonCam");
+        driverCam = new PhotonCamera("driverCam");
         try {
             fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2026RebuiltAndymark.m_resourceFile);
         } catch (IOException e) {
@@ -101,7 +100,7 @@ public class VisionSubsystem extends SubsystemBase {
         cameraProp.setFPS(60);
         cameraProp.setAvgLatencyMs(35);
         cameraProp.setLatencyStdDevMs(5);
-        cameraSim = new PhotonCameraSim(camera, cameraProp);
+        cameraSim = new PhotonCameraSim(photonCam, cameraProp);
         cameraSim.enableRawStream(true);
         cameraSim.enableProcessedStream(true);
 
@@ -125,7 +124,7 @@ public class VisionSubsystem extends SubsystemBase {
         visibleTagPoses.clear();
         visibleTagIds.clear();
 
-        for (var result : camera.getAllUnreadResults()) {
+        for (var result : photonCam.getAllUnreadResults()) {
             visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
             if (visionEstimatedPose.isEmpty()) {
                 visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);

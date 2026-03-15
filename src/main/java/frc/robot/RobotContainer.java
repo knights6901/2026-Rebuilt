@@ -74,6 +74,10 @@ public class RobotContainer {
                         new AutonAutoAimShootCommand(drivetrain, shooter).withTimeout(Seconds.of(3.0)));
 
                 NamedCommands.registerCommand("20RPSshot", new Auton20RPSShootCommand(shooter));
+                
+                NamedCommands.registerCommand("Intake", new AutonIntakeCommand(intake));
+                NamedCommands.registerCommand("RotateToHub", new RotateToHubCommand(drivetrain));
+                NamedCommands.registerCommand("Slapdown", new TriggerSlapdownCommand(slapdown));
         }
 
         private void configureDriverBindings() {
@@ -105,22 +109,7 @@ public class RobotContainer {
 
                 // Point the wheels towards the hub when holding left bumper.
                 driver.leftBumper().whileTrue(new RunCommand(() -> {
-                        Pose2d currentPose = drivetrain.getState().Pose;
-                        Translation2d vectorToTarget = null;
-
-                        if (DriverStation.getAlliance().isPresent() &&
-                                        DriverStation.getAlliance().get() == Alliance.Blue) {
-                                vectorToTarget = GameConstants.blueHubLocation
-                                                .minus(currentPose.getTranslation());
-                        } else if (DriverStation.getAlliance().isPresent() &&
-                                        DriverStation.getAlliance().get() == Alliance.Red) {
-                                vectorToTarget = GameConstants.redHubLocation
-                                                .minus(currentPose.getTranslation());
-                        }
-
-                        Rotation2d targetAngle = vectorToTarget.getAngle();
-                        drivetrain.driveToPose(new Pose2d(currentPose.getX(), currentPose.getY(),
-                                        targetAngle));
+                        
                 }));
 
                 if (Robot.isSimulation()) {
