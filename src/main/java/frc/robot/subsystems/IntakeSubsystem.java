@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -31,12 +32,12 @@ public class IntakeSubsystem extends SubsystemBase {
         motorIntake.setControl(m_request.withVelocity(IntakeRPS.times(-1.0)));
     }
 
-    public void intake(int rps) {
+    public void intake(AngularVelocity rps) {
         motorIntake.setControl(m_request.withVelocity(rps));
     }
 
-    public void outtake(int rps) {
-        motorIntake.setControl(m_request.withVelocity(-rps));
+    public void outtake(AngularVelocity rps) {
+        motorIntake.setControl(m_request.withVelocity(rps.times(-1.0)));
     }
 
     public void stop() {
