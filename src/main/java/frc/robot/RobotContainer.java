@@ -28,10 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.*;
-import frc.robot.commands.Auton20RPSShootCommand;
-import frc.robot.commands.AutonAutoAimShootCommand;
-import frc.robot.commands.AutonIntakeCommand;
-import frc.robot.commands.TeleopAutoAimShootCommand;
+import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -103,11 +100,11 @@ public class RobotContainer {
                 driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
                 driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-                // Reset the field-centric heading on left bumper press.
-                driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                // Reset the field-centric heading on right bumper press.
+                driver.rightBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // Point the wheels towards the hub when holding y.
-                driver.y().whileTrue(new RunCommand(() -> {
+                // Point the wheels towards the hub when holding left bumper.
+                driver.leftBumper().whileTrue(new RunCommand(() -> {
                         Pose2d currentPose = drivetrain.getState().Pose;
                         Translation2d vectorToTarget = null;
 
@@ -136,29 +133,19 @@ public class RobotContainer {
         }
 
         private void configureOperatorBindings() {
-
                 shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
+                kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
+                intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
                 operator.rightBumper().whileTrue(new TeleopAutoAimShootCommand(drivetrain, shooter));
 
-                operator.rightTrigger().whileFalse(new InstantCommand(() -> {
-                        if (!operator.rightBumper().getAsBoolean()) {
-                                shooter.stop();
-                        }
+                operator.rightTrigger().whileTrue(new InstantCommand(() -> {
+                        shooter.shoot(operator.getRightTriggerAxis() * ShooterConstants.maxRPS);
                 }));
 
-                operator.a().whileTrue(new InstantCommand(() -> {
-                        shooter.shoot();
+                operator.b().whileTrue(new InstantCommand(() -> {
+                        kicker.kick();
                 }));
-
-                operator.y().whileTrue(new InstantCommand(() -> {
-                }));
-
-                operator.y().whileFalse(new InstantCommand(() -> {
-                        shooter.stop();
-                }));
-
-                operator.b().whileTrue(Commands.startEnd(kicker::kick, kicker::stop, kicker));
         }
 
         // Generates the command request for moving the drive train based on the current
