@@ -74,6 +74,10 @@ public class RobotContainer {
                         new AutonAutoAimShootCommand(drivetrain, shooter).withTimeout(Seconds.of(3.0)));
 
                 NamedCommands.registerCommand("20RPSshot", new Auton20RPSShootCommand(shooter));
+                
+                NamedCommands.registerCommand("Intake", new AutonIntakeCommand(intake));
+                NamedCommands.registerCommand("RotateToHub", new RotateToHubCommand(drivetrain));
+                NamedCommands.registerCommand("Slapdown", new TriggerSlapdownCommand(slapdown));
         }
 
         private void configureDriverBindings() {

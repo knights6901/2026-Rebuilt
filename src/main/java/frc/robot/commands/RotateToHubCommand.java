@@ -15,7 +15,7 @@ import frc.robot.Constants.GameConstants;
 public class RotateToHubCommand extends Command{
     private final CommandSwerveDrivetrain drivetrain;
 
-    public RotateToHubCommand(CommandSwerveDrivetrain drivetrain, VisionSubsystem vision) {
+    public RotateToHubCommand(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
         addRequirements(drivetrain);
