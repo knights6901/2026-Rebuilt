@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "EshaanAmazingPath"
+            "pathName": "middleDepotHalfSwipeMidReboundLeft"
           }
         },
         {
