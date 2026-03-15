@@ -60,24 +60,23 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
 
-                autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-                                stream -> isCompetition ? stream.filter(auto -> auto.getName().startsWith("comp"))
-                                                : stream.filter(auto -> auto.getName().startsWith("test")));
+                configurePathPlannerCommands();
+
+                autoChooser = AutoBuilder.buildAutoChooser();
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
-                configurePathPlannerCommands();
         }
 
         private void configurePathPlannerCommands() {
                 NamedCommands.registerCommand("autoAimShoot",
                         new AutonAutoAimShootCommand(drivetrain, shooter).withTimeout(Seconds.of(3.0)));
 
-                NamedCommands.registerCommand("20RPSshot", new Auton20RPSShootCommand(shooter));
+                NamedCommands.registerCommand("shoot20RPS", new Auton20RPSShootCommand(shooter));
                 
-                NamedCommands.registerCommand("Intake", new AutonIntakeCommand(intake));
-                NamedCommands.registerCommand("RotateToHub", new RotateToHubCommand(drivetrain));
-                NamedCommands.registerCommand("Slapdown", new TriggerSlapdownCommand(slapdown));
+                NamedCommands.registerCommand("intake", new AutonIntakeCommand(intake));
+                NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
+                NamedCommands.registerCommand("slapdownTrigger", new TriggerSlapdownCommand(slapdown));
         }
 
         private void configureDriverBindings() {
@@ -108,9 +107,7 @@ public class RobotContainer {
                 driver.rightBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
                 // Point the wheels towards the hub when holding left bumper.
-                driver.leftBumper().whileTrue(new RunCommand(() -> {
-                        
-                }));
+                driver.leftBumper().whileTrue(new RotateToHubCommand(drivetrain));
 
                 if (Robot.isSimulation()) {
                         driver.x().onTrue(new InstantCommand(() -> {

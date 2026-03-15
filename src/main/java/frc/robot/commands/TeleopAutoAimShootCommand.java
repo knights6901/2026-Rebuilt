@@ -33,4 +33,9 @@ public class TeleopAutoAimShootCommand extends Command {
 
         shooter.shootWithAutoAim(shooter.calculateRPS(shotGroundDistance));
     }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

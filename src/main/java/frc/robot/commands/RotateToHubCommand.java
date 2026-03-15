@@ -41,4 +41,24 @@ public class RotateToHubCommand extends Command{
         drivetrain.driveToPose(new Pose2d(currentPose.getX(), currentPose.getY(),
                         targetAngle));
     }
+
+    @Override
+    public boolean isFinished() {
+        Pose2d currentPose = drivetrain.getState().Pose;
+        Translation2d vectorToTarget = null;
+
+        if (DriverStation.getAlliance().isPresent() &&
+                        DriverStation.getAlliance().get() == Alliance.Blue) {
+                vectorToTarget = GameConstants.blueHubLocation
+                                .minus(currentPose.getTranslation());
+        } else if (DriverStation.getAlliance().isPresent() &&
+                        DriverStation.getAlliance().get() == Alliance.Red) {
+                vectorToTarget = GameConstants.redHubLocation
+                                .minus(currentPose.getTranslation());
+        }
+
+        Rotation2d targetAngle = vectorToTarget.getAngle().minus(Rotation2d.fromRadians(Math.PI));
+        double errorDegrees = Math.abs(currentPose.getRotation().minus(targetAngle).getDegrees());
+        return errorDegrees < 1.0;
+    }
 }

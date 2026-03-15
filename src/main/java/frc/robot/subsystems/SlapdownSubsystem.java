@@ -38,4 +38,8 @@ public class SlapdownSubsystem extends SubsystemBase {
         motorSlapdown.setControl(m_request.withPosition(HomePosition));
         isSlapdownDeployed = false;
     }
+
+    public boolean getDeploymentState() {
+        return isSlapdownDeployed;
+    }
 }

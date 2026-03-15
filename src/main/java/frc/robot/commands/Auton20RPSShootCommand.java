@@ -16,4 +16,9 @@ public class Auton20RPSShootCommand extends Command {
     public void execute() {
         shooter.shoot(20);
     }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

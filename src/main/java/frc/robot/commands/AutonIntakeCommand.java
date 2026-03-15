@@ -22,4 +22,9 @@ public class AutonIntakeCommand extends Command {
     public void end(boolean interrupted) {
         intake.stop();
     }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

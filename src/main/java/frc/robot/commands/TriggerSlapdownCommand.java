@@ -5,9 +5,11 @@ import frc.robot.subsystems.SlapdownSubsystem;
 
 public class TriggerSlapdownCommand extends Command {
     private final SlapdownSubsystem slapdown;
-
+    private boolean initialState;
+    
     public TriggerSlapdownCommand(SlapdownSubsystem slapdown) {
         this.slapdown = slapdown;
+        this.initialState = slapdown.getDeploymentState();
 
         addRequirements(slapdown);
     }
@@ -20,5 +22,9 @@ public class TriggerSlapdownCommand extends Command {
             slapdown.retractSlapdown();
         }
     }
-    
+
+    @Override
+    public boolean isFinished() {
+        return initialState != slapdown.getDeploymentState();
+    }
 }
