@@ -16,18 +16,18 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutonAutoAimShootCommand extends Command {
+public class AutoAimShootCommand extends Command {
     private CommandSwerveDrivetrain drivetrain;
     private ShooterSubsystem shooter;
     private KickerSubsystem kicker;
     private IntakeSubsystem intake;
 
-    public AutonAutoAimShootCommand(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake) {
+    public AutoAimShootCommand(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake) {
         this.drivetrain = drivetrain;
         this.shooter = shooter;
         this.kicker = kicker;
         this.intake = intake;
-        addRequirements(shooter);
+        addRequirements(drivetrain, shooter, kicker, intake);
     }
 
     @Override
@@ -40,13 +40,13 @@ public class AutonAutoAimShootCommand extends Command {
         Distance shotGroundDistance = Meters
                 .of(currentPose.getTranslation().getDistance(hubLocation));
 
-        shooter.shootWithAutoAim(shooter.calculateRPS(shotGroundDistance));
+        shooter.shoot(shooter.calculateRPS(shotGroundDistance));
         intake.intake(IndexRPS);
         kicker.kick();
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

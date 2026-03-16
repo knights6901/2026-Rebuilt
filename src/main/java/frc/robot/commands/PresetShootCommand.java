@@ -9,19 +9,19 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutonPresetShootCommand extends Command {
+public class PresetShootCommand extends Command {
     private ShooterSubsystem shooter;
     private KickerSubsystem kicker;
     private IntakeSubsystem intake;
-    private int shotrps;
+    private AngularVelocity shotrps;
 
-    public AutonPresetShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake, int shotrps) {
+    public PresetShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake, AngularVelocity shotrps) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.intake = intake;
         this.shotrps = shotrps;
 
-        addRequirements(shooter);
+        addRequirements(shooter, kicker, intake);
     }
 
     @Override
@@ -33,6 +33,6 @@ public class AutonPresetShootCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

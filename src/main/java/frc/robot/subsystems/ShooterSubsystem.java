@@ -62,8 +62,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /// Shoots with a calculated RPS for auto-aiming.
-    public void shootWithAutoAim(AngularVelocity exitVelocity) {
-        motorRight.setControl(m_request.withVelocity(exitVelocity));
+    public void shoot(AngularVelocity rps) {
+        motorRight.setControl(m_request.withVelocity(rps));
     }
 
     // Disables both motors by setting their power to 0.
