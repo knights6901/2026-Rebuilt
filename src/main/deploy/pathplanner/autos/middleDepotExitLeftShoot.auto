@@ -7,6 +7,12 @@
         {
           "type": "named",
           "data": {
+            "name": "slapdownTrigger"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "intake"
           }
         },
