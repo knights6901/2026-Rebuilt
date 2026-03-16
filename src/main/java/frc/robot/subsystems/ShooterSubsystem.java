@@ -29,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private final TalonFX motorRight = new TalonFX(RightMotorId, "rio");
-    private final TalonFX motorLeft = new TalonFX(LeftMotorId, "rio");
+    private final TalonFX m_motorRight = new TalonFX(RightMotorId, "rio");
+    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, "rio");
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     /// Initializes the shooter subsystem.
@@ -40,36 +40,37 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        motorRight.getConfigurator().apply(m_motorConfig);
-        motorLeft.getConfigurator().apply(m_motorConfig);
+        m_motorRight.getConfigurator().apply(m_motorConfig);
+        m_motorLeft.getConfigurator().apply(m_motorConfig);
 
-        motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
+        m_motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
     }
 
     /// Shoots with a variable RPS based on the input axis value (e.g., from a
     /// trigger).
     public void shoot(double axis) {
-        motorRight.setControl(m_request.withVelocity(ShootRPS.times(axis)));
+        m_motorRight.setControl(m_request.withVelocity(ShootRPS.times(axis)));
     }
 
     /// Shoots with a preset RPS defined in Constants.
     public void shoot() {
-        motorRight.setControl(m_request.withVelocity(ShootRPS));
+
+        m_motorRight.setControl(m_request.withVelocity(ShootRPS));
     }
 
     /// Shoots with a specified RPS.
     public void shoot(int rps) {
-        motorRight.setControl(m_request.withVelocity(rps));
+        m_motorRight.setControl(m_request.withVelocity(rps));
     }
 
     /// Shoots with a calculated RPS for auto-aiming.
     public void shoot(AngularVelocity rps) {
-        motorRight.setControl(m_request.withVelocity(rps));
+        m_motorRight.setControl(m_request.withVelocity(rps));
     }
 
     // Disables both motors by setting their power to 0.
     public void stop() {
-        motorRight.setControl(new NeutralOut());
+        m_motorRight.setControl(new NeutralOut());
     }
 
     /// Updates the shot visualization in the dashboard by calculating the

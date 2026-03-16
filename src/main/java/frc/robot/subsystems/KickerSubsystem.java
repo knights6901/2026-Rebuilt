@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.KickerConstants.*;
 
 public class KickerSubsystem extends SubsystemBase {
-    private final TalonFX motorKicker = new TalonFX(KickerMotorId, "rio");
+    private final TalonFX m_motorKicker = new TalonFX(KickerMotorId, "rio");
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     public KickerSubsystem() {
@@ -21,16 +21,16 @@ public class KickerSubsystem extends SubsystemBase {
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        motorKicker.getConfigurator().apply(m_motorConfig);
+        m_motorKicker.getConfigurator().apply(m_motorConfig);
     }
 
     /// Enables the kicker to move balls from the intake to the shooter.
     public void kick() {
-        motorKicker.setControl(m_request.withVelocity(KickerRPS));
+        m_motorKicker.setControl(m_request.withVelocity(KickerRPS));
     }
-    
+
     /// Disables the kicker.
     public void stop() {
-        motorKicker.setControl(new NeutralOut());
+        m_motorKicker.setControl(new NeutralOut());
     }
 }

@@ -12,7 +12,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SlapdownSubsystem extends SubsystemBase {
-    private final TalonFX motorSlapdown = new TalonFX(SlapdownMotorId, "rio");
+    private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, "rio");
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     public boolean isSlapdownDeployed = false;
@@ -23,19 +23,19 @@ public class SlapdownSubsystem extends SubsystemBase {
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        motorSlapdown.getConfigurator().apply(m_motorConfig);
-        motorSlapdown.setPosition(0);
+        m_motorSlapdown.getConfigurator().apply(m_motorConfig);
+        m_motorSlapdown.setPosition(0);
     }
 
     /// Deploys the slapdown.
     public void slapdown() {
-        motorSlapdown.setControl(m_request.withPosition(IntakePosition));
+        m_motorSlapdown.setControl(m_request.withPosition(IntakePosition));
         isSlapdownDeployed = true;
     }
 
     /// Retracts the slapdown.
     public void retractSlapdown() {
-        motorSlapdown.setControl(m_request.withPosition(HomePosition));
+        m_motorSlapdown.setControl(m_request.withPosition(HomePosition));
         isSlapdownDeployed = false;
     }
 

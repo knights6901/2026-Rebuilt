@@ -75,10 +75,12 @@ public class RobotContainer {
                 NamedCommands.registerCommand("stopSubsystems", new StopSubsystemsCommand(shooter, kicker, intake));
 
                 NamedCommands.registerCommand("autoAimShoot",
-                        new AutoAimShootCommand(drivetrain, shooter, kicker, intake).withTimeout(Seconds.of(3.0)));
+                                new AutoAimShootCommand(drivetrain, shooter, kicker, intake)
+                                                .withTimeout(Seconds.of(3.0)));
                 NamedCommands.registerCommand("holdShooter", new HoldShooterCommand(kicker, intake));
-                NamedCommands.registerCommand("shoot20RPS", new PresetShootCommand(shooter, kicker, intake, RotationsPerSecond.of(20)));
-                
+                NamedCommands.registerCommand("shoot20RPS",
+                                new PresetShootCommand(shooter, kicker, intake, RotationsPerSecond.of(20)));
+
                 NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
                 NamedCommands.registerCommand("slapdownTrigger", new TriggerSlapdownCommand(slapdown));
@@ -124,7 +126,6 @@ public class RobotContainer {
         }
 
         private void configureOperatorBindings() {
-                shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
                 kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
@@ -132,15 +133,12 @@ public class RobotContainer {
 
                 operator.a().whileTrue(new IntakeCommand(intake));
 
-                operator.rightBumper().whileTrue(new PresetShootCommand(shooter, kicker, intake, ShooterConstants.ShootRPS));
+                operator.rightBumper()
+                                .whileTrue(new PresetShootCommand(shooter, kicker, intake, ShooterConstants.ShootRPS));
 
                 operator.rightTrigger().whileTrue(new InstantCommand(() -> {
                         shooter.shoot(operator.getRightTriggerAxis() * ShooterConstants.maxRPS);
-                }));
-
-                operator.b().whileTrue(new InstantCommand(() -> {
-                        kicker.kick();
-                }));
+                }, shooter));
         }
 
         // Generates the command request for moving the drive train based on the current

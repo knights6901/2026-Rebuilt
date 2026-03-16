@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.IntakeConstants.IndexRPS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,11 +21,16 @@ public class AutoAimShootCommand extends Command {
     private KickerSubsystem kicker;
     private IntakeSubsystem intake;
 
-    public AutoAimShootCommand(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake) {
+    public AutoAimShootCommand(
+            CommandSwerveDrivetrain drivetrain,
+            ShooterSubsystem shooter,
+            KickerSubsystem kicker,
+            IntakeSubsystem intake) {
         this.drivetrain = drivetrain;
         this.shooter = shooter;
         this.kicker = kicker;
         this.intake = intake;
+
         addRequirements(drivetrain, shooter, kicker, intake);
     }
 
@@ -41,7 +45,8 @@ public class AutoAimShootCommand extends Command {
                 .of(currentPose.getTranslation().getDistance(hubLocation));
 
         shooter.shoot(shooter.calculateRPS(shotGroundDistance));
-        intake.intake(IndexRPS);
+
+        intake.intake();
         kicker.kick();
     }
 
