@@ -33,6 +33,6 @@ public class PresetShootCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

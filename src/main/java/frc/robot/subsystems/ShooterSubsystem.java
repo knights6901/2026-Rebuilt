@@ -8,6 +8,7 @@ import static frc.robot.Constants.ShooterConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -68,7 +69,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Disables both motors by setting their power to 0.
     public void stop() {
-        motorRight.setControl(m_request.withVelocity(0));
+        motorRight.setControl(new NeutralOut());
     }
 
     /// Updates the shot visualization in the dashboard by calculating the

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -41,6 +42,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        motorIntake.setControl(m_request.withVelocity(0));
+        motorIntake.setControl(new NeutralOut());
     }
 }

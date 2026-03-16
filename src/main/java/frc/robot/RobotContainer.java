@@ -130,9 +130,7 @@ public class RobotContainer {
 
                 operator.leftBumper().whileTrue(new AutoAimShootCommand(drivetrain, shooter, kicker, intake));
 
-                operator.a().whileTrue(new InstantCommand(() -> {
-                        shooter.shoot();
-                }));
+                operator.a().whileTrue(new IntakeCommand(intake));
 
                 operator.rightBumper().whileTrue(new PresetShootCommand(shooter, kicker, intake, ShooterConstants.ShootRPS));
 

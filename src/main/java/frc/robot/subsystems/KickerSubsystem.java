@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -30,6 +31,6 @@ public class KickerSubsystem extends SubsystemBase {
     
     /// Disables the kicker.
     public void stop() {
-        motorKicker.setControl(m_request.withVelocity(0));
+        motorKicker.setControl(new NeutralOut());
     }
 }

@@ -100,10 +100,10 @@ public final class Constants {
 
         public static final class IntakeConstants {
                 // The motor ID of the intake motor.
-                public final static int IntakeMotorId = 37;
+                public final static int IntakeMotorId = 32;
 
                 public final static AngularVelocity IndexRPS = RotationsPerSecond.of(20);
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(2);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(100);
 
                 public final static double GearRatio = 5.0;
 
