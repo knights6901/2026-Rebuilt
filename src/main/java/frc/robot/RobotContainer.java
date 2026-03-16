@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.*;
+
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -63,18 +65,21 @@ public class RobotContainer {
 
                 configurePathPlannerCommands();
 
-                autoChooser = AutoBuilder.buildAutoChooser();
+                autoChooser = AutoBuilder.buildAutoChooser("zero");
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
         }
 
         private void configurePathPlannerCommands() {
+                NamedCommands.registerCommand("stopSubsystems", new StopSubsystemsCommand(shooter, kicker, intake));
+
                 NamedCommands.registerCommand("autoAimShoot",
-                        new AutonAutoAimShootCommand(drivetrain, shooter, kicker, intake).withTimeout(Seconds.of(3.0)));
-                NamedCommands.registerCommand("shoot20RPS", new AutonPresetShootCommand(shooter, kicker, intake, 20));
+                        new AutoAimShootCommand(drivetrain, shooter, kicker, intake).withTimeout(Seconds.of(3.0)));
+                NamedCommands.registerCommand("holdShooter", new HoldShooterCommand(kicker, intake));
+                NamedCommands.registerCommand("shoot20RPS", new PresetShootCommand(shooter, kicker, intake, RotationsPerSecond.of(20)));
                 
-                NamedCommands.registerCommand("intake", new AutonIntakeCommand(intake));
+                NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
                 NamedCommands.registerCommand("slapdownTrigger", new TriggerSlapdownCommand(slapdown));
         }
@@ -123,26 +128,13 @@ public class RobotContainer {
                 kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
-                operator.leftBumper().whileTrue(new TeleopAutoAimShootCommand(drivetrain, shooter));
+                operator.leftBumper().whileTrue(new AutoAimShootCommand(drivetrain, shooter, kicker, intake));
 
                 operator.a().whileTrue(new InstantCommand(() -> {
                         shooter.shoot();
                 }));
 
-                operator.rightBumper().whileTrue(new ParallelCommandGroup(
-                        new InstantCommand(() -> {
-                                kicker.kick();
-                        }),
-
-                        new InstantCommand(() -> {
-                                intake.intake();
-                        }),
-
-                        new InstantCommand(() -> {
-                                shooter.shoot();
-                        })
-                        
-                ));
+                operator.rightBumper().whileTrue(new PresetShootCommand(shooter, kicker, intake, ShooterConstants.ShootRPS));
 
                 operator.rightTrigger().whileTrue(new InstantCommand(() -> {
                         shooter.shoot(operator.getRightTriggerAxis() * ShooterConstants.maxRPS);

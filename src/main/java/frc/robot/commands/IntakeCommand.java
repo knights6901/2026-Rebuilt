@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutonIntakeCommand extends Command {
+public class IntakeCommand extends Command {
     private final IntakeSubsystem intake;
 
-    public AutonIntakeCommand(IntakeSubsystem intake) {
+    public IntakeCommand(IntakeSubsystem intake) {
         this.intake = intake;
 
         addRequirements(intake);
@@ -19,12 +19,7 @@ public class AutonIntakeCommand extends Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        intake.stop();
-    }
-
-    @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }
