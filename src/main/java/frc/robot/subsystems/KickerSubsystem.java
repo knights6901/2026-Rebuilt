@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.KickerConstants.*;
@@ -14,6 +16,11 @@ import static frc.robot.Constants.KickerConstants.*;
 public class KickerSubsystem extends SubsystemBase {
     private final TalonFX m_motorKicker = new TalonFX(KickerMotorId, "rio");
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+
+    private final DoublePublisher kickerPub = NetworkTableInstance.getDefault()
+            .getTable("Kicker")
+            .getDoubleTopic("KickerVelocity")
+            .publish();
 
     public KickerSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
@@ -32,5 +39,10 @@ public class KickerSubsystem extends SubsystemBase {
     /// Disables the kicker.
     public void stop() {
         m_motorKicker.setControl(new NeutralOut());
+    }
+
+    @Override
+    public void periodic() {    
+        kickerPub.set(m_motorKicker.getVelocity().getValueAsDouble());
     }
 }

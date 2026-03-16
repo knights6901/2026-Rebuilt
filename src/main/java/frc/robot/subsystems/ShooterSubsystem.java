@@ -19,7 +19,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -32,6 +32,16 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX m_motorRight = new TalonFX(RightMotorId, "rio");
     private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, "rio");
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+
+    private final DoublePublisher leftVelocityPub = NetworkTableInstance.getDefault()
+        .getTable("Shooter")
+        .getDoubleTopic("LeftVelocity")
+        .publish();
+
+    private final DoublePublisher rightVelocityPub = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("RightVelocity")
+            .publish();
 
     /// Initializes the shooter subsystem.
     public ShooterSubsystem() {
@@ -154,5 +164,12 @@ public class ShooterSubsystem extends SubsystemBase {
                 .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
                 .publish()
                 .set(new Pose3d[0]);
+    }
+
+    @Override
+    public void periodic() {
+        // Publish current velocities for telemetry
+        rightVelocityPub.set(m_motorRight.getVelocity().getValueAsDouble());
+        leftVelocityPub.set(m_motorLeft.getVelocity().getValueAsDouble());
     }
 }

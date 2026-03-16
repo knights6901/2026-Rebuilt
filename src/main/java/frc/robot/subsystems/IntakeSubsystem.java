@@ -9,12 +9,19 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final TalonFX m_motorIntake = new TalonFX(IntakeMotorId, "rio");
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+
+    private final DoublePublisher intakeVelocityPub = NetworkTableInstance.getDefault()
+            .getTable("Intake")
+            .getDoubleTopic("IntakeVelocity")
+            .publish();
 
     public IntakeSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
@@ -43,5 +50,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void stop() {
         m_motorIntake.setControl(new NeutralOut());
+    }
+
+    @Override
+    public void periodic() {
+        intakeVelocityPub.set(m_motorIntake.getVelocity().getValueAsDouble());
     }
 }

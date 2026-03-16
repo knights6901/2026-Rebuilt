@@ -9,6 +9,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SlapdownSubsystem extends SubsystemBase {
@@ -16,6 +19,11 @@ public class SlapdownSubsystem extends SubsystemBase {
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     public boolean isSlapdownDeployed = false;
+
+    private final BooleanPublisher slapdownPub = NetworkTableInstance.getDefault()
+            .getTable("Slapdown")
+            .getBooleanTopic("SlapdownDeployed")
+            .publish();
 
     public SlapdownSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
@@ -41,5 +49,10 @@ public class SlapdownSubsystem extends SubsystemBase {
 
     public boolean getDeploymentState() {
         return isSlapdownDeployed;
+    }
+
+    @Override
+    public void periodic() {
+        slapdownPub.set(isSlapdownDeployed);
     }
 }
