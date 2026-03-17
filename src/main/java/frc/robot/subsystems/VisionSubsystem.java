@@ -60,6 +60,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     public Optional<EstimatedRobotPose> visionEstimatedPose = Optional.empty();
 
+    public boolean hasSeededPose = false;
+
     /**
      * Creates the vision subsystem, initializing PhotonVision cameras and the
      * pose estimator from the current year's field layout. Starts camera
@@ -166,6 +168,11 @@ public class VisionSubsystem extends SubsystemBase {
 
             if (visionEstimatedPose.isEmpty()) {
                 visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
+            }
+
+            if (!hasSeededPose && visionEstimatedPose.isPresent()) {
+                drivetrain.resetPose(visionEstimatedPose.get().estimatedPose.toPose2d());
+                hasSeededPose = true;
             }
 
             visionEstimatedPose.ifPresent(estimatedPose -> {
