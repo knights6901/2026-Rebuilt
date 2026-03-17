@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -17,7 +18,7 @@ import frc.robot.Constants.IndexerConstants;
  * closed-loop velocity control.
  */
 public class IndexerSubsystem extends SubsystemBase {
-    private final TalonFX m_motorIndexer = new TalonFX(IndexerConstants.IndexerMotorId, "rio");
+    private final TalonFX m_motorIndexer = new TalonFX(IndexerConstants.IndexerMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private final DoublePublisher indexerVelocityPub = NetworkTableInstance.getDefault()

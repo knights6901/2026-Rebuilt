@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera photonCam;
     private final PhotonCamera driverCam;
+
     private final PhotonPoseEstimator visionPoseEstimator;
     private final CommandSwerveDrivetrain drivetrain;
     // not final because setting fieldLayout wasn't working without try/catch
@@ -47,7 +48,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     private VisionSystemSim visionSim;
     private PhotonCameraSim cameraSim;
-    // private final StructSubscriber<Pose2d> poseSub;
+
     private final StructArrayPublisher<Pose3d> tagPublisher;
 
     private List<Pose3d> visibleTagPoses = new ArrayList<>();

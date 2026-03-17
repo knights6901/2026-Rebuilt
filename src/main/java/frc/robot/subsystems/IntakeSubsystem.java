@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * velocity control.
  */
 public class IntakeSubsystem extends SubsystemBase {
-    private final TalonFX m_motorIntake = new TalonFX(IntakeMotorId, "rio");
+    private final TalonFX m_motorIntake = new TalonFX(IntakeMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private final DoublePublisher intakeVelocityPub = NetworkTableInstance.getDefault()

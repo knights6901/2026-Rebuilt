@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.Constants.ShooterConstants.*;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -38,8 +39,8 @@ import frc.robot.Telemetry;
  * for distance-based shot speed.
  */
 public class ShooterSubsystem extends SubsystemBase {
-    private final TalonFX m_motorRight = new TalonFX(RightMotorId, "rio");
-    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, "rio");
+    private final TalonFX m_motorRight = new TalonFX(RightMotorId, new CANBus("rio"));
+    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private final DoublePublisher leftVelocityPub = NetworkTableInstance.getDefault()

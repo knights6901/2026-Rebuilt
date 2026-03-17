@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -19,7 +20,7 @@ import static frc.robot.Constants.KickerConstants.*;
  * Uses a single TalonFX motor with closed-loop velocity control.
  */
 public class KickerSubsystem extends SubsystemBase {
-    private final TalonFX m_motorKicker = new TalonFX(KickerMotorId, "rio");
+    private final TalonFX m_motorKicker = new TalonFX(KickerMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private final DoublePublisher kickerPub = NetworkTableInstance.getDefault()

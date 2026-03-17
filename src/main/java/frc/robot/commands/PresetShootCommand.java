@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.IntakeConstants.IndexRPS;
-
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 

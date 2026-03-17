@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.SlapdownConstants.*;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 // import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -19,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * single TalonFX motor with closed-loop position control.
  */
 public class SlapdownSubsystem extends SubsystemBase {
-    private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, "rio");
+    private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, new CANBus("rio"));
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     public boolean isSlapdownDeployed = false;
