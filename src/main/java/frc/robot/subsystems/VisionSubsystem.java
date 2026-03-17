@@ -39,7 +39,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera photonCam;
-    private final PhotonCamera driverCam;
+
+    private final PhotonCamera driverCamHopper;
+    private final PhotonCamera driverCameraBack;
 
     private final PhotonPoseEstimator visionPoseEstimator;
     private final CommandSwerveDrivetrain drivetrain;
@@ -65,8 +67,11 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
+
         photonCam = new PhotonCamera("photonCam");
-        driverCam = new PhotonCamera("driverCam");
+        driverCamHopper = new PhotonCamera("driverCamHopper");
+        driverCameraBack = new PhotonCamera("driverCamBack");
+
         try {
             fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2026RebuiltAndymark.m_resourceFile);
         } catch (IOException e) {
@@ -155,6 +160,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         for (var result : photonCam.getAllUnreadResults()) {
             visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
+
             if (visionEstimatedPose.isEmpty()) {
                 visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
             }
