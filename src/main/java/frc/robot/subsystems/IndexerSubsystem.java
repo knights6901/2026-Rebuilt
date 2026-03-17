@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -45,7 +46,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     /** Stops the indexer motor by commanding zero velocity. */
     public void stop() {
-        m_motorIndexer.setControl(m_request.withVelocity(0));
+        m_motorIndexer.setControl(new NeutralOut());
     }
 
     @Override

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IndexerSubsystem;
 
 /**
  * Shoots at a preset RPM configured at command creation time.
@@ -17,12 +17,12 @@ import frc.robot.subsystems.IntakeSubsystem;
  * 
  * <p>
  * Requires: {@link ShooterSubsystem}, {@link KickerSubsystem},
- * {@link IntakeSubsystem}
+ * {@link IndexerSubsystem}
  */
 public class PresetShootCommand extends Command {
     private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
-    private final IntakeSubsystem intake;
+    private final IndexerSubsystem indexer;
     private final AngularVelocity shotrps;
 
     /**
@@ -33,20 +33,21 @@ public class PresetShootCommand extends Command {
      * @param intake  the intake subsystem
      * @param shotrps the preset angular velocity (RPM) for the shot
      */
-    public PresetShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake,
-            AngularVelocity shotrps) {
+    public PresetShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer, AngularVelocity shotrps) {
         this.shooter = shooter;
         this.kicker = kicker;
-        this.intake = intake;
+        this.indexer = indexer;
         this.shotrps = shotrps;
 
-        addRequirements(shooter, kicker, intake);
+        addRequirements(shooter, kicker, indexer);
     }
 
     @Override
     public void execute() {
+        // commented because we are using this command to test only the kicker functionality for now
+        
         // shooter.shoot(shotrps);
-        // intake.intake(IndexRPS);
+        // indexer.enable();
         kicker.kick();
     }
 

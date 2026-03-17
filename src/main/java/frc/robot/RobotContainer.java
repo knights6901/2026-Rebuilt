@@ -75,13 +75,13 @@ public class RobotContainer {
 
         /** Registers named commands used by PathPlanner autonomous routines. */
         private void configurePathPlannerCommands() {
-                NamedCommands.registerCommand("stopSubsystems", new StopSubsystemsCommand(shooter, kicker, intake));
+                NamedCommands.registerCommand("stopSubsystems", new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 NamedCommands.registerCommand("autoAimShoot",
                                 new AutoAimShootCommand(drivetrain, shooter, kicker, indexer)
                                                 .withTimeout(Seconds.of(3.0)));
                 NamedCommands.registerCommand("shoot20RPS",
-                                new PresetShootCommand(shooter, kicker, intake, RotationsPerSecond.of(20)));
+                                new PresetShootCommand(shooter, kicker, indexer, RotationsPerSecond.of(20)));
 
                 NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
@@ -145,11 +145,13 @@ public class RobotContainer {
                                 new AutoAimShootCommand(drivetrain, shooter, kicker, indexer));
 
                 operator.rightBumper().whileTrue(
-                                new PresetShootCommand(shooter, kicker, intake, ShooterConstants.ShootRPS));
+                                new PresetShootCommand(shooter, kicker, indexer, ShooterConstants.ShootRPS));
 
-                operator.rightTrigger().whileTrue(new InstantCommand(() -> {
+                operator.rightTrigger().whileTrue(new RunCommand(() -> {
                         shooter.shoot(operator.getRightTriggerAxis() * ShooterConstants.maxRPS);
                 }, shooter));
+
+                operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
         }
 
         /**

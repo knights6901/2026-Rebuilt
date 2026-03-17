@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
+import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /**
@@ -24,12 +25,13 @@ import frc.robot.subsystems.ShooterSubsystem;
  * 
  * <p>
  * Requires: {@link ShooterSubsystem}, {@link KickerSubsystem},
- * {@link IntakeSubsystem}
+ * {@link IntakeSubsystem}, {@link IndexerSubsystem}
  */
 public class StopSubsystemsCommand extends Command {
     private ShooterSubsystem shooter;
     private KickerSubsystem kicker;
     private IntakeSubsystem intake;
+    private IndexerSubsystem indexer;
 
     /**
      * Constructs a StopSubsystemsCommand.
@@ -37,12 +39,14 @@ public class StopSubsystemsCommand extends Command {
      * @param shooter the shooter subsystem to stop
      * @param kicker  the kicker subsystem to stop
      * @param intake  the intake subsystem to stop
+     * @param indexer the indexer subsystem to stop
      */
-    public StopSubsystemsCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake) {
+    public StopSubsystemsCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake, IndexerSubsystem indexer) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.intake = intake;
-        addRequirements(shooter, kicker, intake);
+        this.indexer = indexer;
+        addRequirements(shooter, kicker, intake, indexer);
     }
 
     @Override
@@ -50,6 +54,7 @@ public class StopSubsystemsCommand extends Command {
         shooter.stop();
         kicker.stop();
         intake.stop();
+        indexer.stop();
     }
 
     @Override
