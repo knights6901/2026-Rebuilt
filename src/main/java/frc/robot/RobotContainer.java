@@ -94,9 +94,8 @@ public class RobotContainer {
          * field-centric driving, SysId routines, heading reset, and hub tracking.
          */
         private void configureDriverBindings() {
-                // Note that X is defined as forward according to WPILib convention,
-                // and Y is defined as to the left according to WPILib convention.
                 drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
+                slapdown.setDefaultCommand(new RunCommand(() -> slapdown.stop(), slapdown));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -128,6 +127,14 @@ public class RobotContainer {
                                 shooter.updateShotVisualization(drivetrain.getPose(), 7, 60);
                         })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
                 }
+
+                // TEMPORARY
+                // Slowly move slapdown down
+                driver.povLeft().whileTrue(
+                                new RunCommand(() -> slapdown.setSpeed(RotationsPerSecond.of(1)), slapdown));
+                driver.povRight().whileTrue(
+                                new RunCommand(() -> slapdown.setSpeed(RotationsPerSecond.of(-1)),
+                                                slapdown));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }

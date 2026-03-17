@@ -23,7 +23,8 @@ public class PresetShootCommand extends Command {
     private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
-    private final AngularVelocity shotrps;
+
+    private final AngularVelocity shotRPS;
 
     /**
      * Constructs a PresetShootCommand with a specific shot RPM.
@@ -31,22 +32,22 @@ public class PresetShootCommand extends Command {
      * @param shooter the shooter subsystem
      * @param kicker  the kicker subsystem
      * @param intake  the intake subsystem
-     * @param shotrps the preset angular velocity (RPM) for the shot
+     * @param shotRPS the preset angular velocity (RPM) for the shot
      */
     public PresetShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer,
-            AngularVelocity shotrps) {
+            AngularVelocity shotRPS) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.indexer = indexer;
-        this.shotrps = shotrps;
+        this.shotRPS = shotRPS;
 
         addRequirements(shooter, kicker, indexer);
     }
 
     @Override
     public void execute() {
-        // shooter.shoot(shotrps);
-        // indexer.enable();
+        shooter.shoot(shotRPS);
+        indexer.enable();
         kicker.kick();
     }
 

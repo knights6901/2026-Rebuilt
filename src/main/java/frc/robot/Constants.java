@@ -137,7 +137,7 @@ public final class Constants {
                 public final static int SlapdownMotorId = 104;
 
                 /// The position to lower the slapdown to when intaking a ball.
-                public final static Angle IntakePosition = Rotations.of(0.25);
+                public final static Angle IntakePosition = Rotations.of(36);
                 /// The default position of slapdown system.
                 public final static Angle HomePosition = Rotations.of(0);
 
