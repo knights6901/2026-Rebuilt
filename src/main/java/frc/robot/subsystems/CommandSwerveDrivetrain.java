@@ -146,9 +146,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
 
-        if (RobotBase.isSimulation()) {
-            SmartDashboard.putData("Field", m_field);
-        }
+        SmartDashboard.putData("Field", m_field);
 
         configureAutoBuilder();
     }
@@ -168,6 +166,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        SmartDashboard.putData("Field", m_field);
 
         configureAutoBuilder();
     }
@@ -196,6 +196,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        SmartDashboard.putData("Field", m_field);
 
         configureAutoBuilder();
     }

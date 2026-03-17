@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -60,7 +61,12 @@ public class VisionSubsystem extends SubsystemBase {
 
     public Optional<EstimatedRobotPose> visionEstimatedPose = Optional.empty();
 
-    public boolean hasSeededPose = false;
+    private boolean hasSeededPose = false;
+
+    private final BooleanPublisher seededPub = NetworkTableInstance.getDefault()
+            .getTable("Vision Debugging")
+            .getBooleanTopic("Has Seeded Pose")
+            .publish();
 
     /**
      * Creates the vision subsystem, initializing PhotonVision cameras and the
@@ -159,16 +165,15 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-
         visibleTagPoses.clear();
         visibleTagIds.clear();
 
         for (var result : photonCam.getAllUnreadResults()) {
-            visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
+            // visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
 
-            if (visionEstimatedPose.isEmpty()) {
-                visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
-            }
+            // if (visionEstimatedPose.isEmpty()) {
+            visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
+            // }
 
             if (!hasSeededPose && visionEstimatedPose.isPresent()) {
                 drivetrain.resetPose(visionEstimatedPose.get().estimatedPose.toPose2d());
@@ -196,9 +201,11 @@ public class VisionSubsystem extends SubsystemBase {
                     tagPose.ifPresent(visibleTagPoses::add);
                     visibleTagIds.add(target.getFiducialId());
                 }
+
                 tagPublisher.set(visibleTagPoses.toArray(new Pose3d[0]));
             }
         }
 
+        seededPub.set(hasSeededPose);
     }
 }
