@@ -169,14 +169,15 @@ public class VisionSubsystem extends SubsystemBase {
         visibleTagIds.clear();
 
         for (var result : photonCam.getAllUnreadResults()) {
-            // visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
+            visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
 
-            // if (visionEstimatedPose.isEmpty()) {
-            visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
-            // }
+            if (visionEstimatedPose.isEmpty()) {
+                visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
+            }
 
-            if (!hasSeededPose && visionEstimatedPose.isPresent()) {
+            if (!hasSeededPose && visionEstimatedPose.isPresent() && drivetrain.hasAppliedOperatorPerspective()) {
                 drivetrain.resetPose(visionEstimatedPose.get().estimatedPose.toPose2d());
+                drivetrain.seedFieldCentric();
                 hasSeededPose = true;
             }
 
@@ -190,7 +191,7 @@ public class VisionSubsystem extends SubsystemBase {
                         // third value is rotation which apparently gyro is much much better for than
                         // vision anyways
                         // it needs more real-field tuning tho
-                        VecBuilder.fill(5, 5, 9999));
+                        VecBuilder.fill(1.5, 1.5, 9999));
             });
 
             if (result.hasTargets()) {
