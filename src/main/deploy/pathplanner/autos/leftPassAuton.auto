@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "slapdown"
+            "name": "slapdownTrigger"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoAimShoot"
+            "name": "shoot20RPS"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoAimShoot"
+            "name": "shoot20RPS"
           }
         },
         {

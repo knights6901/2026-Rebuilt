@@ -212,14 +212,16 @@ public final class Constants {
                                                                 // stator current limit to help avoid brownouts without
                                                                 // impacting performance.
                                                                 .withStatorCurrentLimit(Amps.of(60))
-                                                                .withStatorCurrentLimitEnable(true));
+                                                                .withStatorCurrentLimitEnable(true)
+                                                                .withSupplyCurrentLimit(Amps.of(20))
+                                                                .withSupplyCurrentLimitEnable(true));
                 private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
                 // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
                 private static final Pigeon2Configuration pigeonConfigs = null;
 
                 // CAN bus that the devices are located on;
                 // All swerve devices must share the same CAN bus
-                public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
+                public static final CANBus kCANBus = new CANBus("Swerve CANivore", "./logs/example.hoot");
 
                 // Theoretical free speed (m/s) at 12 V applied output;
                 // This needs to be tuned to your individual robot
