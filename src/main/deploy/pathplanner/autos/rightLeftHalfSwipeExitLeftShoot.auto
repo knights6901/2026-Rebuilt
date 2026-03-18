@@ -5,9 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "slapdownTrigger"
+            "pathName": "crossRightLeft"
           }
         },
         {
@@ -19,19 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftOutpost"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.5
+            "pathName": "leftLeftHalfSwipe"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "outpostExitRight"
+            "pathName": "leftHalfSwipeExitLeft"
           }
         },
         {
@@ -39,11 +33,17 @@
           "data": {
             "name": "rotateToHub"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAimShoot"
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Left",
+  "folder": "Right",
   "choreoAuto": false
 }

@@ -19,31 +19,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftOutpost"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.5
+            "pathName": "leftLeftHalfSwipe"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "outpostExitRight"
+            "pathName": "leftPass1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "rotateToHub"
+            "name": "shoot20RPS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftPass2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot20RPS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftPass3"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Left",
+  "folder": null,
   "choreoAuto": false
 }

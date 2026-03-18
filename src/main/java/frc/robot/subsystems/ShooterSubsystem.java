@@ -6,8 +6,10 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.Constants.ShooterConstants.*;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,7 +20,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -27,53 +29,98 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Telemetry;
 
+/**
+ * Subsystem controlling the dual-motor shooter flywheel.
+ *
+ * <p>
+ * The left motor follows the right motor in the opposed direction. Provides
+ * multiple shoot overloads for manual, automatic, and auto-aim velocity
+ * control, as well as trajectory visualization and ballistics calculations
+ * for distance-based shot speed.
+ */
 public class ShooterSubsystem extends SubsystemBase {
-    private final TalonFX motorRight = new TalonFX(RightMotorId, "rio");
-    private final TalonFX motorLeft = new TalonFX(LeftMotorId, "rio");
+    private final TalonFX m_motorRight = new TalonFX(RightMotorId, new CANBus("rio"));
+    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
-    /// Initializes the shooter subsystem.
+    private final DoublePublisher leftVelocityPub = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("LeftVelocity")
+            .publish();
+
+    private final DoublePublisher rightVelocityPub = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("RightVelocity")
+            .publish();
+
+    /**
+     * Configures both shooter motors with PID gains from constants and sets the
+     * left motor to follow the right motor in the opposed direction.
+     */
     public ShooterSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
         m_motorConfig.Slot0 = ShooterGains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        motorRight.getConfigurator().apply(m_motorConfig);
-        motorLeft.getConfigurator().apply(m_motorConfig);
+        m_motorRight.getConfigurator().apply(m_motorConfig);
+        m_motorLeft.getConfigurator().apply(m_motorConfig);
 
-        motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
+        m_motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
     }
 
-    /// Shoots with a variable RPS based on the input axis value (e.g., from a
-    /// trigger).
+    /**
+     * Spins the flywheel at a velocity proportional to the given axis value,
+     * useful for variable-speed control from a trigger.
+     *
+     * @param axis scalar in [0, 1] applied to the maximum shoot velocity
+     */
     public void shoot(double axis) {
-        motorRight.setControl(m_request.withVelocity(ShootRPS.times(axis)));
+        m_motorRight.setControl(m_request.withVelocity(ShootRPS.times(axis)));
     }
 
-    /// Shoots with a preset RPS defined in Constants.
+    /** Spins the flywheel at the default shoot velocity defined in constants. */
     public void shoot() {
-        motorRight.setControl(m_request.withVelocity(ShootRPS));
+        m_motorRight.setControl(m_request.withVelocity(ShootRPS));
     }
 
-    /// Shoots with a specified RPS.
+    /**
+     * Spins the flywheel at an exact integer RPS setpoint.
+     *
+     * @param rps target rotations per second
+     */
     public void shoot(int rps) {
-        motorRight.setControl(m_request.withVelocity(rps));
+        m_motorRight.setControl(m_request.withVelocity(rps));
     }
 
-    /// Shoots with a calculated RPS for auto-aiming.
-    public void shootWithAutoAim(AngularVelocity exitVelocity) {
-        motorRight.setControl(m_request.withVelocity(exitVelocity));
+    /**
+     * Spins the flywheel at the specified angular velocity, typically used
+     * for auto-aim shots where the velocity is computed from target distance.
+     *
+     * @param rps target angular velocity
+     */
+    public void shoot(AngularVelocity rps) {
+        m_motorRight.setControl(m_request.withVelocity(rps));
     }
 
-    // Disables both motors by setting their power to 0.
+    /** Stops the flywheel by applying neutral output to both motors. */
     public void stop() {
-        motorRight.setControl(m_request.withVelocity(0));
+        m_motorRight.setControl(new NeutralOut());
     }
 
-    /// Updates the shot visualization in the dashboard by calculating the
-    /// trajectory of the ball based on the robot's current pose, velocity, and the
-    /// launch angle.
+    /**
+     * Publishes a 3D trajectory to NetworkTables for dashboard visualization.
+     *
+     * <p>
+     * Computes a parabolic ball path by combining the robot's field-relative
+     * velocity with the shot's launch velocity, then samples positions along the
+     * arc at fixed time steps.
+     *
+     * @param robotPose          current field-relative pose of the robot
+     * @param v0_mag             launch speed magnitude in m/s
+     * @param launchAngleDegrees angle above horizontal at which the ball is
+     *                           launched
+     */
     public void updateShotVisualization(Pose2d robotPose, double v0_mag, double launchAngleDegrees) {
         // 1. Fetch robot pose (The starting point)
         double robotX = robotPose.getX();
@@ -124,10 +171,14 @@ public class ShooterSubsystem extends SubsystemBase {
                 .set(trajectory);
     }
 
-    /// Calculates the required RPS to hit the target based on the given pitch and
-    /// horizontal distance to the target.
-    ///
-    /// @param groundDistance The horizontal distance from the robot to the target.
+    /**
+     * Calculates the required flywheel angular velocity to hit the hub target at
+     * the given horizontal distance, using projectile kinematics with a fixed
+     * launch pitch angle.
+     *
+     * @param groundDistance horizontal distance from the robot to the target
+     * @return the flywheel angular velocity needed to reach the target
+     */
     public AngularVelocity calculateRPS(Distance groundDistance) {
         double dx = groundDistance.in(Meters);
         double dy = HubTargetHeight.minus(BallExtakeHeight).in(Meters);
@@ -145,12 +196,21 @@ public class ShooterSubsystem extends SubsystemBase {
         return RotationsPerSecond.of(DampingCoefficient * rps);
     }
 
-    /// Clears the trajectory visualization by publishing an empty array to the same
-    /// Network Table topic.
+    /**
+     * Clears the dashboard trajectory visualization by publishing an empty pose
+     * array.
+     */
     public void clearTrajectory() {
         NetworkTableInstance.getDefault()
                 .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
                 .publish()
                 .set(new Pose3d[0]);
+    }
+
+    @Override
+    public void periodic() {
+        // Publish current velocities for telemetry
+        rightVelocityPub.set(m_motorRight.getVelocity().getValueAsDouble());
+        leftVelocityPub.set(m_motorLeft.getVelocity().getValueAsDouble());
     }
 }

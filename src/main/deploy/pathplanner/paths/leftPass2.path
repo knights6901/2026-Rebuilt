@@ -3,74 +3,72 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 0.75
+        "x": 7.75,
+        "y": 7.281
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.7496268615098844,
-        "y": 0.736346062372891
+        "x": 7.83289156626506,
+        "y": 6.8434216867469875
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.161409638554217,
-        "y": 1.4779156626506016
+        "x": 6.029819277108434,
+        "y": 7.029192771084338
       },
       "prevControl": {
-        "x": 2.4859749026860776,
-        "y": 0.9947222021854837
+        "x": 6.029819277108434,
+        "y": 7.937245433559604
       },
       "nextControl": {
-        "x": 1.6005445462034915,
-        "y": 2.3128982525217525
+        "x": 6.029819277108434,
+        "y": 6.12114010860907
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.379963855421687,
-        "y": 5.477457831325301
+        "x": 5.680132530120481,
+        "y": 2.9531566265060234
       },
       "prevControl": {
-        "x": 2.9455626579551684,
-        "y": 4.654763312503031
+        "x": 5.680132530120481,
+        "y": 2.49913029526839
       },
       "nextControl": {
-        "x": 2.0723164597769816,
-        "y": 5.924947863116631
+        "x": 5.680132530120481,
+        "y": 3.407182957743657
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.621,
-        "y": 6.0
+        "x": 6.029819277108434,
+        "y": 7.44444578313253
       },
       "prevControl": {
-        "x": 1.549215473351396,
-        "y": 5.8518478073853135
+        "x": 6.023336065185168,
+        "y": 7.6943617049205555
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [
+  "rotationTargets": [
     {
-      "name": "slapdown",
-      "waypointRelativePos": 0.8069478908188473,
-      "endWaypointRelativePos": null,
-      "command": null
+      "waypointRelativePos": 1,
+      "rotationDegrees": -90.0
     }
   ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -81,13 +79,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

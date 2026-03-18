@@ -7,6 +7,12 @@
         {
           "type": "named",
           "data": {
+            "name": "slapdownTrigger"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "intake"
           }
         },
@@ -32,6 +38,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Left",
   "choreoAuto": false
 }
