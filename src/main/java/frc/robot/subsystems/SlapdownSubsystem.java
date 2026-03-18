@@ -6,6 +6,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class SlapdownSubsystem extends SubsystemBase {
     private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, new CANBus("rio"));
+    private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     public boolean isSlapdownDeployed = false;
 
@@ -41,16 +43,14 @@ public class SlapdownSubsystem extends SubsystemBase {
 
     /** Moves the slapdown arm to the deployed intake position. */
     public void slapdown() {
-        // m_motorSlapdown.setControl(m_request.withPosition(IntakePosition));
+        m_motorSlapdown.setControl(m_request.withPosition(IntakePosition));
         isSlapdownDeployed = true;
-        throw new RuntimeException("ts not working lmao");
     }
 
     /** Retracts the slapdown arm to the stowed home position. */
     public void retractSlapdown() {
-        // m_motorSlapdown.setControl(m_request.withPosition(HomePosition));
+        m_motorSlapdown.setControl(m_request.withPosition(HomePosition));
         isSlapdownDeployed = false;
-        throw new RuntimeException("ts not working lmao");
     }
 
     public void setPower(double power) {
