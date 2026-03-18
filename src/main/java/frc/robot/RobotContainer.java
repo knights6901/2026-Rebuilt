@@ -157,6 +157,9 @@ public class RobotContainer {
                 // ShooterConstants.MaxRPS.times(operator.getRightY())));
 
                 operator.rightBumper().whileTrue(new RunCommand(() -> kicker.kick(), kicker));
+                
+                operator.leftBumper().whileTrue(new RunCommand(() -> intake.intake(), intake));
+
                 // operator.rightBumper().whileTrue(new RunCommand(() -> indexer.enable(), indexer));
 
                 operator.a().whileTrue(new RunCommand(() -> shooter.shoot(), shooter));

@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "slapdown"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftLeftHalfSwipe"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftPass1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAimShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftPass2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAimShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftPass3"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
