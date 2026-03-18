@@ -180,9 +180,9 @@ public class RobotContainer {
         public FieldCentric getDriverInput() {
                 return drive
                                 .withVelocityX(DrivetrainConstants.MaxSpeed.times(
-                                                driver.getLeftY() * DrivetrainConstants.TeleopMovementSensitivity))
+                                                driver.getLeftY() * DrivetrainConstants.TeleopMovementSensitivity).times(-1.0))
                                 .withVelocityY(DrivetrainConstants.MaxSpeed.times(
-                                                driver.getLeftX() * DrivetrainConstants.TeleopMovementSensitivity))
+                                                driver.getLeftX() * DrivetrainConstants.TeleopMovementSensitivity).times(-1.0))
                                 .withRotationalRate(DrivetrainConstants.MaxAngularRate
                                                 .times(-driver.getRightX()));
         }
