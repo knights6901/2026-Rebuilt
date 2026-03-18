@@ -255,6 +255,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
+    public boolean hasAppliedOperatorPerspective() {
+        return m_hasAppliedOperatorPerspective;
+    }
+
     /**
      * Returns a command that continuously applies a swerve request to the
      * drivetrain.
