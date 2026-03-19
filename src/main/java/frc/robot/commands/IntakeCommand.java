@@ -5,36 +5,36 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /**
- * Reverses the intake mechanism to expel game pieces from the robot.
+ * Activates the intake mechanism to draw game pieces into the robot.
  * 
  * <p>
  * This command runs continuously until manually interrupted. It starts the
- * outtake process during initialization and allows the intake to eject pieces
- * at the default outtake speed.
+ * intake process during initialization and allows the intake to consume pieces
+ * at the default intake speed.
  * 
  * <p>
  * Requires: {@link IntakeSubsystem}
  */
-public class OuttakeCommand extends Command {
+public class IntakeCommand extends Command {
     private final IntakeSubsystem intake;
 
     /**
-     * Constructs an OuttakeCommand.
+     * Constructs an IntakeCommand.
      *
      * @param intake the intake subsystem
      */
-    public OuttakeCommand(IntakeSubsystem intake) {
+    public IntakeCommand(IntakeSubsystem intake) {
         this.intake = intake;
 
         addRequirements(intake);
     }
 
     /**
-     * Initializes the command by starting the intake motor in reverse.
+     * Initializes the command by starting the intake motor.
      */
     @Override
     public void initialize() {
-        intake.outtake();
+        intake.intake();
     }
 
     @Override

@@ -10,7 +10,7 @@ import frc.robot.subsystems.IntakeSubsystem;
  * <p>
  * This command toggles the intake between running and stopped states. If the
  * intake is already running, this command stops it; if stopped, it starts
- * intaking. The command runs continuously until manually interrupted.
+ * intaking.
  * 
  * <p>
  * Requires: {@link IntakeSubsystem}
@@ -41,13 +41,8 @@ public class ToggleIntakeCommand extends Command {
             intake.intake();
     }
 
-    /**
-     * This command runs continuously until manually interrupted.
-     *
-     * @return {@code false} to run continuously
-     */
     @Override
-    public boolean isFinished() {
-        return false;
+    public void end(boolean interrupted) {
+        intake.stop();
     }
 }

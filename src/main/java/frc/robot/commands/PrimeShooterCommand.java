@@ -5,12 +5,11 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /**
- * Enables the shooter to run at a low RPS to make it ready to actually shoot
- * fuel.
+ * Spins up the shooter to a priming speed to prepare it for shooting game pieces.
  *
  * <p>
  * This command spins up the shooter to a priming speed and finishes when the
@@ -18,10 +17,11 @@ import frc.robot.subsystems.ShooterSubsystem;
  * shot.
  * 
  * <p>
- * Requires: {@link ShooterSubsystem}
+ * Requires: {@link ShooterSubsystem}, {@link KickerSubsystem}
  */
 public class PrimeShooterCommand extends Command {
     private final ShooterSubsystem shooter;
+    private final KickerSubsystem kicker;
 
     private final Timer timer;
     private final Time timeout;
@@ -30,14 +30,16 @@ public class PrimeShooterCommand extends Command {
      * Constructs a PrimeShooterCommand with a specific timeout.
      *
      * @param shooter the shooter subsystem
+     * @param kicker  the kicker subsystem
      * @param timeout the maximum time to run the priming sequence
      */
-    public PrimeShooterCommand(ShooterSubsystem shooter, Time timeout) {
+    public PrimeShooterCommand(ShooterSubsystem shooter, KickerSubsystem kicker, Time timeout) {
         this.shooter = shooter;
+        this.kicker = kicker;
         this.timer = new Timer();
         this.timeout = timeout;
 
-        addRequirements(shooter);
+        addRequirements(shooter, kicker);
     }
 
     /**
@@ -47,6 +49,8 @@ public class PrimeShooterCommand extends Command {
     @Override
     public void initialize() {
         shooter.shoot(RotationsPerSecond.of(30));
+        kicker.kick();
+        timer.restart();
     }
 
     /**

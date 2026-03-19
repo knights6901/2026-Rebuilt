@@ -66,6 +66,7 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
 
+                configureDefaultCommands();
                 configurePathPlannerCommands();
 
                 autoChooser = AutoBuilder.buildAutoChooser("zero");
@@ -85,9 +86,20 @@ public class RobotContainer {
                 NamedCommands.registerCommand("shoot20RPS",
                                 new PresetShootCommand(shooter, kicker, indexer, RotationsPerSecond.of(20)));
 
-                NamedCommands.registerCommand("intake", new ToggleIntakeCommand(intake));
+                NamedCommands.registerCommand("intake", new IntakeCommand(intake));
+                NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
+
                 NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
                 NamedCommands.registerCommand("slapdownTrigger", new ToggleSlapdownCommand(slapdown));
+        }
+
+        /** Binds all the default commands. */
+        private void configureDefaultCommands() {
+                drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
+                kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
+                indexer.setDefaultCommand(new RunCommand(() -> indexer.stop(), indexer));
+                intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
+                shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
         }
 
         /**
@@ -95,17 +107,14 @@ public class RobotContainer {
          * field-centric driving, SysId routines, heading reset, and hub tracking.
          */
         private void configureDriverBindings() {
-                drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
-
-                // Idle while the robot is disabled. This ensures the configured
-                // neutral mode is applied to the drive motors while disabled.
                 final var idle = new SwerveRequest.Idle();
 
                 RobotModeTriggers.disabled().whileTrue(
                                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
                 driver.a().onTrue(new ToggleIntakeCommand(intake));
-                driver.povDown().whileTrue(new OuttakeCommand(intake));
+                driver.x().whileTrue(new OuttakeCommand(intake));
+                driver.y().onTrue(new InstantCommand(() -> vision.resetVisionPose(), vision));
 
                 driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -128,20 +137,24 @@ public class RobotContainer {
                         })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
                 }
 
-                // TEMPORARY
-                // Slowly move slapdown down
-                driver.povLeft().onTrue(
-                                new RunCommand(() -> slapdown.slapdown(), slapdown));
-                driver.povRight().onTrue(
-                                new RunCommand(() -> slapdown.retractSlapdown(),
+                // TODO: check if ToggleSlapdownCommand can be used here instead of separate POV
+                // TODO: bindings
+                driver.povUp().onTrue(
+                                new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
+                driver.povDown().onTrue(
+                                new InstantCommand(() -> slapdown.slapdown(),
                                                 slapdown));
 
-                driver.povUp().whileTrue(
-                                Commands.startEnd(() -> slapdown.setPower(0.1), () -> slapdown.stop(), slapdown));
-                driver.povDown().whileTrue(
-                                Commands.startEnd(() -> slapdown.setPower(-0.1), () -> slapdown.stop(), slapdown));
+                driver.povLeft().whileTrue(Commands.startEnd(
+                                () -> slapdown.setPower(0.1),
+                                () -> slapdown.stop(),
+                                slapdown));
+                driver.povRight().whileTrue(Commands.startEnd(
+                                () -> slapdown.setPower(-0.1),
+                                () -> slapdown.stop(),
+                                slapdown));
 
-                driver.x().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
+                driver.leftStick().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -151,34 +164,17 @@ public class RobotContainer {
          * shooting, intake, and auto-aim.
          */
         private void configureOperatorBindings() {
-                kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
-                indexer.setDefaultCommand(new RunCommand(() -> indexer.stop(), indexer));
-                intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
-                shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
-
                 operator.leftTrigger().whileTrue(
                                 new AutoAimShootCommand(drivetrain, shooter, kicker, indexer));
 
-                // operator.rightBumper().whileTrue(
-                // new PresetShootCommand(shooter, kicker, indexer,
-                // ShooterConstants.MaxRPS.times(operator.getRightY())));
-
-                operator.rightBumper().whileTrue(new RunCommand(() -> kicker.kick(), kicker));
-
-                operator.leftBumper().whileTrue(new RunCommand(() -> intake.intake(), intake));
-
-                // operator.rightBumper().whileTrue(new RunCommand(() -> indexer.enable(),
-                // indexer));
-
-                operator.a().whileTrue(new RunCommand(() -> shooter.shoot(), shooter));
+                operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
                 operator.rightTrigger().whileTrue(
-                                new PresetShootCommand(shooter, kicker, indexer, ShooterConstants.ShootRPS));
+                                new PresetShootCommand(shooter, kicker, indexer,
+                                                ShooterConstants.MaxRPS.times(-operator.getRightY())));
 
-                operator.povUp().onTrue(new PrimeShooterCommand(shooter, Seconds.of(5)));
+                operator.povUp().onTrue(new PrimeShooterCommand(shooter, kicker, Seconds.of(5)));
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
-
-                operator.y().onTrue(new InstantCommand(() -> vision.resetVisionPose(), vision));
 
                 // TEMPORARY TEST INDEXER
                 operator.povLeft().whileTrue(Commands.startEnd(() -> indexer.enable(), () -> indexer.stop(), indexer));
@@ -195,19 +191,15 @@ public class RobotContainer {
         public FieldCentric getDriverInput() {
                 return drive
                                 .withVelocityX(DrivetrainConstants.MaxSpeed.times(
-                                                driver.getLeftY() * DrivetrainConstants.TeleopMovementSensitivity)
-                                                .times(-1.0))
+                                                -driver.getLeftY() * DrivetrainConstants.TeleopMovementSensitivity))
                                 .withVelocityY(DrivetrainConstants.MaxSpeed.times(
-                                                driver.getLeftX() * DrivetrainConstants.TeleopMovementSensitivity)
-                                                .times(-1.0))
+                                                -driver.getLeftX() * DrivetrainConstants.TeleopMovementSensitivity))
                                 .withRotationalRate(DrivetrainConstants.MaxAngularRate
                                                 .times(-driver.getRightX()));
         }
 
         /**
-         * Retur
-         * 
-         * ns the autonomous command selected from the SmartDashboard chooser.
+         * Returns the autonomous command selected from the SmartDashboard chooser.
          *
          * @return the selected autonomous {@link Command}
          */
