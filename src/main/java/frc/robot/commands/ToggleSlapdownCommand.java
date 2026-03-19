@@ -17,7 +17,7 @@ import frc.robot.subsystems.SlapdownSubsystem;
  * <p>
  * Requires: {@link SlapdownSubsystem}
  */
-public class TriggerSlapdownCommand extends Command {
+public class ToggleSlapdownCommand extends Command {
     private final SlapdownSubsystem slapdown;
     private boolean initialState;
 
@@ -26,7 +26,7 @@ public class TriggerSlapdownCommand extends Command {
      *
      * @param slapdown the slapdown subsystem
      */
-    public TriggerSlapdownCommand(SlapdownSubsystem slapdown) {
+    public ToggleSlapdownCommand(SlapdownSubsystem slapdown) {
         this.slapdown = slapdown;
         this.initialState = slapdown.getDeploymentState();
 
@@ -36,14 +36,15 @@ public class TriggerSlapdownCommand extends Command {
     @Override
     public void execute() {
         if (!slapdown.isSlapdownDeployed) {
-            slapdown.slapdown();
+            // slapdown.slapdown();
         } else {
-            slapdown.retractSlapdown();
+            // slapdown.retractSlapdown();
         }
     }
 
     @Override
     public boolean isFinished() {
-        return initialState != slapdown.getDeploymentState();
+        // return initialState != slapdown.getDeploymentState();
+        return true;
     }
 }

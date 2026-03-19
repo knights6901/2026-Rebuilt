@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -35,7 +34,8 @@ public class KickerSubsystem extends SubsystemBase {
         m_motorConfig.Slot0 = KickerGains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        m_motorConfig.withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(60).withSupplyCurrentLimitEnable(true));
+        m_motorConfig.withCurrentLimits(
+                new CurrentLimitsConfigs().withStatorCurrentLimit(60).withSupplyCurrentLimitEnable(true));
 
         m_motorKicker.getConfigurator().apply(m_motorConfig);
     }

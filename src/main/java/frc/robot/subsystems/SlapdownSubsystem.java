@@ -38,7 +38,7 @@ public class SlapdownSubsystem extends SubsystemBase {
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         m_motorSlapdown.getConfigurator().apply(m_motorConfig);
-        m_motorSlapdown.setPosition(0);
+        resetSlapdownPosition();
     }
 
     /** Moves the slapdown arm to the deployed intake position. */
@@ -60,6 +60,10 @@ public class SlapdownSubsystem extends SubsystemBase {
     /** Stops the slapdown by applying neutral output. */
     public void stop() {
         m_motorSlapdown.setControl(new NeutralOut());
+    }
+
+    public void resetSlapdownPosition() {
+        m_motorSlapdown.setPosition(0);
     }
 
     /**

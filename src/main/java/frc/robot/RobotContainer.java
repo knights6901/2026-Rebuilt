@@ -85,9 +85,9 @@ public class RobotContainer {
                 NamedCommands.registerCommand("shoot20RPS",
                                 new PresetShootCommand(shooter, kicker, indexer, RotationsPerSecond.of(20)));
 
-                NamedCommands.registerCommand("intake", new IntakeCommand(intake));
+                NamedCommands.registerCommand("intake", new ToggleIntakeCommand(intake));
                 NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
-                NamedCommands.registerCommand("slapdownTrigger", new TriggerSlapdownCommand(slapdown));
+                NamedCommands.registerCommand("slapdownTrigger", new ToggleSlapdownCommand(slapdown));
         }
 
         /**
@@ -104,8 +104,8 @@ public class RobotContainer {
                 RobotModeTriggers.disabled().whileTrue(
                                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-                driver.a().whileTrue(new IntakeCommand(intake));
-                // driver.povDown().whileTrue(new OuttakeCommand(intake)); TODO ADD BACK LOL
+                driver.a().onTrue(new ToggleIntakeCommand(intake));
+                driver.povDown().whileTrue(new OuttakeCommand(intake));
 
                 driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -141,6 +141,8 @@ public class RobotContainer {
                 driver.povDown().whileTrue(
                                 Commands.startEnd(() -> slapdown.setPower(-0.1), () -> slapdown.stop(), slapdown));
 
+                driver.x().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
+
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
 
@@ -175,6 +177,13 @@ public class RobotContainer {
 
                 operator.povUp().onTrue(new PrimeShooterCommand(shooter, Seconds.of(5)));
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
+
+                operator.y().onTrue(new InstantCommand(() -> vision.resetVisionPose(), vision));
+
+                // TEMPORARY TEST INDEXER
+                operator.povLeft().whileTrue(Commands.startEnd(() -> indexer.enable(), () -> indexer.stop(), indexer));
+                operator.povRight().whileTrue(
+                                Commands.startEnd(() -> indexer.enableInverted(), () -> indexer.stop(), indexer));
         }
 
         /**

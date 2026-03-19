@@ -79,7 +79,7 @@ public final class Constants {
 
                 // rps at far distance is 50rps
                 // rps at climber center is 47 rps
-                public final static AngularVelocity ShootRPS = RotationsPerSecond.of(10.0);
+                public final static AngularVelocity ShootRPS = RotationsPerSecond.of(40.0);
 
                 /// The PID settings for the shooter motors.
                 public final static Slot0Configs ShooterGains = new Slot0Configs()
@@ -102,17 +102,10 @@ public final class Constants {
 
         public static final class IndexerConstants {
                 // The motor ID of the indexer motor.
-                public final static int IndexerMotorId = 40;
+                public final static int MotorId = 40;
 
-                /// The rotational speed of the indexer motor in rotations per second.
-                public final static AngularVelocity IndexerRPS = RotationsPerSecond.of(40);
-
-                /// The PID settings for the indexer motor.
-                ///
-                /// UNTUNED
-                public final static Slot0Configs IndexerGains = new Slot0Configs()
-                                .withKP(0.1).withKI(0).withKD(0)
-                                .withKS(0).withKV(0.1);
+                /// The strength of the indexer motor (set in DutyCycle).
+                public final static double Power = 0.75;
         }
 
         public static final class IntakeConstants {
@@ -120,7 +113,7 @@ public final class Constants {
                 public final static int IntakeMotorId = 32;
 
                 public final static AngularVelocity IndexRPS = RotationsPerSecond.of(20);
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(100);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(85);
 
                 public final static double GearRatio = 5.0;
 

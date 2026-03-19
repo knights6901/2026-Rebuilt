@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -32,9 +34,24 @@ public class RotateToHubCommand extends Command {
     private final CommandSwerveDrivetrain drivetrain;
 
     /** The maximum allowable error in degrees */
-    private final static double kToleranceDegrees = 1.0;
+    private final static double kToleranceDegrees = 0.5;
     /** The current error between the robot's heading and the target angle */
     private Angle errorAngle;
+
+    private final DoublePublisher errorPub = NetworkTableInstance.getDefault()
+            .getTable("rotateToHub")
+            .getDoubleTopic("error")
+            .publish();
+
+    private final DoublePublisher currentPub = NetworkTableInstance.getDefault()
+            .getTable("rotateToHub")
+            .getDoubleTopic("current")
+            .publish();
+
+    private final DoublePublisher targetPub = NetworkTableInstance.getDefault()
+            .getTable("rotateToHub")
+            .getDoubleTopic("target")
+            .publish();
 
     /**
      * Constructs a RotateToHubCommand.
@@ -67,6 +84,9 @@ public class RotateToHubCommand extends Command {
         this.errorAngle = Degrees.of(Math.abs(currentPose.getRotation().minus(targetAngle).getDegrees()));
 
         drivetrain.driveToPose(new Pose2d(currentPose.getX(), currentPose.getY(), targetAngle));
+        errorPub.set(errorAngle.in(Degrees));
+        currentPub.set(currentPose.getRotation().getDegrees());
+        targetPub.set(targetAngle.getDegrees());
     }
 
     @Override

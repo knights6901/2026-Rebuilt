@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -24,9 +25,15 @@ public class IntakeSubsystem extends SubsystemBase {
     private final TalonFX m_motorIntake = new TalonFX(IntakeMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
+    private boolean intaking = false;
+
     private final DoublePublisher intakeVelocityPub = NetworkTableInstance.getDefault()
             .getTable("Intake")
             .getDoubleTopic("IntakeVelocity")
+            .publish();
+    private final BooleanPublisher intakingPub = NetworkTableInstance.getDefault()
+            .getTable("Intake")
+            .getBooleanTopic("IntakeToggled")
             .publish();
 
     public IntakeSubsystem() {
@@ -50,6 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public void intake(AngularVelocity rps) {
         m_motorIntake.setControl(m_request.withVelocity(rps));
+        intaking = true;
     }
 
     /**
@@ -66,15 +74,22 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public void outtake(AngularVelocity rps) {
         m_motorIntake.setControl(m_request.withVelocity(rps.times(-1.0)));
+        intaking = false;
     }
 
     /** Stops the intake motor by applying neutral output. */
     public void stop() {
         m_motorIntake.setControl(new NeutralOut());
+        intaking = false;
+    }
+
+    public boolean intaking() {
+        return intaking;
     }
 
     @Override
     public void periodic() {
         intakeVelocityPub.set(m_motorIntake.getVelocity().getValueAsDouble());
+        intakingPub.set(intaking);
     }
 }

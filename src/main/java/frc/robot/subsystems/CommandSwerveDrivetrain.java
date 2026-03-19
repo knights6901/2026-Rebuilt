@@ -72,7 +72,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // PID velocity controllers
     private final PIDController xController = new PIDController(2, 0, 0);
     private final PIDController yController = new PIDController(2, 0, 0);
-    private final PIDController thetaController = new PIDController(7, 0, 0.05);
+    private final PIDController thetaController = new PIDController(6.901, 0, 0.0);
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 

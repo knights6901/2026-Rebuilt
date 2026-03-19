@@ -191,7 +191,7 @@ public class VisionSubsystem extends SubsystemBase {
                         // third value is rotation which apparently gyro is much much better for than
                         // vision anyways
                         // it needs more real-field tuning tho
-                        VecBuilder.fill(1.5, 1.5, 9999));
+                        VecBuilder.fill(1.5, 1.5, 3));
             });
 
             if (result.hasTargets()) {
@@ -208,5 +208,9 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         seededPub.set(hasSeededPose);
+    }
+
+    public void resetVisionPose() {
+        hasSeededPose = false;
     }
 }

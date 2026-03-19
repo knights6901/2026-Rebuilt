@@ -15,7 +15,7 @@ import frc.robot.subsystems.IntakeSubsystem;
  * <p>
  * Requires: {@link IntakeSubsystem}
  */
-public class IntakeCommand extends Command {
+public class ToggleIntakeCommand extends Command {
     private final IntakeSubsystem intake;
 
     /**
@@ -23,7 +23,7 @@ public class IntakeCommand extends Command {
      *
      * @param intake the intake subsystem
      */
-    public IntakeCommand(IntakeSubsystem intake) {
+    public ToggleIntakeCommand(IntakeSubsystem intake) {
         this.intake = intake;
 
         addRequirements(intake);
@@ -31,7 +31,10 @@ public class IntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        intake.intake();
+        if (intake.intaking())
+            intake.stop();
+        else
+            intake.intake();
     }
 
     @Override
