@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 7.5
+        "x": 0.5,
+        "y": 0.65
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.67686058259189,
-        "y": 7.5
+        "x": 0.6377081623728711,
+        "y": 0.8586539288292626
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.592481927710843,
-        "y": 7.018265060240964
+        "x": 1.9482101004464285,
+        "y": 5.087714029947917
       },
       "prevControl": {
-        "x": 7.121443746972734,
-        "y": 7.774784073090259
-      },
-      "nextControl": {
-        "x": 7.953095304593152,
-        "y": 6.439095712499841
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.75,
-        "y": 4.75
-      },
-      "prevControl": {
-        "x": 7.75,
-        "y": 5.859888269675761
+        "x": 2.617715831938243,
+        "y": 3.7003236025855646
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "slapdownTrigger",
-      "waypointRelativePos": 0.4650282972440945,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -65,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -88.69804732742116
+    "rotation": 142.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

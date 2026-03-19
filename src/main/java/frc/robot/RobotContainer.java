@@ -82,7 +82,7 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("autoAimShoot",
                                 new AutoAimShootCommand(drivetrain, shooter, kicker, indexer)
-                                                .withTimeout(Seconds.of(3.0)));
+                                                .withTimeout(Seconds.of(10.0)));
                 NamedCommands.registerCommand("shoot20RPS",
                                 new PresetShootCommand(shooter, kicker, indexer, RotationsPerSecond.of(20)));
 

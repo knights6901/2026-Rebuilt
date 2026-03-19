@@ -5,21 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "slapdownTrigger"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "leftOutpost"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "slapdownTrigger"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "leftOutpost"
+                }
+              }
+            ]
           }
         },
         {
@@ -31,13 +32,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "outpostExitRight"
+            "pathName": "outpostExitLeft"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "rotateToHub"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAimShoot"
           }
         }
       ]
