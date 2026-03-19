@@ -9,7 +9,8 @@ import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /**
- * Spins up the shooter to a priming speed to prepare it for shooting game pieces.
+ * Spins up the shooter to a priming speed to prepare it for shooting game
+ * pieces.
  *
  * <p>
  * This command spins up the shooter to a priming speed and finishes when the
