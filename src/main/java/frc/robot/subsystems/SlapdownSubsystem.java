@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.SlapdownConstants.*;
 
 import com.ctre.phoenix6.CANBus;
@@ -25,8 +26,8 @@ public class SlapdownSubsystem extends SubsystemBase {
     private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, new CANBus("rio"));
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
-    /** Tracks whether the slapdown is currently deployed. */
-    public boolean isSlapdownDeployed = false;
+    /** Tracks whether the slapdown should be currently deployed. */
+    private boolean slapdownDeployed = false;
 
     private final BooleanPublisher slapdownPub = NetworkTableInstance.getDefault()
             .getTable("Slapdown")
@@ -55,13 +56,13 @@ public class SlapdownSubsystem extends SubsystemBase {
     /** Moves the slapdown arm to the deployed intake position. */
     public void slapdown() {
         m_motorSlapdown.setControl(m_request.withPosition(IntakePosition));
-        isSlapdownDeployed = true;
+        slapdownDeployed = true;
     }
 
     /** Retracts the slapdown arm to the stowed home position. */
     public void retractSlapdown() {
         m_motorSlapdown.setControl(m_request.withPosition(HomePosition));
-        isSlapdownDeployed = false;
+        slapdownDeployed = false;
     }
 
     /**
@@ -91,12 +92,22 @@ public class SlapdownSubsystem extends SubsystemBase {
      * @return {@code true} if the slapdown is in the deployed position
      */
     public boolean getDeploymentState() {
-        return isSlapdownDeployed;
+        if (slapdownDeployed) {
+            return getSlapdownPosition() >= IntakePosition.minus(PositionTolerance)
+                    .in(Degrees);
+        }
+
+        return slapdownDeployed;
+    }
+
+    /* Returns the current position of the slapdown motor. */
+    public double getSlapdownPosition() {
+        return m_motorSlapdown.getPosition().getValueAsDouble();
     }
 
     @Override
     public void periodic() {
-        slapdownPub.set(isSlapdownDeployed);
-        slapdownPositionPub.set(m_motorSlapdown.getPosition().getValueAsDouble());
+        slapdownPub.set(slapdownDeployed);
+        slapdownPositionPub.set(getSlapdownPosition());
     }
 }

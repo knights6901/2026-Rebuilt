@@ -145,6 +145,11 @@ public final class Constants {
                 public final static Angle IntakePosition = Rotations.of(36);
                 /** The default home position of slapdown system. */
                 public final static Angle HomePosition = Rotations.of(0);
+                /**
+                 * The tolerance for determining whether the slapdown is in the deployed
+                 * position.
+                 */
+                public final static Angle PositionTolerance = Degrees.of(1);
 
                 /** The PID and feedforward settings for the slapdown motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
