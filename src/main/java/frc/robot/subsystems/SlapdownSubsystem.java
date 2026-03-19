@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -92,22 +93,20 @@ public class SlapdownSubsystem extends SubsystemBase {
      * @return {@code true} if the slapdown is in the deployed position
      */
     public boolean getDeploymentState() {
-        if (slapdownDeployed) {
-            return getSlapdownPosition() >= IntakePosition.minus(PositionTolerance)
-                    .in(Degrees);
-        }
+        Angle error = slapdownDeployed ? IntakePosition.minus(getSlapdownPosition())
+                : HomePosition.minus(getSlapdownPosition());
 
-        return slapdownDeployed;
+        return error.abs(Degrees) <= PositionTolerance.in(Degrees);
     }
 
     /* Returns the current position of the slapdown motor. */
-    public double getSlapdownPosition() {
-        return m_motorSlapdown.getPosition().getValueAsDouble();
+    public Angle getSlapdownPosition() {
+        return m_motorSlapdown.getPosition().getValue();
     }
 
     @Override
     public void periodic() {
         slapdownPub.set(slapdownDeployed);
-        slapdownPositionPub.set(getSlapdownPosition());
+        slapdownPositionPub.set(getSlapdownPosition().in(Degrees));
     }
 }
