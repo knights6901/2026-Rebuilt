@@ -53,103 +53,114 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+        /**
+         * Controller-related constants for gamepad input.
+         */
         public static final class ControllerConstants {
+                /** The USB port number for the driver controller. */
                 public static final int kDriverPort = 0;
+                /** The USB port number for the operator controller. */
                 public static final int kOperatorPort = 1;
+                /** The deadband threshold for controller joysticks (0-1 scale). */
                 public static final double kDeadband = 0.1;
         }
 
         public static final class DrivetrainConstants {
-                // The desired top speed of the robot.
+                /** The desired top speed of the robot in meters per second. */
                 public final static LinearVelocity MaxSpeed = TunerConstants.kSpeedAt12Volts;
-                /// The movement sensitivity multiplier for teleop control (between 0 and 1).
+                /** The movement sensitivity multiplier for teleop control (between 0 and 1). */
                 public final static double TeleopMovementSensitivity = 0.5;
-                // The maximum turning rate (in radians per second).
+                /** The maximum angular turning rate in rotations per second. */
                 public final static AngularVelocity MaxAngularRate = RotationsPerSecond.of(0.5);
         }
 
         public static final class ShooterConstants {
-                // The motor ID of the left motor.
+                /** The CAN ID of the left shooter motor. */
                 public final static int LeftMotorId = 35;
-                // The motor ID of the right motor.
+                /** The CAN ID of the right shooter motor. */
                 public final static int RightMotorId = 36;
 
-                // The maximum RPS that the shooter will shoot at
+                /** The maximum rotations per second that the shooter can achieve. */
                 public final static AngularVelocity MaxRPS = RotationsPerSecond.of(80);
 
-                // rps at far distance is 50rps
-                // rps at climber center is 47 rps
+                /** The target rotations per second for shooting at typical game distances. */
                 public final static AngularVelocity ShootRPS = RotationsPerSecond.of(40.0);
 
-                /// The PID settings for the shooter motors.
-                public final static Slot0Configs ShooterGains = new Slot0Configs()
+                /** The PID and feedforward settings for the shooter motors. */
+                public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.35).withKI(0).withKD(0.01)
                                 .withKS(0).withKV(0.115);
 
-                // The strength of gravity
+                /** The strength of gravity (9.81 m/s²). */
                 public final static LinearAcceleration G = MetersPerSecondPerSecond.of(9.81);
 
-                // The distance from floor to hub target point
+                /** The height of the target hub from the ground. */
                 public final static Distance HubTargetHeight = Meters.of(1.524);
-                /// The vertical position of ball extake
+                /** The vertical position of the ball exit point from the shooter. */
                 public final static Distance BallExtakeHeight = Meters.of(0.432);
-                /// The angle at which the shooter is mounted above the horizontal.
+                /** The angle at which the shooter is mounted above the horizontal plane. */
                 public final static Angle Pitch = Degrees.of(73);
 
-                /// The scaling constant to correct for damping
+                /** The scaling constant to correct for damping in the shooter mechanism. */
                 public final static double DampingCoefficient = 2.2;
         }
 
         public static final class IndexerConstants {
-                // The motor ID of the indexer motor.
+                /** The CAN ID of the indexer motor. */
                 public final static int MotorId = 40;
 
-                /// The strength of the indexer motor (set in DutyCycle).
-                public final static double Power = 0.75;
+                /** The target rotations per second for the indexer motor during operation. */
+                public final static AngularVelocity Power = RotationsPerSecond.of(85);
+
+                /** The PID and feedforward settings for the indexer motor. */
+                public final static Slot0Configs Gains = new Slot0Configs()
+                                .withKP(0.15).withKI(0).withKD(0.015)
+                                .withKS(0).withKV(0.15);
         }
 
         public static final class IntakeConstants {
-                // The motor ID of the intake motor.
+                /** The CAN ID of the intake motor. */
                 public final static int IntakeMotorId = 32;
 
+                /** The rotations per second for indexing balls into the intake system. */
                 public final static AngularVelocity IndexRPS = RotationsPerSecond.of(20);
+                /** The rotations per second for actively intaking balls. */
                 public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(85);
 
+                /** The gear ratio of the intake system. */
                 public final static double GearRatio = 5.0;
 
-                // UNTUNED
-                // The PID settings for the intake motor.
-                public final static Slot0Configs IntakeGains = new Slot0Configs()
+                /** The PID and feedforward settings for the intake motor. */
+                public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.5).withKI(0).withKD(0)
                                 .withKS(0).withKV(0.15);
 
         }
 
         public static final class SlapdownConstants {
-                // The motor ID of the slapdown motor.
+                /** The CAN ID of the slapdown motor. */
                 public final static int SlapdownMotorId = 31;
 
-                /// The position to lower the slapdown to when intaking a ball.
+                /** The position to lower the slapdown to when intaking a ball. */
                 public final static Angle IntakePosition = Rotations.of(36);
-                /// The default position of slapdown system.
+                /** The default home position of slapdown system. */
                 public final static Angle HomePosition = Rotations.of(0);
 
-                /// The PID settings for the slapdown motor.
-                public final static Slot0Configs SlapdownGains = new Slot0Configs()
+                /** The PID and feedforward settings for the slapdown motor. */
+                public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.1).withKI(0).withKD(0)
                                 .withKS(0).withKV(0.1);
         }
 
         public static final class KickerConstants {
-                // The motor ID of the kicker motor.
+                /** The CAN ID of the kicker motor. */
                 public final static int KickerMotorId = 37;
 
+                /** The target rotations per second for the kicker motor. */
                 public final static AngularVelocity KickerRPS = RotationsPerSecond.of(80);
 
-                /// The PID settings for the kicker motor.
-                ///
-                /// UNTUNED
-                public final static Slot0Configs KickerGains = new Slot0Configs()
+                /** The PID and feedforward settings for the kicker motor. */
+                public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.15).withKI(0).withKD(0.015)
                                 .withKS(0).withKV(0.15);
         }
@@ -436,28 +447,40 @@ public final class Constants {
                 }
         }
 
+        /**
+         * Vision processing constants for AprilTag-based localization.
+         */
         public static final class Vision {
+                /** The name/identifier of the camera used for vision processing. */
                 public static final String kCameraName = "YOUR CAMERA NAME";
-                // Cam mounted facing forward, half a meter forward of center, half a meter up
-                // from center,
-                // pitched upward.
+
+                /** The pitch angle of the camera relative to the horizontal plane. */
                 private static final double camPitch = Units.degreesToRadians(30.0);
+
+                /**
+                 * The 3D transformation from the robot center to the camera position and
+                 * orientation.
+                 */
                 public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
                                 new Rotation3d(0, -camPitch, 0));
 
-                // The layout of the AprilTags on the field
+                /** The layout of AprilTags on the field for localization. */
                 public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
                                 .loadField(AprilTagFields.kDefaultField);
 
-                // The standard deviations of our vision estimated poses, which affect
-                // correction rate
-                // (Fake values. Experiment and determine estimation noise on an actual robot.)
+                /** Standard deviations for single AprilTag pose estimation (x, y, theta). */
                 public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+                /** Standard deviations for multi-AprilTag pose estimation (x, y, theta). */
                 public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
         }
 
+        /**
+         * Game field-related constants.
+         */
         public static final class GameConstants {
+                /** The position of the hub/target on the blue alliance side of the field. */
                 public static final Translation2d blueHubLocation = new Translation2d(4.03, 4.035);
+                /** The position of the hub/target on the red alliance side of the field. */
                 public static final Translation2d redHubLocation = new Translation2d(12.51, 4.035);
         }
 }

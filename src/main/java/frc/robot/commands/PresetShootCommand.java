@@ -47,8 +47,8 @@ public class PresetShootCommand extends Command {
     @Override
     public void execute() {
         shooter.shoot(shotRPS);
-        // indexer.enable();
-        // kicker.kick();
+        indexer.enable();
+        kicker.kick();
     }
 
     @Override

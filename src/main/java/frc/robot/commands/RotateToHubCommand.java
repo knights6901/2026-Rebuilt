@@ -33,21 +33,24 @@ import frc.robot.Constants.GameConstants;
 public class RotateToHubCommand extends Command {
     private final CommandSwerveDrivetrain drivetrain;
 
-    /** The maximum allowable error in degrees */
+    /** The maximum allowable error in degrees. */
     private final static double kToleranceDegrees = 0.5;
-    /** The current error between the robot's heading and the target angle */
+    /** The current error between the robot's heading and the target angle. */
     private Angle errorAngle;
 
+    /** Network table publisher for the angular error. */
     private final DoublePublisher errorPub = NetworkTableInstance.getDefault()
             .getTable("rotateToHub")
             .getDoubleTopic("error")
             .publish();
 
+    /** Network table publisher for the current robot heading. */
     private final DoublePublisher currentPub = NetworkTableInstance.getDefault()
             .getTable("rotateToHub")
             .getDoubleTopic("current")
             .publish();
 
+    /** Network table publisher for the target heading angle. */
     private final DoublePublisher targetPub = NetworkTableInstance.getDefault()
             .getTable("rotateToHub")
             .getDoubleTopic("target")
@@ -89,6 +92,12 @@ public class RotateToHubCommand extends Command {
         targetPub.set(targetAngle.getDegrees());
     }
 
+    /**
+     * Finishes the command when the robot's heading matches the target angle
+     * within the tolerance.
+     *
+     * @return {@code true} if the angular error is within tolerance
+     */
     @Override
     public boolean isFinished() {
         return errorAngle.in(Degrees) < kToleranceDegrees;

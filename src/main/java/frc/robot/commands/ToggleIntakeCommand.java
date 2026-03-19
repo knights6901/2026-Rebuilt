@@ -8,9 +8,9 @@ import frc.robot.subsystems.IntakeSubsystem;
  * Activates the intake mechanism to draw game pieces into the robot.
  * 
  * <p>
- * This command runs continuously until manually interrupted. It simply calls
- * the
- * intake subsystem's intake method during initialization.
+ * This command toggles the intake between running and stopped states. If the
+ * intake is already running, this command stops it; if stopped, it starts
+ * intaking. The command runs continuously until manually interrupted.
  * 
  * <p>
  * Requires: {@link IntakeSubsystem}
@@ -19,7 +19,7 @@ public class ToggleIntakeCommand extends Command {
     private final IntakeSubsystem intake;
 
     /**
-     * Constructs an IntakeCommand.
+     * Constructs a ToggleIntakeCommand.
      *
      * @param intake the intake subsystem
      */
@@ -29,6 +29,10 @@ public class ToggleIntakeCommand extends Command {
         addRequirements(intake);
     }
 
+    /**
+     * Initializes the command by toggling the intake state.
+     * If currently intaking, it stops; otherwise it starts intaking.
+     */
     @Override
     public void initialize() {
         if (intake.intaking())
@@ -37,6 +41,11 @@ public class ToggleIntakeCommand extends Command {
             intake.intake();
     }
 
+    /**
+     * This command runs continuously until manually interrupted.
+     *
+     * @return {@code false} to run continuously
+     */
     @Override
     public boolean isFinished() {
         return false;

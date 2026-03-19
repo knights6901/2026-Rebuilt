@@ -11,6 +11,12 @@ import frc.robot.subsystems.ShooterSubsystem;
 /**
  * Enables the shooter to run at a low RPS to make it ready to actually shoot
  * fuel.
+ *
+ * <p>
+ * This command spins up the shooter to a priming speed and finishes when the
+ * specified timeout has elapsed. Useful for preparing the shooter before a
+ * shot.
+ * 
  * <p>
  * Requires: {@link ShooterSubsystem}
  */
@@ -24,6 +30,7 @@ public class PrimeShooterCommand extends Command {
      * Constructs a PrimeShooterCommand with a specific timeout.
      *
      * @param shooter the shooter subsystem
+     * @param timeout the maximum time to run the priming sequence
      */
     public PrimeShooterCommand(ShooterSubsystem shooter, Time timeout) {
         this.shooter = shooter;
@@ -33,11 +40,20 @@ public class PrimeShooterCommand extends Command {
         addRequirements(shooter);
     }
 
+    /**
+     * Initializes the command by starting the timer and spinning the shooter
+     * at the priming speed.
+     */
     @Override
     public void initialize() {
         shooter.shoot(RotationsPerSecond.of(30));
     }
 
+    /**
+     * Ends the command when the timeout has been reached.
+     *
+     * @return {@code true} if the timeout has elapsed, {@code false} otherwise
+     */
     @Override
     public boolean isFinished() {
         return timer.hasElapsed(timeout);

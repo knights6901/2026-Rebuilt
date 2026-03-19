@@ -29,9 +29,13 @@ public class KickerSubsystem extends SubsystemBase {
             .getDoubleTopic("KickerVelocity")
             .publish();
 
+    /**
+     * Initializes the kicker subsystem with motor configuration, PID settings,
+     * and current limiting.
+     */
     public KickerSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = KickerGains;
+        m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         m_motorConfig.withCurrentLimits(

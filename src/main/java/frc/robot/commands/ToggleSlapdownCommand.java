@@ -22,7 +22,7 @@ public class ToggleSlapdownCommand extends Command {
     private boolean initialState;
 
     /**
-     * Constructs a TriggerSlapdownCommand.
+     * Constructs a ToggleSlapdownCommand.
      *
      * @param slapdown the slapdown subsystem
      */
@@ -33,6 +33,9 @@ public class ToggleSlapdownCommand extends Command {
         addRequirements(slapdown);
     }
 
+    /**
+     * Toggles the slapdown deployment state.
+     */
     @Override
     public void execute() {
         if (!slapdown.isSlapdownDeployed) {
@@ -42,6 +45,11 @@ public class ToggleSlapdownCommand extends Command {
         }
     }
 
+    /**
+     * Finishes the command when the deployment state changes.
+     *
+     * @return {@code true} once the deployment state has changed
+     */
     @Override
     public boolean isFinished() {
         // return initialState != slapdown.getDeploymentState();

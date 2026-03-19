@@ -36,9 +36,12 @@ public class IntakeSubsystem extends SubsystemBase {
             .getBooleanTopic("IntakeToggled")
             .publish();
 
+    /**
+     * Initializes the intake subsystem with motor configuration and PID settings.
+     */
     public IntakeSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = IntakeGains;
+        m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -83,6 +86,12 @@ public class IntakeSubsystem extends SubsystemBase {
         intaking = false;
     }
 
+    /**
+     * Gets the current intake state.
+     *
+     * @return {@code true} if the intake is actively intaking, {@code false}
+     *         otherwise
+     */
     public boolean intaking() {
         return intaking;
     }

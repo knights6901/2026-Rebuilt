@@ -51,16 +51,26 @@ public class VisionSubsystem extends SubsystemBase {
     // not final because setting fieldLayout wasn't working without try/catch
     private AprilTagFieldLayout fieldLayout;
 
+    /** Vision simulation system (active only when running in simulator). */
     private VisionSystemSim visionSim;
+    /**
+     * Simulated camera properties and output (active only when running in
+     * simulator).
+     */
     private PhotonCameraSim cameraSim;
 
+    /** Network table publisher for visible AprilTag positions. */
     private final StructArrayPublisher<Pose3d> tagPublisher;
 
+    /** Cached list of 3D field poses for currently visible AprilTags. */
     private List<Pose3d> visibleTagPoses = new ArrayList<>();
+    /** Cached list of fiducial IDs for currently visible AprilTags. */
     private List<Integer> visibleTagIds = new ArrayList<>();
 
+    /** The most recently estimated robot pose from vision (optional). */
     public Optional<EstimatedRobotPose> visionEstimatedPose = Optional.empty();
 
+    /** Tracks whether the vision system has provided an initial pose estimate. */
     private boolean hasSeededPose = false;
 
     private final BooleanPublisher seededPub = NetworkTableInstance.getDefault()
@@ -158,12 +168,20 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putData("VisionSim", visionSim.getDebugField());
     }
 
+    /**
+     * Updates the vision simulation with the current robot pose.
+     * Called during simulation mode only.
+     */
     @Override
     public void simulationPeriodic() {
         visionSim.update(drivetrain.getPose());
     }
 
-    @Override
+    /**
+     * Processes all new camera frames from PhotonVision, updates pose estimation,
+     * seeds the drivetrain odometry if not yet seeded, and publishes visible tag
+     * data.
+     */
     public void periodic() {
         visibleTagPoses.clear();
         visibleTagIds.clear();
@@ -210,6 +228,10 @@ public class VisionSubsystem extends SubsystemBase {
         seededPub.set(hasSeededPose);
     }
 
+    /**
+     * Resets the vision pose seeding state. Call this if you need the vision
+     * system to re-seed the odometry.
+     */
     public void resetVisionPose() {
         hasSeededPose = false;
     }

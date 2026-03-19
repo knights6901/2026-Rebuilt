@@ -1,6 +1,5 @@
-// if you need to stop literally any subsytem, just use this
-// if shooter stops, everything will have to stop anways
-// if you need something other than shooter to stop while shooter runs, use holdshootercommand instead
+// Stop all shooter-related subsystems when needed
+// Note: If the shooter stops, all related mechanisms should stop anyway
 
 package frc.robot.commands;
 
@@ -16,12 +15,10 @@ import frc.robot.subsystems.ShooterSubsystem;
  * 
  * <p>
  * This command disables the shooter, kicker, and intake subsystems. Use this
- * command
- * to halt all shooting-related mechanisms at once. If you need more
- * fine-grained control
- * where some subsystems continue while others stop, consider using alternative
- * commands
- * with more specific requirements.
+ * command to halt all shooting-related mechanisms at once. If you need more
+ * fine-grained control where some subsystems continue while others stop,
+ * consider
+ * using alternative commands with more specific requirements.
  * 
  * <p>
  * Requires: {@link ShooterSubsystem}, {@link KickerSubsystem},
@@ -41,7 +38,8 @@ public class StopSubsystemsCommand extends Command {
      * @param intake  the intake subsystem to stop
      * @param indexer the indexer subsystem to stop
      */
-    public StopSubsystemsCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake, IndexerSubsystem indexer) {
+    public StopSubsystemsCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IntakeSubsystem intake,
+            IndexerSubsystem indexer) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.intake = intake;
@@ -49,6 +47,9 @@ public class StopSubsystemsCommand extends Command {
         addRequirements(shooter, kicker, intake, indexer);
     }
 
+    /**
+     * Immediately stops all controlled subsystems.
+     */
     @Override
     public void execute() {
         shooter.stop();
@@ -57,6 +58,11 @@ public class StopSubsystemsCommand extends Command {
         indexer.stop();
     }
 
+    /**
+     * This command runs continuously until manually interrupted.
+     *
+     * @return {@code false} to run continuously
+     */
     @Override
     public boolean isFinished() {
         return false;

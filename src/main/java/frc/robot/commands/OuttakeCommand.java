@@ -8,9 +8,9 @@ import frc.robot.subsystems.IntakeSubsystem;
  * Reverses the intake mechanism to expel game pieces from the robot.
  * 
  * <p>
- * This command runs continuously until manually interrupted. It simply calls
- * the
- * intake subsystem's outtake method during initialization.
+ * This command runs continuously until manually interrupted. It starts the
+ * outtake process during initialization and allows the intake to eject pieces
+ * at the default outtake speed.
  * 
  * <p>
  * Requires: {@link IntakeSubsystem}
@@ -29,11 +29,19 @@ public class OuttakeCommand extends Command {
         addRequirements(intake);
     }
 
+    /**
+     * Initializes the command by starting the intake motor in reverse.
+     */
     @Override
     public void initialize() {
         intake.outtake();
     }
 
+    /**
+     * This command runs continuously until manually interrupted.
+     *
+     * @return {@code false} to run continuously
+     */
     @Override
     public boolean isFinished() {
         return false;

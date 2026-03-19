@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -24,6 +25,7 @@ public class SlapdownSubsystem extends SubsystemBase {
     private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, new CANBus("rio"));
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
+    /** Tracks whether the slapdown is currently deployed. */
     public boolean isSlapdownDeployed = false;
 
     private final BooleanPublisher slapdownPub = NetworkTableInstance.getDefault()
@@ -31,9 +33,18 @@ public class SlapdownSubsystem extends SubsystemBase {
             .getBooleanTopic("SlapdownDeployed")
             .publish();
 
+    private final DoublePublisher slapdownPositionPub = NetworkTableInstance.getDefault()
+            .getTable("Slapdown")
+            .getDoubleTopic("SlapdownPosition")
+            .publish();
+
+    /**
+     * Initializes the slapdown subsystem with motor configuration and PID settings.
+     * Resets the motor position to home.
+     */
     public SlapdownSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = SlapdownGains;
+        m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -53,15 +64,23 @@ public class SlapdownSubsystem extends SubsystemBase {
         isSlapdownDeployed = false;
     }
 
+    /**
+     * Sets the slapdown motor to a specified duty cycle for manual control.
+     *
+     * @param power the duty cycle output from -1.0 to 1.0
+     */
     public void setPower(double power) {
         m_motorSlapdown.setControl(new DutyCycleOut(power));
     }
 
-    /** Stops the slapdown by applying neutral output. */
+    /** Stops the slapdown motor by applying neutral output. */
     public void stop() {
         m_motorSlapdown.setControl(new NeutralOut());
     }
 
+    /**
+     * Resets the slapdown motor position encoder to zero (home position).
+     */
     public void resetSlapdownPosition() {
         m_motorSlapdown.setPosition(0);
     }
@@ -78,5 +97,6 @@ public class SlapdownSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         slapdownPub.set(isSlapdownDeployed);
+        slapdownPositionPub.set(m_motorSlapdown.getPosition().getValueAsDouble());
     }
 }

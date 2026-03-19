@@ -4,6 +4,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -26,8 +27,12 @@ public class IndexerSubsystem extends SubsystemBase {
             .getDoubleTopic("IndexerVelocity")
             .publish();
 
+    /**
+     * Initializes the indexer subsystem with motor configuration and PID settings.
+     */
     public IndexerSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
+        m_motorConfig.Slot0 = IndexerConstants.Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -39,11 +44,14 @@ public class IndexerSubsystem extends SubsystemBase {
      * toward the shooter.
      */
     public void enable() {
-        m_motorIndexer.setControl(new DutyCycleOut(IndexerConstants.Power));
+        m_motorIndexer.setControl(new VelocityVoltage(IndexerConstants.Power));
     }
 
+    /**
+     * Runs the indexer motor in the reverse direction at the configured velocity.
+     */
     public void enableInverted() {
-        m_motorIndexer.setControl(new DutyCycleOut(-IndexerConstants.Power));
+        m_motorIndexer.setControl(new VelocityVoltage(IndexerConstants.Power.times(-1)));
     }
 
     /** Stops the indexer motor by commanding zero velocity. */

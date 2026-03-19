@@ -59,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public ShooterSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = ShooterGains;
+        m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
@@ -79,7 +79,9 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motorRight.setControl(m_request.withVelocity(ShootRPS.times(axis)));
     }
 
-    /** Spins the flywheel at the default shoot velocity defined in constants. */
+    /**
+     * Spins the flywheel at the default shoot velocity defined in constants.
+     */
     public void shoot() {
         m_motorRight.setControl(m_request.withVelocity(ShootRPS));
     }
