@@ -24,11 +24,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * single TalonFX motor with closed-loop position control.
  */
 public class SlapdownSubsystem extends SubsystemBase {
+    /** The possible states of the slapdown mechanism. */
+    public static enum SlapdownState {
+        UP,
+        DOWN
+    }
+
     private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, new CANBus("rio"));
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
-    /** Tracks whether the slapdown should be currently deployed. */
-    private boolean slapdownDeployed = false;
+    /** The current state of the slapdown mechanism. */
+    private SlapdownState state = SlapdownState.DOWN;
 
     private final BooleanPublisher slapdownPub = NetworkTableInstance.getDefault()
             .getTable("Slapdown")
@@ -57,13 +63,13 @@ public class SlapdownSubsystem extends SubsystemBase {
     /** Moves the slapdown arm to the deployed intake position. */
     public void slapdown() {
         m_motorSlapdown.setControl(m_request.withPosition(IntakePosition));
-        slapdownDeployed = true;
+        state = SlapdownState.DOWN;
     }
 
     /** Retracts the slapdown arm to the stowed home position. */
     public void retractSlapdown() {
         m_motorSlapdown.setControl(m_request.withPosition(HomePosition));
-        slapdownDeployed = false;
+        state = SlapdownState.UP;
     }
 
     /**
@@ -90,13 +96,16 @@ public class SlapdownSubsystem extends SubsystemBase {
     /**
      * Returns whether the slapdown is currently deployed.
      *
-     * @return {@code true} if the slapdown is in the deployed position
+     * @return
      */
-    public boolean getDeploymentState() {
-        Angle error = slapdownDeployed ? IntakePosition.minus(getSlapdownPosition())
-                : HomePosition.minus(getSlapdownPosition());
+    public SlapdownState getDeploymentState() {
+        Angle error = (state == SlapdownState.DOWN ? IntakePosition : HomePosition).minus(getSlapdownPosition());
 
-        return error.abs(Degrees) <= PositionTolerance.in(Degrees);
+        if (error.abs(Degrees) <= PositionTolerance.in(Degrees)) {
+            return state;
+        } else {
+            return state == SlapdownState.DOWN ? SlapdownState.UP : SlapdownState.DOWN;
+        }
     }
 
     /* Returns the current position of the slapdown motor. */
@@ -106,7 +115,7 @@ public class SlapdownSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        slapdownPub.set(slapdownDeployed);
+        slapdownPub.set(state == SlapdownState.DOWN);
         slapdownPositionPub.set(getSlapdownPosition().in(Degrees));
     }
 }

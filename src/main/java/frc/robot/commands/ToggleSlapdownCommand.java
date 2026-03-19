@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.subsystems.SlapdownSubsystem;
+import frc.robot.subsystems.SlapdownSubsystem.SlapdownState;
 
 /**
  * Toggles the slapdown mechanism deployment state.
@@ -19,7 +20,7 @@ import frc.robot.subsystems.SlapdownSubsystem;
  */
 public class ToggleSlapdownCommand extends Command {
     private final SlapdownSubsystem slapdown;
-    private boolean initialState;
+    private SlapdownState initialState;
 
     /**
      * Constructs a ToggleSlapdownCommand.
@@ -37,11 +38,11 @@ public class ToggleSlapdownCommand extends Command {
      * Toggles the slapdown deployment state.
      */
     @Override
-    public void execute() {
-        if (!slapdown.isSlapdownDeployed) {
-            // slapdown.slapdown();
+    public void initialize() {
+        if (initialState == SlapdownState.UP) {
+            slapdown.slapdown();
         } else {
-            // slapdown.retractSlapdown();
+            slapdown.retractSlapdown();
         }
     }
 
@@ -52,7 +53,6 @@ public class ToggleSlapdownCommand extends Command {
      */
     @Override
     public boolean isFinished() {
-        // return initialState != slapdown.getDeploymentState();
-        return true;
+        return initialState != slapdown.getDeploymentState();
     }
 }
