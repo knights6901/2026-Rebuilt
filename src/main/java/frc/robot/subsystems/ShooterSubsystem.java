@@ -56,6 +56,8 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Configures both shooter motors with PID gains from constants and sets the
      * left motor to follow the right motor in the opposed direction.
+     * 
+     * Much love <3 - sid
      */
     public ShooterSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();

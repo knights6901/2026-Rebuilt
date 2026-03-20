@@ -29,8 +29,6 @@ public class ToggleSlapdownCommand extends Command {
      */
     public ToggleSlapdownCommand(SlapdownSubsystem slapdown) {
         this.slapdown = slapdown;
-        this.initialState = slapdown.getDeploymentState();
-
         addRequirements(slapdown);
     }
 
@@ -39,6 +37,8 @@ public class ToggleSlapdownCommand extends Command {
      */
     @Override
     public void initialize() {
+        this.initialState = slapdown.state;
+
         if (initialState == SlapdownState.UP) {
             slapdown.slapdown();
         } else {

@@ -13,19 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftLeftHalfSwipe"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoAimShoot"
+            "pathName": "comp auton 1"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Left",
   "choreoAuto": false
 }

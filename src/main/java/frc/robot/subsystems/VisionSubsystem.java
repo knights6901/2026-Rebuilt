@@ -18,6 +18,7 @@ import org.photonvision.simulation.VisionSystemSim;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -191,7 +192,11 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
             if (!hasSeededPose && visionEstimatedPose.isPresent() && drivetrain.hasAppliedOperatorPerspective()) {
-                drivetrain.resetPose(visionEstimatedPose.get().estimatedPose.toPose2d());
+                Pose2d pose = visionEstimatedPose.get().estimatedPose.toPose2d();
+
+                drivetrain.resetPose(pose);
+                drivetrain.getPigeon2().setYaw(pose.getRotation().getDegrees());
+
                 hasSeededPose = true;
             }
 
@@ -205,7 +210,7 @@ public class VisionSubsystem extends SubsystemBase {
                         // third value is rotation which apparently gyro is much much better for than
                         // vision anyways
                         // it needs more real-field tuning tho
-                        VecBuilder.fill(1.5, 1.5, 1.2));
+                        VecBuilder.fill(1.5, 1.5, 2.0));
             });
 
             if (result.hasTargets()) {

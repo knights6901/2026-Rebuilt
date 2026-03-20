@@ -34,7 +34,7 @@ public class SlapdownSubsystem extends SubsystemBase {
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     /** The current state of the slapdown mechanism. */
-    private SlapdownState state = SlapdownState.DOWN;
+    public SlapdownState state = SlapdownState.UP;
 
     private final BooleanPublisher slapdownPub = NetworkTableInstance.getDefault()
             .getTable("Slapdown")
@@ -46,7 +46,13 @@ public class SlapdownSubsystem extends SubsystemBase {
             .getDoubleTopic("SlapdownPosition")
             .publish();
 
+    private final DoublePublisher testPub = NetworkTableInstance.getDefault()
+            .getTable("Slapdown")
+            .getDoubleTopic("SlapdownError")
+            .publish();
+
     /**
+     * 
      * Initializes the slapdown subsystem with motor configuration and PID settings.
      * Resets the motor position to home.
      */
@@ -102,7 +108,9 @@ public class SlapdownSubsystem extends SubsystemBase {
     public SlapdownState getDeploymentState() {
         Angle error = (state == SlapdownState.DOWN ? IntakePosition : HomePosition).minus(getSlapdownPosition());
 
-        if (error.abs(Degrees) <= PositionTolerance.in(Degrees)) {
+        System.out.println("HERER FUCKGSHDKFDSJF " + state + " ERROR: " + error.in(Degrees) / 144);
+
+        if (error.abs(Degrees) / 144 <= PositionTolerance.in(Degrees)) {
             return state;
         } else {
             return state == SlapdownState.DOWN ? SlapdownState.UP : SlapdownState.DOWN;
@@ -118,5 +126,7 @@ public class SlapdownSubsystem extends SubsystemBase {
     public void periodic() {
         slapdownPub.set(state == SlapdownState.DOWN);
         slapdownPositionPub.set(getSlapdownPosition().in(Degrees));
+        testPub.set(
+                (state == SlapdownState.DOWN ? IntakePosition : HomePosition).minus(getSlapdownPosition()).in(Degrees));
     }
 }

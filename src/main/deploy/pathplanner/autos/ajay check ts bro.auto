@@ -5,15 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "leftLeave"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "slapdownTrigger"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "leftLeftHalfSwipe"
+            "name": "rotateToHub"
           }
         },
         {

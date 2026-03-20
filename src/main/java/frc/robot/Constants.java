@@ -124,7 +124,7 @@ public final class Constants {
                 public final static int IntakeMotorId = 32;
 
                 /** The rotations per second for actively intaking balls. */
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(85);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(91.6901);
 
                 /** The gear ratio of the intake system. */
                 public final static double GearRatio = 5.0;
@@ -141,14 +141,14 @@ public final class Constants {
                 public final static int SlapdownMotorId = 31;
 
                 /** The position to lower the slapdown to when intaking a ball. */
-                public final static Angle IntakePosition = Rotations.of(-45);
+                public final static Angle IntakePosition = Rotations.of(-55);
                 /** The default home position of slapdown system. */
                 public final static Angle HomePosition = Rotations.of(0);
                 /**
                  * The tolerance for determining whether the slapdown is in the deployed
                  * position.
                  */
-                public final static Angle PositionTolerance = Degrees.of(1);
+                public final static Angle PositionTolerance = Degrees.of(10.0);
 
                 /** The PID and feedforward settings for the slapdown motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
@@ -189,13 +189,13 @@ public final class Constants {
                 // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
                 private static final Slot0Configs steerGains = new Slot0Configs()
                                 .withKP(100).withKI(0).withKD(0.5)
-                                .withKS(0.1).withKV(2.39).withKA(0)
+                                .withKS(0.1).withKV(2).withKA(0)
                                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
                 // When using closed-loop control, the drive motor uses the control
                 // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
                 private static final Slot0Configs driveGains = new Slot0Configs()
                                 .withKP(0.1).withKI(0).withKD(0)
-                                .withKS(0).withKV(0.124);
+                                .withKS(0).withKV(0.1);
 
                 // The closed-loop output type to use for the steer motors;
                 // This affects the PID/FF gains for the steer motors
@@ -257,7 +257,7 @@ public final class Constants {
                 private static final boolean kInvertLeftSide = false;
                 private static final boolean kInvertRightSide = true;
 
-                private static final int kPigeonId = 15;
+                public static final int kPigeonId = 15;
 
                 // These are only used for simulation
                 private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
@@ -493,8 +493,8 @@ public final class Constants {
          */
         public static final class GameConstants {
                 /** The position of the hub/target on the blue alliance side of the field. */
-                public static final Translation2d blueHubLocation = new Translation2d(4.012, 4.021);
+                public static final Translation2d blueHubLocation = new Translation2d(4.612, 4.021);
                 /** The position of the hub/target on the red alliance side of the field. */
-                public static final Translation2d redHubLocation = new Translation2d(11.912, 4.021);
+                public static final Translation2d redHubLocation = new Translation2d(11.901, 4.021);
         }
 }

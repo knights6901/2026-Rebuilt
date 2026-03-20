@@ -7,13 +7,25 @@
         {
           "type": "named",
           "data": {
+            "name": "resetVisionPose"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "slapdownTrigger"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "leftLeftHalfSwipe"
+            "waitTime": 1.69
           }
         },
         {

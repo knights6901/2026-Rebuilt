@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -96,6 +97,10 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
                 NamedCommands.registerCommand("slapdownTrigger", new ToggleSlapdownCommand(slapdown));
+
+                NamedCommands.registerCommand("resetVisionPose", new InstantCommand(() -> {
+                        vision.resetVisionPose();
+                }, vision));
         }
 
         /** Binds all the default commands. */
@@ -147,11 +152,8 @@ public class RobotContainer {
                         })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
                 }
 
-                driver.povUp().onTrue(
-                                new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
-                driver.povDown().onTrue(
-                                new InstantCommand(() -> slapdown.slapdown(),
-                                                slapdown));
+                driver.povUp().onTrue(new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
+                driver.povDown().onTrue(new InstantCommand(() -> slapdown.slapdown(), slapdown));
 
                 driver.povLeft().whileTrue(Commands.startEnd(
                                 () -> slapdown.setPower(0.1),
@@ -210,6 +212,7 @@ public class RobotContainer {
          * @return the selected autonomous {@link Command}
          */
         public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
+                // return autoChooser.getSelected();
+                return null;
         }
 }
