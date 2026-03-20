@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.ShooterConstants.MaxRPS;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -25,32 +27,35 @@ public class ManualShootCommand extends Command {
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
 
-    private final CommandXboxController operator;
+    private final DoubleSupplier supplier;
 
     /**
      * Constructs a ManualShootCommand with a specific shot RPM.
      *
-     * @param shooter the shooter subsystem
-     * @param kicker  the kicker subsystem
-     * @param intake  the intake subsystem
-     * @param shotRPS the preset angular velocity (RPM) for the shot
+     * @param shooter  the shooter subsystem
+     * @param kicker   the kicker subsystem
+     * @param intake   the intake subsystem
+     * @param supplier a function providing the RPS to shoot at, at any given
+     *                 instance
      */
     public ManualShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer,
-            CommandXboxController operator) {
+            DoubleSupplier supplier) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.indexer = indexer;
-        this.operator = operator;
+        this.supplier = supplier;
 
         addRequirements(shooter, kicker, indexer);
     }
 
     @Override
     public void execute() {
-        if (Math.abs(operator.getRightY()) < 0.2)
+        double scale = supplier.getAsDouble();
+
+        if (Math.abs(scale) < 0.2)
             return;
 
-        shooter.shoot(MaxRPS.times(-operator.getRightY()));
+        shooter.shoot(MaxRPS.times(scale));
         indexer.enable();
         kicker.kick();
     }

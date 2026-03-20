@@ -147,8 +147,6 @@ public class RobotContainer {
                         })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
                 }
 
-                // TODO: check if ToggleSlapdownCommand can be used here instead of separate POV
-                // TODO: bindings
                 driver.povUp().onTrue(
                                 new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
                 driver.povDown().onTrue(
@@ -166,10 +164,7 @@ public class RobotContainer {
 
                 driver.leftTrigger().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
-                // TEMPORARY
                 driver.rightTrigger().onTrue(new RetakeCommand(intake));
-                // driver.rightTrigger().whileTrue(new RunCommand(() -> indexer.enable(),
-                // indexer));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -181,10 +176,10 @@ public class RobotContainer {
         private void configureOperatorBindings() {
                 operator.leftTrigger().whileTrue(
                                 new AutoAimShootCommand(drivetrain, shooter, kicker, indexer));
-
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
-                operator.rightTrigger().whileTrue(new ManualShootCommand(shooter, kicker, indexer, operator));
+                operator.rightTrigger().whileTrue(
+                                new ManualShootCommand(shooter, kicker, indexer, () -> -operator.getRightY()));
                 operator.rightBumper().whileTrue(
                                 new PresetShootCommand(shooter, kicker, indexer,
                                                 ShooterConstants.ShootRPS));
