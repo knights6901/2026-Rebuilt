@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -33,6 +35,8 @@ import frc.robot.Constants.GameConstants;
 public class RotateToHubCommand extends Command {
     private final CommandSwerveDrivetrain drivetrain;
 
+    private final Supplier<Pose2d> currentPoseSupplier;
+
     /** The maximum allowable error in degrees. */
     private final static double kToleranceDegrees = 0.5;
     /** The current error between the robot's heading and the target angle. */
@@ -61,8 +65,9 @@ public class RotateToHubCommand extends Command {
      *
      * @param drivetrain the swerve drivetrain subsystem
      */
-    public RotateToHubCommand(CommandSwerveDrivetrain drivetrain) {
+    public RotateToHubCommand(CommandSwerveDrivetrain drivetrain, Supplier<Pose2d> currentPoseSupplier) {
         this.drivetrain = drivetrain;
+        this.currentPoseSupplier = currentPoseSupplier;
         this.errorAngle = Degrees.of(0);
 
         addRequirements(drivetrain);
@@ -70,7 +75,7 @@ public class RotateToHubCommand extends Command {
 
     @Override
     public void execute() {
-        Pose2d currentPose = drivetrain.getState().Pose;
+        Pose2d currentPose = currentPoseSupplier.get();
         Translation2d vectorToTarget = null;
 
         if (DriverStation.getAlliance().isPresent() &&

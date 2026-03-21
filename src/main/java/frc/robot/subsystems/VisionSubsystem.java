@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import org.photonvision.simulation.PhotonCameraSim;
@@ -17,14 +18,12 @@ import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -63,15 +62,7 @@ public class VisionSubsystem extends SubsystemBase {
     private List<Integer> visibleTagIds = new ArrayList<>();
 
     /** The most recently estimated robot pose from vision (optional). */
-    public Optional<EstimatedRobotPose> visionEstimatedPose = Optional.empty();
-
-    /** Tracks whether the vision system has provided an initial pose estimate. */
-    // private boolean hasSeededPose = false;
-
-    // private final BooleanPublisher seededPub = NetworkTableInstance.getDefault()
-    // .getTable("Vision Debugging")
-    // .getBooleanTopic("Has Seeded Pose")
-    // .publish();
+    private Optional<EstimatedRobotPose> visionEstimatedPose = Optional.empty();
 
     /**
      * Creates the vision subsystem, initializing PhotonVision cameras and the
@@ -151,91 +142,43 @@ public class VisionSubsystem extends SubsystemBase {
         cameraSim.enableProcessedStream(true);
 
         visionSim.addCamera(cameraSim, robotToCam);
-        /*
-         * poseSub = NetworkTableInstance.getDefault()
-         * .getStructTopic("SmartDashboard/RobotPose", Pose2d.struct)
-         * .subscribe(new Pose2d());
-         */
+
         SmartDashboard.putData("VisionSim", visionSim.getDebugField());
     }
 
-    /**
-     * Processes all new camera frames from PhotonVision, updates pose estimation,
-     * seeds the drivetrain odometry if not yet seeded, and publishes visible tag
-     * data.
-     */
-    // public void periodic() {
-    // visibleTagPoses.clear();
-    // visibleTagIds.clear();
-
-    // for (var result : photonCam.getAllUnreadResults()) {
-    // visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
-
-    // if (visionEstimatedPose.isEmpty()) {
-    // visionEstimatedPose =
-    // visionPoseEstimator.estimateLowestAmbiguityPose(result);
-    // }
-
-    // if (!hasSeededPose && visionEstimatedPose.isPresent()) {
-    // Pose2d pose = visionEstimatedPose.get().estimatedPose.toPose2d();
-    // hasSeededPose = true;
-    // }
-
-    // if (result.hasTargets()) {
-    // List<PhotonTrackedTarget> targets = result.getTargets();
-
-    // for (PhotonTrackedTarget target : targets) {
-    // Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
-    // tagPose.ifPresent(visibleTagPoses::add);
-    // visibleTagIds.add(target.getFiducialId());
-    // }
-
-    // tagPublisher.set(visibleTagPoses.toArray(new Pose3d[0]));
-    // }
-    // }
-
-    // seededPub.set(hasSeededPose);
-    // }
-
-    public Optional<Pose2d> getVisionPose() {
+    @Override
+    public void periodic() {
+        // clear the visible tag lists - they will be repopulated if there are targets
+        // in the latest result
         visibleTagPoses.clear();
         visibleTagIds.clear();
 
-        for (var result : photonCam.getAllUnreadResults()) {
-            System.out.println("RESULT: " + result);
-            visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(result);
+        List<PhotonPipelineResult> results = photonCam.getAllUnreadResults();
 
-            if (visionEstimatedPose.isEmpty()) {
-                visionEstimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(result);
-            }
-
-            if (result.hasTargets()) {
-                List<PhotonTrackedTarget> targets = result.getTargets();
-
-                for (PhotonTrackedTarget target : targets) {
-                    Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
-                    tagPose.ifPresent(visibleTagPoses::add);
-                    visibleTagIds.add(target.getFiducialId());
-                }
-
-                tagPublisher.set(visibleTagPoses.toArray(new Pose3d[0]));
-            }
-
-            if (visionEstimatedPose.isPresent()) {
-                System.out.println(visionEstimatedPose);
-
-                return Optional.of(visionEstimatedPose.get().estimatedPose.toPose2d());
-            }
+        if (results.size() == 0) {
+            visionEstimatedPose = Optional.empty();
+            return;
         }
 
-        return Optional.empty();
+        PhotonPipelineResult latest = results.get(results.size() - 1);
+        visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(latest)
+                .or(() -> visionPoseEstimator.estimateLowestAmbiguityPose(latest));
+
+        if (latest.hasTargets()) {
+            List<PhotonTrackedTarget> targets = latest.getTargets();
+
+            for (PhotonTrackedTarget target : targets) {
+                Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
+                tagPose.ifPresent(visibleTagPoses::add);
+                visibleTagIds.add(target.getFiducialId());
+            }
+
+            tagPublisher.set(visibleTagPoses.toArray(new Pose3d[0]));
+        }
+
     }
 
-    /**
-     * Resets the vision pose seeding state. Call this if you need the vision
-     * system to re-seed the odometry.
-     */
-    public void resetVisionPose() {
-        // hasSeededPose = false;
+    public Optional<Pose2d> getEstimatedPose2d() {
+        return visionEstimatedPose.map(pose -> pose.estimatedPose.toPose2d());
     }
 }

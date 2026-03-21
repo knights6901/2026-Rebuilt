@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -87,7 +86,7 @@ public class RobotContainer {
                                 new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 NamedCommands.registerCommand("autoAimShoot",
-                                new AutoAimShootCommand(drivetrain, shooter, kicker, indexer)
+                                new AutoAimShootCommand(shooter, kicker, indexer, () -> drivetrain.getState().Pose)
                                                 .withTimeout(Seconds.of(10.0)));
                 NamedCommands.registerCommand("shoot20RPS",
                                 new PresetShootCommand(shooter, kicker, indexer, RotationsPerSecond.of(20)));
@@ -95,12 +94,10 @@ public class RobotContainer {
                 NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
 
-                NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(drivetrain));
+                NamedCommands.registerCommand("rotateToHub", new RotateToHubCommand(
+                                drivetrain,
+                                () -> vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose)));
                 NamedCommands.registerCommand("slapdownTrigger", new ToggleSlapdownCommand(slapdown));
-
-                NamedCommands.registerCommand("resetVisionPose", new InstantCommand(() -> {
-                        vision.resetVisionPose();
-                }, vision));
         }
 
         /** Binds all the default commands. */
@@ -129,7 +126,6 @@ public class RobotContainer {
 
                 driver.a().onTrue(new ToggleIntakeCommand(intake));
                 driver.x().whileTrue(new OuttakeCommand(intake));
-                driver.y().onTrue(new InstantCommand(() -> vision.resetVisionPose(), vision));
 
                 driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -144,7 +140,9 @@ public class RobotContainer {
                 driver.rightBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
                 // Point the wheels towards the hub when holding left bumper.
-                driver.leftBumper().whileTrue(new RotateToHubCommand(drivetrain));
+                driver.leftBumper().whileTrue(new RotateToHubCommand(
+                                drivetrain,
+                                () -> vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose)));
 
                 if (Robot.isSimulation()) {
                         driver.x().onTrue(new InstantCommand(() -> {
@@ -179,6 +177,7 @@ public class RobotContainer {
                 operator.leftTrigger().whileTrue(new InstantCommand(() -> {
                         vision.getVisionPose();
                 }));
+                // TODO: BRO IF WE DONT ADD THIS BACK WE'RE COOKED
                 // operator.leftTrigger().whileTrue(
                 // new AutoAimShootCommand(drivetrain, shooter, kicker, indexer));
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));

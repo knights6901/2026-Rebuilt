@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
@@ -31,10 +33,11 @@ import frc.robot.subsystems.KickerSubsystem;
  * {@link KickerSubsystem}, {@link IndexerSubsystem}
  */
 public class AutoAimShootCommand extends Command {
-    private CommandSwerveDrivetrain drivetrain;
-    private ShooterSubsystem shooter;
-    private KickerSubsystem kicker;
-    private IndexerSubsystem indexer;
+    private final ShooterSubsystem shooter;
+    private final KickerSubsystem kicker;
+    private final IndexerSubsystem indexer;
+
+    private final Supplier<Pose2d> currentPoseSupplier;
 
     /**
      * Constructs an AutoAimShootCommand.
@@ -45,21 +48,21 @@ public class AutoAimShootCommand extends Command {
      * @param indexer    the indexer subsystem
      */
     public AutoAimShootCommand(
-            CommandSwerveDrivetrain drivetrain,
             ShooterSubsystem shooter,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
-        this.drivetrain = drivetrain;
+            IndexerSubsystem indexer,
+            Supplier<Pose2d> currentPoseSupplier) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.indexer = indexer;
+        this.currentPoseSupplier = currentPoseSupplier;
 
-        addRequirements(drivetrain, shooter, kicker, indexer);
+        addRequirements(shooter, kicker, indexer);
     }
 
     @Override
     public void execute() {
-        Pose2d currentPose = drivetrain.getState().Pose;
+        Pose2d currentPose = currentPoseSupplier.get();
         Translation2d hubLocation = (DriverStation.getAlliance().get() == Alliance.Blue)
                 ? GameConstants.blueHubLocation
                 : GameConstants.redHubLocation;
