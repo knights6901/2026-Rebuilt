@@ -13,14 +13,14 @@ import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class RPSForPassingCommand extends Command{
+public class PassingShootCommand extends Command{
         private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
 
     private final Supplier<Pose2d> currentPoseSupplier;
 
-    public RPSForPassingCommand(
+    public PassingShootCommand(
             ShooterSubsystem shooter,
             KickerSubsystem kicker,
             IndexerSubsystem indexer,
