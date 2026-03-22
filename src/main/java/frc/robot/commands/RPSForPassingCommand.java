@@ -5,12 +5,10 @@ import java.util.function.Supplier;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.GameConstants;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -41,9 +39,6 @@ public class RPSForPassingCommand extends Command{
         Distance targetX = (DriverStation.getAlliance().get() == Alliance.Blue)
                 ? Meters.of(2.306)
                 : Meters.of(14.207);
-        Translation2d hubLocation = (DriverStation.getAlliance().get() == Alliance.Blue)
-                ? new Translation2d(2.03, currentPose.getTranslation().getY())
-                : new Translation2d(2.03, currentPose.getTranslation().getY());
 
         Distance shotGroundDistance = Meters
                 .of(Math.abs(currentPose.getTranslation().getX() - targetX.in(Meters)));
