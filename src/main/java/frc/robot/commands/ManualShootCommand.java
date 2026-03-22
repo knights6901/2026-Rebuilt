@@ -1,9 +1,6 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.ShooterConstants.MaxRPS;
-import static frc.robot.Constants.ShooterConstants.ShootRPS;
-
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,7 +9,9 @@ import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 
 /**
- * Shoots at a preset RPM configured at command creation time.
+ * Shoots at a variable RPM provided by a supplier function, allowing for
+ * dynamic control of the shooter's speed based on real-time inputs or
+ * adjustments.
  * 
  * <p>
  * This command executes a shooting sequence using a predefined shooter speed
@@ -28,6 +27,8 @@ public class ManualShootCommand extends Command {
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
 
+    private final Supplier<AngularVelocity> rpsSupplier;
+
     /**
      * Constructs a ManualShootCommand with a specific shot RPM.
      *
@@ -37,17 +38,19 @@ public class ManualShootCommand extends Command {
      * @param supplier a function providing the RPS to shoot at, at any given
      *                 instance
      */
-    public ManualShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer) {
+    public ManualShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer,
+            Supplier<AngularVelocity> rpsSupplier) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.indexer = indexer;
+        this.rpsSupplier = rpsSupplier;
 
         addRequirements(shooter, kicker, indexer);
     }
 
     @Override
     public void execute() {
-        shooter.shoot(ShootRPS);
+        shooter.shoot(rpsSupplier.get());
         indexer.enable();
         kicker.kick();
     }

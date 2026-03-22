@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static frc.robot.Constants.ShooterConstants.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -28,6 +27,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Telemetry;
+import frc.robot.Constants.ShooterConstants;
 
 /**
  * Subsystem controlling the dual-motor shooter flywheel.
@@ -39,8 +39,8 @@ import frc.robot.Telemetry;
  * for distance-based shot speed.
  */
 public class ShooterSubsystem extends SubsystemBase {
-    private final TalonFX m_motorRight = new TalonFX(RightMotorId, new CANBus("rio"));
-    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, new CANBus("rio"));
+    private final TalonFX m_motorRight = new TalonFX(ShooterConstants.RightMotorId, new CANBus("rio"));
+    private final TalonFX m_motorLeft = new TalonFX(ShooterConstants.LeftMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private final DoublePublisher leftVelocityPub = NetworkTableInstance.getDefault()
@@ -53,48 +53,26 @@ public class ShooterSubsystem extends SubsystemBase {
             .getDoubleTopic("RightVelocity")
             .publish();
 
+    private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
+
     /**
      * Configures both shooter motors with PID gains from constants and sets the
      * left motor to follow the right motor in the opposed direction.
-     * 
-     * Much love <3 - sid
      */
     public ShooterSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = Gains;
+        m_motorConfig.Slot0 = ShooterConstants.Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         m_motorRight.getConfigurator().apply(m_motorConfig);
         m_motorLeft.getConfigurator().apply(m_motorConfig);
 
-        m_motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
+        m_motorLeft.setControl(new Follower(ShooterConstants.RightMotorId, MotorAlignmentValue.Opposed));
     }
 
-    /**
-     * Spins the flywheel at a velocity proportional to the given axis value,
-     * useful for variable-speed control from a trigger.
-     *
-     * @param axis scalar in [0, 1] applied to the maximum shoot velocity
-     */
-    public void shoot(double axis) {
-        m_motorRight.setControl(m_request.withVelocity(ShootRPS.times(axis)));
-    }
-
-    /**
-     * Spins the flywheel at the default shoot velocity defined in constants.
-     */
     public void shoot() {
-        m_motorRight.setControl(m_request.withVelocity(ShootRPS));
-    }
-
-    /**
-     * Spins the flywheel at an exact integer RPS setpoint.
-     *
-     * @param rps target rotations per second
-     */
-    public void shoot(int rps) {
-        m_motorRight.setControl(m_request.withVelocity(rps));
+        m_motorRight.setControl(m_request.withVelocity(shootRPS));
     }
 
     /**
@@ -105,11 +83,24 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void shoot(AngularVelocity rps) {
         m_motorRight.setControl(m_request.withVelocity(rps));
+
     }
 
     /** Stops the flywheel by applying neutral output to both motors. */
     public void stop() {
         m_motorRight.setControl(new NeutralOut());
+    }
+
+    public void increaseShootRPS() {
+        shootRPS = shootRPS.plus(RotationsPerSecond.of(1));
+    }
+
+    public void decreaseShootRPS() {
+        shootRPS = shootRPS.minus(RotationsPerSecond.of(1));
+    }
+
+    public AngularVelocity getShootRPS() {
+        return shootRPS;
     }
 
     /**
@@ -185,10 +176,10 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public AngularVelocity calculateRPS(Distance groundDistance) {
         double dx = groundDistance.in(Meters);
-        double dy = HubTargetHeight.minus(BallExtakeHeight).in(Meters);
+        double dy = ShooterConstants.HubTargetHeight.minus(ShooterConstants.BallExtakeHeight).in(Meters);
 
-        double gVal = G.in(MetersPerSecondPerSecond);
-        double pitchRad = Pitch.in(Radians);
+        double gVal = ShooterConstants.G.in(MetersPerSecondPerSecond);
+        double pitchRad = ShooterConstants.Pitch.in(Radians);
 
         double velocity = Math.sqrt(
                 (gVal * dx * dx) /
@@ -197,7 +188,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double rps = velocity / (2 * Math.PI * 0.051);
 
-        return RotationsPerSecond.of(DampingCoefficient * rps);
+        return RotationsPerSecond.of(ShooterConstants.DampingCoefficient * rps);
     }
 
     /**

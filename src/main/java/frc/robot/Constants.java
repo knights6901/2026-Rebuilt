@@ -59,11 +59,11 @@ public final class Constants {
          */
         public static final class ControllerConstants {
                 /** The USB port number for the driver controller. */
-                public static final int kDriverPort = 0;
+                public static final int DriverPort = 0;
                 /** The USB port number for the operator controller. */
-                public static final int kOperatorPort = 1;
+                public static final int OperatorPort = 1;
                 /** The deadband threshold for controller joysticks (0-1 scale). */
-                public static final double kDeadband = 0.1;
+                public static final double Deadband = 0.1;
         }
 
         public static final class DrivetrainConstants {
@@ -83,9 +83,11 @@ public final class Constants {
 
                 /** The maximum rotations per second that the shooter can achieve. */
                 public final static AngularVelocity MaxRPS = RotationsPerSecond.of(80);
-
-                /** The target rotations per second for shooting at typical game distances. */
-                public static AngularVelocity ShootRPS = RotationsPerSecond.of(55);
+                /**
+                 * The default rotations per second of the shooter to shoot a ball (tested
+                 * experimentally).
+                 */
+                public final static AngularVelocity DefaultRPS = RotationsPerSecond.of(55);
 
                 /** The PID and feedforward settings for the shooter motors. */
                 public final static Slot0Configs Gains = new Slot0Configs()

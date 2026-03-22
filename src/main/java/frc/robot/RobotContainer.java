@@ -15,7 +15,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -40,16 +39,16 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                        .withDeadband(DrivetrainConstants.MaxSpeed.times(ControllerConstants.kDeadband))
-                        .withRotationalDeadband(DrivetrainConstants.MaxAngularRate.times(ControllerConstants.kDeadband))
+                        .withDeadband(DrivetrainConstants.MaxSpeed.times(ControllerConstants.Deadband))
+                        .withRotationalDeadband(DrivetrainConstants.MaxAngularRate.times(ControllerConstants.Deadband))
                         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
         private final Telemetry logger = new Telemetry(DrivetrainConstants.MaxSpeed);
 
-        private final CommandXboxController driver = new CommandXboxController(ControllerConstants.kDriverPort);
-        private final CommandXboxController operator = new CommandXboxController(ControllerConstants.kOperatorPort);
+        private final CommandXboxController driver = new CommandXboxController(ControllerConstants.DriverPort);
+        private final CommandXboxController operator = new CommandXboxController(ControllerConstants.OperatorPort);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
@@ -89,7 +88,7 @@ public class RobotContainer {
                                 new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose())
                                                 .withTimeout(Seconds.of(10.0)));
                 NamedCommands.registerCommand("shoot20RPS",
-                                new PresetShootCommand(shooter, kicker, indexer, RotationsPerSecond.of(20)));
+                                new ManualShootCommand(shooter, kicker, indexer, () -> RotationsPerSecond.of(50)));
 
                 NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
@@ -178,17 +177,16 @@ public class RobotContainer {
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
                 operator.povLeft().onTrue(new InstantCommand(() -> {
-                        ShooterConstants.ShootRPS = ShooterConstants.ShootRPS.minus(RotationsPerSecond.of(1));
+                        shooter.decreaseShootRPS();
                 }));
                 operator.povRight().onTrue(new InstantCommand(() -> {
-                        ShooterConstants.ShootRPS = ShooterConstants.ShootRPS.plus(RotationsPerSecond.of(1));
+                        shooter.increaseShootRPS();
                 }));
 
                 operator.rightTrigger().whileTrue(
-                                new ManualShootCommand(shooter, kicker, indexer));
+                                new ManualShootCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
                 operator.rightBumper().whileTrue(
-                                new PresetShootCommand(shooter, kicker, indexer,
-                                                ShooterConstants.ShootRPS));
+                                new ManualShootCommand(shooter, kicker, indexer, () -> ShooterConstants.DefaultRPS));
 
                 operator.povUp().onTrue(new PrimeShooterCommand(shooter, kicker, Seconds.of(5)));
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
@@ -218,19 +216,22 @@ public class RobotContainer {
          * @return the selected autonomous {@link Command}
          */
         public Command getAutonomousCommand() {
-                // // move back one meter
+                // move back one meter
                 Pose2d current = getEstimatedVisionPose();
-                Pose2d target = new Pose2d(current.getTranslation().minus(new Translation2d(0.0, 10.0)),
+                Pose2d target = new Pose2d(current.getTranslation().minus(new Translation2d(5.0, 0.0)),
                                 current.getRotation());
 
                 return new SequentialCommandGroup(
-                        new RunCommand(() -> drivetrain.driveToPose(current, target), drivetrain)
-                );
-                // return null;
+                                new RunCommand(() -> drivetrain.driveToPose(current, target), drivetrain));
         }
 
+        /**
+         * Gets the robot's estimated pose from the vision subsystem, or falls back to
+         * the drivetrain's odometry pose if no vision estimate is available.
+         *
+         * @return the estimated {@link Pose2d} of the robot on the field
+         */
         private Pose2d getEstimatedVisionPose() {
                 return vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose);
-                // return vision.getEstimatedPose2d().orElse(null);
         }
 }
