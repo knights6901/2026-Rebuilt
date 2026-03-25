@@ -86,10 +86,8 @@ public class VisionSubsystem extends SubsystemBase {
             System.out.println("Could not find the field file!");
         }
 
-        // put real values in here when cad + camera location is finalized
-        // these are rough estimates based on current design team predictions (jan 26)
         Transform3d robotToCam = new Transform3d(new Translation3d(-0.33, 0.0, 0.17),
-                new Rotation3d(0, Math.PI / 3, Math.PI));
+                new Rotation3d(0, Math.PI / 4, Math.PI));
 
         if (fieldLayout != null) {
             visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
