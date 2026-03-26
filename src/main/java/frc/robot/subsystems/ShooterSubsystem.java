@@ -53,6 +53,11 @@ public class ShooterSubsystem extends SubsystemBase {
             .getDoubleTopic("RightVelocity")
             .publish();
 
+    private final DoublePublisher shootRPSPub = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("ShootRPS")
+            .publish();
+
     private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
 
     /**
@@ -207,5 +212,6 @@ public class ShooterSubsystem extends SubsystemBase {
         // Publish current velocities for telemetry
         rightVelocityPub.set(m_motorRight.getVelocity().getValueAsDouble());
         leftVelocityPub.set(m_motorLeft.getVelocity().getValueAsDouble());
+        shootRPSPub.set(shootRPS.in(RotationsPerSecond));
     }
 }

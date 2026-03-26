@@ -108,7 +108,7 @@ public class RobotContainer {
         private void configureDefaultCommands() {
                 drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
                 kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
-                indexer.setDefaultCommand(new RunCommand(() -> indexer.stop(), indexer));
+                indexer.setDefaultCommand(new PeriodicReverseIndexerCommand(indexer));
                 intake.setDefaultCommand(new RunCommand(() -> {
                         if (intake.currentlyIntaking())
                                 intake.intake();
@@ -144,7 +144,7 @@ public class RobotContainer {
                 driver.rightBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
                 // Point the wheels towards the hub when holding left bumper.
-                driver.leftBumper().whileTrue(new RotateToHubCommand(
+                driver.leftBumper().onTrue(new RotateToHubCommand(
                                 drivetrain,
                                 () -> getEstimatedVisionPose()));
 
@@ -168,7 +168,8 @@ public class RobotContainer {
 
                 driver.leftTrigger().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
-                driver.rightTrigger().onTrue(new RetakeCommand(intake));
+                driver.rightTrigger().whileTrue(
+                                new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -178,8 +179,6 @@ public class RobotContainer {
          * shooting, intake, and auto-aim.
          */
         private void configureOperatorBindings() {
-                operator.leftTrigger().whileTrue(
-                                new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
                 operator.povLeft().onTrue(new InstantCommand(() -> {
@@ -198,6 +197,10 @@ public class RobotContainer {
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 operator.x().onTrue(new Rotate180Command(drivetrain, () -> drivetrain.getPose()));
+
+                operator.b().whileTrue(new RunCommand(() -> {
+                        indexer.enableInverted();
+                }, indexer));
         }
 
         /**
@@ -222,7 +225,6 @@ public class RobotContainer {
          * @return the selected autonomous {@link Command}
          */
         public Command getAutonomousCommand() {
-                // move back one meter
                 return autoChooser.getSelected();
         }
 

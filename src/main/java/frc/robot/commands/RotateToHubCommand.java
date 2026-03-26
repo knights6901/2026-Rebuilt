@@ -23,6 +23,6 @@ public class RotateToHubCommand extends RotateToTarget {
                 ? GameConstants.BlueHubLocation
                 : GameConstants.RedHubLocation;
 
-        return targetHub.minus(currentPose.getTranslation()).getAngle();
+        return targetHub.minus(currentPose.getTranslation()).getAngle().plus(new Rotation2d(Degrees.of(180)));
     }
 }

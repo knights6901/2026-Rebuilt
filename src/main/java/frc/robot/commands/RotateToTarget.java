@@ -51,6 +51,8 @@ public class RotateToTarget extends Command {
     public void initialize() {
         targetRotation = targetRotationSupplier.get();
         targetPub.set(targetRotation.getDegrees());
+
+        drivetrain.resetPIDControllers();
     }
 
     @Override

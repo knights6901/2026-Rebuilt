@@ -37,7 +37,7 @@ public class KickerSubsystem extends SubsystemBase {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
         m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         m_motorConfig.withCurrentLimits(
                 new CurrentLimitsConfigs().withStatorCurrentLimit(60).withSupplyCurrentLimitEnable(true));
 

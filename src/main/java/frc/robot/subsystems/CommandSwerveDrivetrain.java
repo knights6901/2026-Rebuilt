@@ -248,6 +248,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 .withRotationalRate(thetaVel));
     }
 
+    public void resetPIDControllers() {
+        xController.reset();
+        yController.reset();
+        thetaController.reset();
+    }
+
     private void configureAutoBuilder() {
         try {
             RobotConfig config = RobotConfig.fromGUISettings();
