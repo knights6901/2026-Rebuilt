@@ -63,7 +63,7 @@ public class RobotContainer {
         private final SlapdownSubsystem slapdown = new SlapdownSubsystem();
         private final KickerSubsystem kicker = new KickerSubsystem();
 
-        private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> manor_autoChooser;
 
         boolean isCompetition = false;
 
@@ -74,13 +74,12 @@ public class RobotContainer {
                 configureDefaultCommands();
                 configurePathPlannerCommands();
 
-                autoChooser = AutoBuilder.buildAutoChooser("zero");
+                manor_autoChooser = AutoBuilder.buildAutoChooser("zero");
 
                 // mirrored autos for left/right side
-                autoChooser.addOption("rightFarHalfSwipe", new PathPlannerAuto("leftFarHalfSwipe", true));
-                autoChooser.addOption("rightNearHalfSwipe", new PathPlannerAuto("leftNearHalfSwipe", true));
+                manor_autoChooser.addOption("manor_rightHS", new PathPlannerAuto("manor_leftHS", true));
 
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                SmartDashboard.putData("Auto Chooser", manor_autoChooser);
 
         }
 
@@ -239,7 +238,7 @@ public class RobotContainer {
          * @return the selected autonomous {@link Command}
          */
         public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
+                return manor_autoChooser.getSelected();
         }
 
         /**
