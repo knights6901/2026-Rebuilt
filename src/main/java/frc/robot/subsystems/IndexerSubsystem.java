@@ -50,7 +50,7 @@ public class IndexerSubsystem extends SubsystemBase {
      * Runs the indexer motor in the reverse direction at the configured velocity.
      */
     public void enableInverted() {
-        m_motorIndexer.setControl(new VelocityVoltage(IndexerConstants.Power.times(-1)));
+        m_motorIndexer.setControl(new VelocityVoltage(IndexerConstants.Power.times(-.25)));
     }
 
     /** Stops the indexer motor by commanding zero velocity. */

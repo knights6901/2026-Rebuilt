@@ -13,9 +13,16 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Constants.GameConstants;
 
-public class RotateToHubCommand extends RotateToTarget {
+public class RotateToHubCommand extends DriveToTarget {
     public RotateToHubCommand(CommandSwerveDrivetrain drivetrain, Supplier<Pose2d> currentPoseSupplier) {
-        super(drivetrain, currentPoseSupplier, () -> computeHubRotation(currentPoseSupplier.get()), Degrees.of(2));
+        super(drivetrain, currentPoseSupplier, () -> {
+            Pose2d currentPose = currentPoseSupplier.get();
+
+            Rotation2d rotation = computeHubRotation(currentPose);
+            Translation2d translation = currentPose.getTranslation();
+
+            return new Pose2d(translation, rotation);
+        });
     }
 
     private static Rotation2d computeHubRotation(Pose2d currentPose) {

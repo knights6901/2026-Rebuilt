@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.KickerConstants.*;
@@ -44,12 +45,16 @@ public class KickerSubsystem extends SubsystemBase {
         m_motorKicker.getConfigurator().apply(m_motorConfig);
     }
 
+    public void kick(AngularVelocity rps) {
+        m_motorKicker.setControl(m_request.withVelocity(rps));
+    }
+
     /**
      * Spins the kicker wheel at the configured velocity to feed a game piece into
      * the shooter.
      */
     public void kick() {
-        m_motorKicker.setControl(m_request.withVelocity(KickerRPS));
+        kick(KickerRPS);
     }
 
     /** Stops the kicker motor by applying neutral output. */

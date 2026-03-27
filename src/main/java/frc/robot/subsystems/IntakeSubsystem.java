@@ -67,7 +67,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Runs the intake rollers outward at the default velocity to eject game pieces.
      */
     public void outtake() {
-        outtake(IntakeRPS);
+        outtake(IntakeRPS.times(.2));
     }
 
     /**

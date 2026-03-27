@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -86,8 +87,10 @@ public class VisionSubsystem extends SubsystemBase {
             System.out.println("Could not find the field file!");
         }
 
-        Transform3d robotToCam = new Transform3d(new Translation3d(-0.33, 0.0, 0.17),
-                new Rotation3d(0, Math.PI / 4, Math.PI));
+        Transform3d robotToCam = new Transform3d(new Translation3d(-0.31, 0.0, 0.14),
+                // new Rotation3d(0, Math.PI / 3, Math.PI));
+                new Rotation3d(0, Math.PI / 3, 0));
+                // new Rotation3d(0, -Math.PI / 3, Math.pi)); // maybe it works? - sam
 
         if (fieldLayout != null) {
             visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
@@ -187,7 +190,10 @@ public class VisionSubsystem extends SubsystemBase {
 
             if (!hasSeededPose) {
                 hasSeededPose = true;
-                drivetrain.resetPose(getEstimatedPose2d().get());
+
+                Translation2d translation = getEstimatedPose2d().get().getTranslation();
+
+                drivetrain.resetTranslation(translation);
             }
         }
     }

@@ -6,11 +6,19 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-public class Rotate180Command extends RotateToTarget {
+public class Rotate180Command extends DriveToTarget {
     public Rotate180Command(CommandSwerveDrivetrain drivetrain, Supplier<Pose2d> currentPoseSupplier) {
-        super(drivetrain, currentPoseSupplier, () -> compute180Rotation(currentPoseSupplier.get()), Degrees.of(0.1));
+        super(drivetrain, currentPoseSupplier, () -> {
+            Pose2d currentPose = currentPoseSupplier.get();
+
+            Rotation2d rotation = compute180Rotation(currentPose);
+            Translation2d translation = currentPose.getTranslation();
+
+            return new Pose2d(translation, rotation);
+        });
     }
 
     private static Rotation2d compute180Rotation(Pose2d currentPose) {

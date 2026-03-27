@@ -70,7 +70,7 @@ public final class Constants {
                 /** The desired top speed of the robot in meters per second. */
                 public final static LinearVelocity MaxSpeed = TunerConstants.kSpeedAt12Volts;
                 /** The movement sensitivity multiplier for teleop control (between 0 and 1). */
-                public final static double TeleopMovementSensitivity = .6901;
+                public final static double TeleopMovementSensitivity = .46901;
                 /** The maximum angular turning rate in rotations per second. */
                 public final static AngularVelocity MaxAngularRate = RotationsPerSecond.of(0.5);
         }
@@ -126,7 +126,7 @@ public final class Constants {
                 public final static int IntakeMotorId = 32;
 
                 /** The rotations per second for actively intaking balls. */
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(85.6901);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(96.901);
 
                 /** The gear ratio of the intake system. */
                 public final static double GearRatio = 5.0;
@@ -173,7 +173,7 @@ public final class Constants {
 
         public static final class PeriodicReverseIndexerConstants {
                 public final static Time ReversePeriod = Seconds.of(3.0);
-                public final static Time ReverseLength = Seconds.of(0.5);
+                public final static Time ReverseLength = Seconds.of(1.5);
         }
 
         public static final class RetakeConstants {

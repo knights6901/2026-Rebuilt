@@ -89,6 +89,10 @@ public class RobotContainer {
                 NamedCommands.registerCommand("stopSubsystems",
                                 new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
+                NamedCommands.registerCommand("reverseShoot", new RunCommand(() -> {
+                        shooter.shoot(RotationsPerSecond.of(-20));
+                        kicker.kick(RotationsPerSecond.of(-20));
+                }, shooter, kicker).withTimeout(Seconds.of(1)));
                 NamedCommands.registerCommand("autoAimShoot",
                                 new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose())
                                                 .withTimeout(Seconds.of(10.0)));
@@ -108,7 +112,8 @@ public class RobotContainer {
         private void configureDefaultCommands() {
                 drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
                 kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
-                indexer.setDefaultCommand(new PeriodicReverseIndexerCommand(indexer));
+                // indexer.setDefaultCommand(new PeriodicReverseIndexerCommand(indexer));
+                indexer.setDefaultCommand(new RunCommand(() -> indexer.stop(), indexer));
                 intake.setDefaultCommand(new RunCommand(() -> {
                         if (intake.currentlyIntaking())
                                 intake.intake();
@@ -168,6 +173,10 @@ public class RobotContainer {
 
                 driver.leftTrigger().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
+                driver.leftTrigger().whileTrue(new RunCommand(() -> {
+                        indexer.enableInverted();
+                }, indexer));
+
                 driver.rightTrigger().whileTrue(
                                 new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
 
@@ -190,6 +199,7 @@ public class RobotContainer {
 
                 operator.rightTrigger().whileTrue(
                                 new ManualShootCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
+
                 operator.rightBumper().whileTrue(
                                 new ManualShootCommand(shooter, kicker, indexer, () -> ShooterConstants.DefaultRPS));
 
