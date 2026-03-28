@@ -9,9 +9,11 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.concurrent.BrokenBarrierException;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -96,6 +98,7 @@ public class RobotContainer {
                                 new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
                 NamedCommands.registerCommand("shoot20RPS",
                                 new ManualShootCommand(shooter, kicker, indexer, () -> RotationsPerSecond.of(50)));
+                NamedCommands.registerCommand("primeShooter", new PrimeShooterCommand(shooter, kicker, Seconds.of(3)));
 
                 NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
@@ -163,6 +166,8 @@ public class RobotContainer {
                 driver.povDown().onTrue(new InstantCommand(() -> slapdown.slapdown(), slapdown));
 
                 driver.rightStick().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
+                driver.leftStick().onTrue(
+                                new InstantCommand(() -> drivetrain.applyRequest(() -> getDriverInput()), drivetrain));
 
                 driver.povRight().whileTrue(Commands.startEnd(
                                 () -> slapdown.setPower(0.1),
@@ -201,10 +206,14 @@ public class RobotContainer {
                 operator.rightTrigger().whileTrue(
                                 new ManualShootCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
 
-                operator.leftTrigger().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
+                operator.rightBumper().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
-                operator.rightBumper().whileTrue(
-                                new ManualShootCommand(shooter, kicker, indexer, () -> ShooterConstants.DefaultRPS));
+                // operator.rightBumper().whileTrue(
+                // new ManualShootCommand(shooter, kicker, indexer, () ->
+                // ShooterConstants.DefaultRPS));
+
+                operator.leftTrigger().whileTrue(
+                                new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
 
                 operator.povUp().onTrue(new PrimeShooterCommand(shooter, kicker, Seconds.of(5)));
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));

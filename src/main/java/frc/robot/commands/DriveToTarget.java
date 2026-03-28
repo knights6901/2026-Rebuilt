@@ -20,7 +20,7 @@ public class DriveToTarget extends Command {
     private final Supplier<Pose2d> targetPoseSupplier;
     private Pose2d targetPose;
 
-    public final Angle ThetaErrorTolerance = Degrees.of(2);
+    public final Angle ThetaErrorTolerance = Degrees.of(7.5);
     public final Distance DisplacementErrorTolerance = Meters.of(0.5);
 
     private Angle thetaError;

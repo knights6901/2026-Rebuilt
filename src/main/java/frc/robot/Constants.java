@@ -155,7 +155,7 @@ public final class Constants {
                 /** The PID and feedforward settings for the slapdown motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.1).withKI(0).withKD(0)
-                                .withKS(0).withKV(0.255);
+                                .withKS(0).withKV(0.27);
         }
 
         public static final class KickerConstants {
