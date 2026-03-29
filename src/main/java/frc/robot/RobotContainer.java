@@ -9,11 +9,8 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.concurrent.BrokenBarrierException;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -170,11 +167,11 @@ public class RobotContainer {
                                 new InstantCommand(() -> drivetrain.applyRequest(() -> getDriverInput()), drivetrain));
 
                 driver.povRight().whileTrue(Commands.startEnd(
-                                () -> slapdown.setPower(0.1),
+                                () -> slapdown.setPower(0.36901),
                                 () -> slapdown.stop(),
                                 slapdown));
                 driver.povLeft().whileTrue(Commands.startEnd(
-                                () -> slapdown.setPower(-0.1),
+                                () -> slapdown.setPower(-0.36901),
                                 () -> slapdown.stop(),
                                 slapdown));
 
@@ -192,6 +189,9 @@ public class RobotContainer {
         /**
          * Binds operator controller inputs to scoring-mechanism commands including
          * shooting, intake, and auto-aim.
+         * 
+         * KICKER, INDEXER, 20
+         * INTAKE 40
          */
         private void configureOperatorBindings() {
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));

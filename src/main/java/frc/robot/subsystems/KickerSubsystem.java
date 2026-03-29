@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static edu.wpi.first.units.Units.Amps;
 import static frc.robot.Constants.KickerConstants.*;
 
 /**
@@ -39,8 +40,8 @@ public class KickerSubsystem extends SubsystemBase {
         m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        m_motorConfig.withCurrentLimits(
-                new CurrentLimitsConfigs().withStatorCurrentLimit(60).withSupplyCurrentLimitEnable(true));
+        m_motorConfig.CurrentLimits = new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(Amps.of(25));
 
         m_motorKicker.getConfigurator().apply(m_motorConfig);
     }

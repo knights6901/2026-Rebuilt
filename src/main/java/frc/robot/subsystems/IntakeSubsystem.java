@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -44,6 +46,8 @@ public class IntakeSubsystem extends SubsystemBase {
         m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        m_motorConfig.CurrentLimits = new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(Amps.of(40));
 
         m_motorIntake.getConfigurator().apply(m_motorConfig);
     }

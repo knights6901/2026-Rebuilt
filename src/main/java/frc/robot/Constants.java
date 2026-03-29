@@ -70,7 +70,7 @@ public final class Constants {
                 /** The desired top speed of the robot in meters per second. */
                 public final static LinearVelocity MaxSpeed = TunerConstants.kSpeedAt12Volts;
                 /** The movement sensitivity multiplier for teleop control (between 0 and 1). */
-                public final static double TeleopMovementSensitivity = .46901;
+                public final static double TeleopMovementSensitivity = .6901;
                 /** The maximum angular turning rate in rotations per second. */
                 public final static AngularVelocity MaxAngularRate = RotationsPerSecond.of(0.5);
         }
@@ -163,7 +163,7 @@ public final class Constants {
                 public final static int KickerMotorId = 37;
 
                 /** The target rotations per second for the kicker motor. */
-                public final static AngularVelocity KickerRPS = RotationsPerSecond.of(90);
+                public final static AngularVelocity KickerRPS = RotationsPerSecond.of(85);
 
                 /** The PID and feedforward settings for the kicker motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
@@ -236,7 +236,7 @@ public final class Constants {
                                                                 // so we can set a relatively low
                                                                 // stator current limit to help avoid brownouts without
                                                                 // impacting performance.
-                                                                .withStatorCurrentLimit(Amps.of(60))
+                                                                .withStatorCurrentLimit(Amps.of(40))
                                                                 .withStatorCurrentLimitEnable(true)
                                                                 .withSupplyCurrentLimit(Amps.of(20))
                                                                 .withSupplyCurrentLimitEnable(true));

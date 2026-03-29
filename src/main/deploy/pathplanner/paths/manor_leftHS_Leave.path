@@ -89,7 +89,7 @@
   "eventMarkers": [
     {
       "name": "slapdownDown",
-      "waypointRelativePos": 0.6461538461538481,
+      "waypointRelativePos": 0.5023632680621203,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
