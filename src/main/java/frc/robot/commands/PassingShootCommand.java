@@ -37,8 +37,8 @@ public class PassingShootCommand extends Command{
     public void execute() {
         Pose2d currentPose = currentPoseSupplier.get();
         Distance targetX = (DriverStation.getAlliance().get() == Alliance.Blue)
-                ? Meters.of(2.306)
-                : Meters.of(14.207);
+                ? Meters.of(4.612)
+                : Meters.of(11.901);
 
         Distance shotGroundDistance = Meters
                 .of(Math.abs(currentPose.getTranslation().getX() - targetX.in(Meters)));

@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.proto.Photon;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -18,6 +19,7 @@ import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -170,12 +172,16 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         PhotonPipelineResult latest = results.get(results.size() - 1);
-        visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(latest)
-                .or(() -> visionPoseEstimator.estimateLowestAmbiguityPose(latest));
-
+        
         if (latest.hasTargets()) {
             List<PhotonTrackedTarget> targets = latest.getTargets();
-
+            PhotonTrackedTarget bestTarget = latest.getBestTarget();
+            
+            if (bestTarget.getPoseAmbiguity() < 0.2) {
+                visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(latest)
+                        .or(() -> visionPoseEstimator.estimateLowestAmbiguityPose(latest));
+            }
+            
             for (PhotonTrackedTarget target : targets) {
                 Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
                 tagPose.ifPresent(visibleTagPoses::add);
@@ -200,6 +206,13 @@ public class VisionSubsystem extends SubsystemBase {
 
     public Optional<Pose2d> getEstimatedPose2d() {
         return visionEstimatedPose.map(pose -> pose.estimatedPose.toPose2d());
+    }
+
+    public void adjustDrivetrainPose() {
+        if (visionEstimatedPose.isPresent()) {
+            drivetrain.addVisionMeasurement(getEstimatedPose2d().get(), visionEstimatedPose.get().timestampSeconds,
+            VecBuilder.fill(0.2, 0.2, 99999));
+        }
     }
 
     public void reseedPose() {
