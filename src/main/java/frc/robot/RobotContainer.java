@@ -95,10 +95,10 @@ public class RobotContainer {
                         kicker.kick(RotationsPerSecond.of(-20));
                 }, shooter, kicker).withTimeout(Seconds.of(1)));
                 NamedCommands.registerCommand("autoAimShoot",
-                                new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
+                                new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
                 NamedCommands.registerCommand("shoot20RPS",
-                                new ManualShootCommand(shooter, kicker, indexer, () -> RotationsPerSecond.of(50)));
-                NamedCommands.registerCommand("primeShooter", new PrimeShooterCommand(shooter, kicker, Seconds.of(3)));
+                                new ShootManualRPSCommand(shooter, kicker, indexer, () -> RotationsPerSecond.of(50)));
+                NamedCommands.registerCommand("primeShooter", new ShootPrimedRPSCommand(shooter, kicker, Seconds.of(3)));
 
                 NamedCommands.registerCommand("intake", new IntakeCommand(intake));
                 NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
@@ -156,11 +156,11 @@ public class RobotContainer {
                                 drivetrain,
                                 () -> getEstimatedVisionPose()));
 
-                if (Robot.isSimulation()) {
-                        driver.x().onTrue(new InstantCommand(() -> {
-                                shooter.updateShotVisualization(drivetrain.getPose(), 7, 60);
-                        })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
-                }
+                // if (Robot.isSimulation()) {
+                //         driver.x().onTrue(new InstantCommand(() -> {
+                //                 shooter.updateShotVisualization(drivetrain.getPose(), 7, 60);
+                //         })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
+                // }
 
                 driver.povUp().onTrue(new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
                 driver.povDown().onTrue(new InstantCommand(() -> slapdown.slapdown(), slapdown));
@@ -184,7 +184,7 @@ public class RobotContainer {
                 }, indexer));
 
                 driver.rightTrigger().whileTrue(
-                                new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
+                                new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -207,7 +207,7 @@ public class RobotContainer {
                 }));
 
                 operator.rightTrigger().whileTrue(
-                                new ManualShootCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
+                                new ShootManualRPSCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
 
                 operator.rightBumper().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
@@ -216,9 +216,9 @@ public class RobotContainer {
                 // ShooterConstants.DefaultRPS));
 
                 operator.leftTrigger().whileTrue(
-                                new AutoAimShootCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
+                                new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
 
-                operator.povUp().onTrue(new PrimeShooterCommand(shooter, kicker, Seconds.of(5)));
+                operator.povUp().onTrue(new ShootPrimedRPSCommand(shooter, kicker, Seconds.of(5)));
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 operator.x().onTrue(new Rotate180Command(drivetrain, () -> drivetrain.getPose()));

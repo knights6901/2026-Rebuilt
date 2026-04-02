@@ -22,7 +22,7 @@ import frc.robot.subsystems.IndexerSubsystem;
  * Requires: {@link ShooterSubsystem}, {@link KickerSubsystem},
  * {@link IndexerSubsystem}
  */
-public class ManualShootCommand extends Command {
+public class ShootManualRPSCommand extends Command {
     private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
@@ -38,7 +38,7 @@ public class ManualShootCommand extends Command {
      * @param supplier a function providing the RPS to shoot at, at any given
      *                 instance
      */
-    public ManualShootCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer,
+    public ShootManualRPSCommand(ShooterSubsystem shooter, KickerSubsystem kicker, IndexerSubsystem indexer,
             Supplier<AngularVelocity> rpsSupplier) {
         this.shooter = shooter;
         this.kicker = kicker;

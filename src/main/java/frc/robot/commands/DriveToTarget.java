@@ -26,6 +26,8 @@ public class DriveToTarget extends Command {
     private Angle thetaError;
     private Distance displacementError;
 
+    private boolean isCompleted;
+
     private final DoublePublisher thetaErrorPub = NetworkTableInstance.getDefault()
             .getTable("DriveToTarget")
             .getDoubleTopic("Error (theta)")
@@ -51,6 +53,8 @@ public class DriveToTarget extends Command {
     public void initialize() {
         targetPose = targetPoseSupplier.get();
         drivetrain.resetPIDControllers();
+
+        isCompleted = false;
     }
 
     @Override
@@ -60,7 +64,11 @@ public class DriveToTarget extends Command {
         thetaError = currentPose.getRotation().minus(targetPose.getRotation()).getMeasure();
         displacementError = Meters.of(currentPose.getTranslation().getDistance(targetPose.getTranslation()));
 
-        drivetrain.driveToPose(currentPose, targetPose);
+        isCompleted = thetaError.abs(Degrees) <= ThetaErrorTolerance.in(Degrees)
+                && displacementError.abs(Meters) <= DisplacementErrorTolerance.in(Meters);
+        if (!isCompleted) {
+            drivetrain.driveToPose(currentPose, targetPose);
+        }
 
         thetaErrorPub.set(thetaError.in(Degrees));
         displacementErrorPub.set(displacementError.in(Meters));
@@ -68,7 +76,6 @@ public class DriveToTarget extends Command {
 
     @Override
     public boolean isFinished() {
-        return thetaError.abs(Degrees) <= ThetaErrorTolerance.in(Degrees)
-                && displacementError.abs(Meters) <= DisplacementErrorTolerance.in(Meters);
+        return isCompleted;
     }
 }

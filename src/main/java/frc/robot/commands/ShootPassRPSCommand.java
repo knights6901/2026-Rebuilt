@@ -13,14 +13,14 @@ import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class PassingShootCommand extends Command{
-        private final ShooterSubsystem shooter;
+public class ShootPassRPSCommand extends Command{
+    private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
 
     private final Supplier<Pose2d> currentPoseSupplier;
 
-    public PassingShootCommand(
+    public ShootPassRPSCommand(
             ShooterSubsystem shooter,
             KickerSubsystem kicker,
             IndexerSubsystem indexer,
@@ -37,13 +37,14 @@ public class PassingShootCommand extends Command{
     public void execute() {
         Pose2d currentPose = currentPoseSupplier.get();
         Distance targetX = (DriverStation.getAlliance().get() == Alliance.Blue)
-                ? Meters.of(4.612)
-                : Meters.of(11.901);
+                ? Meters.of(2.306)
+                : Meters.of(14.207);
 
         Distance shotGroundDistance = Meters
                 .of(Math.abs(currentPose.getTranslation().getX() - targetX.in(Meters)));
+        Distance vertDistance = Meters.of(0);
 
-        shooter.shoot(shooter.calculateRPS(shotGroundDistance));
+        shooter.shoot(shooter.calculateRPS(shotGroundDistance, vertDistance));
 
         indexer.enable();
         kicker.kick();
