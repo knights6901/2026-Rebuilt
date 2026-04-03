@@ -29,7 +29,8 @@ public class DriveToTarget extends Command {
     public final Distance DisplacementErrorTolerance = Meters.of(0.5);
 
     private Angle thetaError;
-    private Distance displacementError;
+    private Distance xError;
+    private Distance yError;
 
     private boolean isCompleted;
 
@@ -38,9 +39,14 @@ public class DriveToTarget extends Command {
             .getDoubleTopic("Error (theta)")
             .publish();
 
-    private final DoublePublisher displacementErrorPub = NetworkTableInstance.getDefault()
+    private final DoublePublisher xErrorPub = NetworkTableInstance.getDefault()
             .getTable("DriveToTarget")
-            .getDoubleTopic("Error (displacement)")
+            .getDoubleTopic("Error (x)")
+            .publish();
+
+    private final DoublePublisher yErrorPub = NetworkTableInstance.getDefault()
+            .getTable("DriveToTarget")
+            .getDoubleTopic("Error (y)")
             .publish();
 
     public DriveToTarget(
@@ -70,17 +76,22 @@ public class DriveToTarget extends Command {
     public void execute() {
         Pose2d currentPose = currentPoseSupplier.get();
 
-        thetaError = currentPose.getRotation().minus(targetPose.getRotation()).getMeasure();
-        displacementError = Meters.of(currentPose.getTranslation().getDistance(targetPose.getTranslation()));
 
-        isCompleted = thetaError.abs(Degrees) <= ThetaErrorTolerance.in(Degrees)
-                && displacementError.abs(Meters) <= DisplacementErrorTolerance.in(Meters);
+        thetaError = currentPose.getRotation().minus(targetPose.getRotation()).getMeasure();
+        xError = Meters.of(currentPose.getTranslation().getX() - targetPose.getTranslation().getX());
+        yError = Meters.of(currentPose.getTranslation().getY() - targetPose.getTranslation().getY());
+
+        isCompleted = (!controllersToUse[0] || xError.abs(Meters) <= DisplacementErrorTolerance.in(Meters))
+           && (!controllersToUse[1] || yError.abs(Meters) <= DisplacementErrorTolerance.in(Meters))
+           && (!controllersToUse[2] || thetaError.abs(Degrees) <= ThetaErrorTolerance.in(Degrees));
+        
         if (!isCompleted) {
             drivetrain.driveToPose(currentPose, targetPose, controllersToUse, driverInput.get());
         }
 
         thetaErrorPub.set(thetaError.in(Degrees));
-        displacementErrorPub.set(displacementError.in(Meters));
+        xErrorPub.set(xError.in(Meters));
+        yErrorPub.set(yError.in(Meters));
     }
 
     @Override
