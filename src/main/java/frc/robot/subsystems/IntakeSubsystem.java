@@ -12,9 +12,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,13 +28,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private boolean intaking = false;
 
-    private final DoublePublisher intakeVelocityPub = NetworkTableInstance.getDefault()
+    public static enum IntakeState {
+        OFF,
+        INTAKING,
+        REVERSED
+    }
+
+    private IntakeState intakeState = IntakeState.OFF;
+
+    private final StringPublisher intakeStatePub = NetworkTableInstance.getDefault()
             .getTable("Intake")
-            .getDoubleTopic("IntakeVelocity")
-            .publish();
-    private final BooleanPublisher intakingPub = NetworkTableInstance.getDefault()
-            .getTable("Intake")
-            .getBooleanTopic("IntakeToggled")
+            .getStringTopic("Intake?")
             .publish();
 
     /**
@@ -102,7 +105,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        intakeVelocityPub.set(m_motorIntake.getVelocity().getValueAsDouble());
-        intakingPub.set(intaking);
+        if (intaking && m_motorIntake.getVelocity().getValueAsDouble() < -1) {
+            intakeState = IntakeState.REVERSED;
+        } else if (intaking) {
+            intakeState = IntakeState.INTAKING;
+        } else {
+            intakeState = IntakeState.OFF;
+        }
+        intakeStatePub.set(intakeState.toString());
     }
 }

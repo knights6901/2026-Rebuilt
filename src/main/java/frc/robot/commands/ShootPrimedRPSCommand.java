@@ -20,7 +20,7 @@ import frc.robot.subsystems.ShooterSubsystem;
  * <p>
  * Requires: {@link ShooterSubsystem}, {@link KickerSubsystem}
  */
-public class PrimeShooterCommand extends Command {
+public class ShootPrimedRPSCommand extends Command {
     private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
 
@@ -34,7 +34,7 @@ public class PrimeShooterCommand extends Command {
      * @param kicker  the kicker subsystem
      * @param timeout the maximum time to run the priming sequence
      */
-    public PrimeShooterCommand(ShooterSubsystem shooter, KickerSubsystem kicker, Time timeout) {
+    public ShootPrimedRPSCommand(ShooterSubsystem shooter, KickerSubsystem kicker, Time timeout) {
         this.shooter = shooter;
         this.kicker = kicker;
         this.timer = new Timer();
@@ -50,6 +50,8 @@ public class PrimeShooterCommand extends Command {
     @Override
     public void initialize() {
         shooter.shoot(RotationsPerSecond.of(30));
+        shooter.shooterState = ShooterSubsystem.ShooterState.PRIMING;
+
         kicker.kick();
         timer.restart();
     }

@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "manor_backToTower"
+            "pathName": "dcmp_leftHS_Leave"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "rotate180"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "slapdownTrigger"
+            "pathName": "dcmp_leftHS_Pass1"
           }
         },
         {
@@ -29,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "autoAimShoot"
+                  "name": "autoPassShoot"
                 }
               },
               {
@@ -42,9 +36,15 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "slapdownTrigger"
+            "pathName": "dcmp_leftHS_PassBtwn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dcmp_leftHS_Pass2"
           }
         },
         {
@@ -54,7 +54,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "autoAimShoot"
+                  "name": "autoPassShoot"
                 }
               },
               {
@@ -70,6 +70,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Middle",
+  "folder": "Left",
   "choreoAuto": false
 }

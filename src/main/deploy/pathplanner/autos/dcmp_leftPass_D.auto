@@ -5,15 +5,21 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "manor_leftHS_Leave"
+            "waitTime": 4.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "manor_leftHS_Return"
+            "pathName": "dcmp_leftHS_Leave"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dcmp_leftHS_Pass1"
           }
         },
         {
@@ -23,32 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "autoAimShoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 3.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "slapdownTrigger"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "autoAimShoot"
+                  "name": "autoPassShoot"
                 }
               },
               {
@@ -61,15 +42,34 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "toggleIntake"
+            "pathName": "dcmp_leftHS_PassBtwn"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "manor_leftHS_Finale"
+            "pathName": "dcmp_leftHS_Pass2"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoPassShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              }
+            ]
           }
         }
       ]

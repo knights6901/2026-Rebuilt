@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "manor_leftHS_Leave"
+            "pathName": "dcmp_backToTower"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "manor_leftHS_Return"
+            "name": "rotate180"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "slapdownTrigger"
           }
         },
         {
@@ -59,35 +65,11 @@
               }
             ]
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "toggleIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "manor_depotExit"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoAimShoot"
-          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Left",
+  "folder": "Middle",
   "choreoAuto": false
 }

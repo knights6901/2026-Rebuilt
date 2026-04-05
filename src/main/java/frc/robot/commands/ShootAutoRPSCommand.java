@@ -32,7 +32,7 @@ import frc.robot.subsystems.KickerSubsystem;
  * Requires: {@link CommandSwerveDrivetrain}, {@link ShooterSubsystem},
  * {@link KickerSubsystem}, {@link IndexerSubsystem}
  */
-public class AutoAimShootCommand extends Command {
+public class ShootAutoRPSCommand extends Command {
     private final ShooterSubsystem shooter;
     private final KickerSubsystem kicker;
     private final IndexerSubsystem indexer;
@@ -47,7 +47,7 @@ public class AutoAimShootCommand extends Command {
      * @param kicker     the kicker subsystem
      * @param indexer    the indexer subsystem
      */
-    public AutoAimShootCommand(
+    public ShootAutoRPSCommand(
             ShooterSubsystem shooter,
             KickerSubsystem kicker,
             IndexerSubsystem indexer,
@@ -71,6 +71,8 @@ public class AutoAimShootCommand extends Command {
                 .of(currentPose.getTranslation().getDistance(hubLocation));
 
         shooter.shoot(shooter.calculateRPS(shotGroundDistance));
+
+        shooter.shooterState = ShooterSubsystem.ShooterState.AUTOHUB;
 
         indexer.enable();
         kicker.kick();

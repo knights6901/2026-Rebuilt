@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.Constants.TunerConstants.TunerSwerveDrivetrain;
-
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -54,6 +53,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+    private final SwerveRequest.FieldCentric m_fieldCentricRequest = new SwerveRequest.FieldCentric();
 
     private final Field2d m_field = new Field2d();
     private final StructPublisher<Pose3d> m_posePublisher = NetworkTableInstance.getDefault()
@@ -217,36 +218,46 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * {@code execute()}).
      *
      * @param targetPose the field-relative pose to drive toward
+     * @param controllersToUse array of booleans indicating which controllers to use:
+     * 
+     * update 4/3/2026 --> should not override driver completely now
      */
-    public void driveToPose(Pose2d currentPose, Pose2d targetPose) {
-        xController.setTolerance(0.1);
-        yController.setTolerance(0.1);
-        thetaController.setTolerance(0.1);
+    public void driveToPose(Pose2d currentPose, Pose2d targetPose, boolean[] controllersToUse, SwerveRequest.FieldCentric driverInput) {
+        xController.setTolerance(0.5);
+        yController.setTolerance(0.5);
+        thetaController.setTolerance(Math.PI / 18);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        double xVel = -xController.calculate(currentPose.getX(), targetPose.getX());
-        double yVel = -yController.calculate(currentPose.getY(), targetPose.getY());
-        double thetaVel = thetaController.calculate(currentPose.getRotation().getRadians(),
-                targetPose.getRotation().getRadians());
+        m_fieldCentricRequest.VelocityX = driverInput.VelocityX;
+        m_fieldCentricRequest.VelocityY = driverInput.VelocityY;
+        m_fieldCentricRequest.RotationalRate = driverInput.RotationalRate;
 
-        setControl(new SwerveRequest.FieldCentric()
-                .withVelocityX(xVel)
-                .withVelocityY(yVel)
-                .withRotationalRate(thetaVel));
+        if (controllersToUse[0]) {
+            m_fieldCentricRequest.VelocityX = -xController.calculate(currentPose.getX(), targetPose.getX());
+        }
+        if (controllersToUse[1]) {;
+            m_fieldCentricRequest.VelocityY = -yController.calculate(currentPose.getY(), targetPose.getY());
+        }
+        if (controllersToUse[2]) {
+            m_fieldCentricRequest.RotationalRate = thetaController.calculate(currentPose.getRotation().getRadians(),
+            targetPose.getRotation().getRadians());
+        }
+
+        setControl(m_fieldCentricRequest);
     }
 
-    public void rotateToPose(Pose2d currentPose, Pose2d targetPose) {
-        thetaController.setTolerance(.01);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    // public void rotateToPose(Pose2d currentPose, Pose2d targetPose) {
+    //     thetaController.setTolerance(.01);
+    //     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        double thetaVel = thetaController.calculate(
-                currentPose.getRotation().getRadians(),
-                targetPose.getRotation().getRadians());
+    //     double thetaVel = thetaController.calculate(
+    //             currentPose.getRotation().getRadians(),
+    //             targetPose.getRotation().getRadians());
 
-        setControl(new SwerveRequest.FieldCentric()
-                .withRotationalDeadband(0.1)
-                .withRotationalRate(thetaVel));
-    }
+    //     setControl(new SwerveRequest.FieldCentric()
+    //             .withRotationalDeadband(0.1)
+    //             .withRotationalRate(thetaVel));
+    // }
 
     public void resetPIDControllers() {
         xController.reset();

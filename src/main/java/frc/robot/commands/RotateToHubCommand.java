@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,7 +16,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Constants.GameConstants;
 
 public class RotateToHubCommand extends DriveToTarget {
-    public RotateToHubCommand(CommandSwerveDrivetrain drivetrain, Supplier<Pose2d> currentPoseSupplier) {
+    public RotateToHubCommand(CommandSwerveDrivetrain drivetrain, Supplier<Pose2d> currentPoseSupplier, Supplier<SwerveRequest.FieldCentric> driverInputSupplier) {
         super(drivetrain, currentPoseSupplier, () -> {
             Pose2d currentPose = currentPoseSupplier.get();
 
@@ -22,10 +24,11 @@ public class RotateToHubCommand extends DriveToTarget {
             Translation2d translation = currentPose.getTranslation();
 
             return new Pose2d(translation, rotation);
-        });
+        }, new boolean[]{false, false, true},
+        driverInputSupplier);
     }
 
-    private static Rotation2d computeHubRotation(Pose2d currentPose) {
+    public static Rotation2d computeHubRotation(Pose2d currentPose) {
         Translation2d targetHub = (DriverStation.getAlliance().get() == Alliance.Blue)
                 ? GameConstants.BlueHubLocation
                 : GameConstants.RedHubLocation;

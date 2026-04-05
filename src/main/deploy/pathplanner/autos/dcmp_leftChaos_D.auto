@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "manor_leftStraight"
+            "pathName": "dcmp_leftStraight"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "manorRightFromLeft"
+            "pathName": "dcmp_RightFromLeft"
           }
         }
       ]
