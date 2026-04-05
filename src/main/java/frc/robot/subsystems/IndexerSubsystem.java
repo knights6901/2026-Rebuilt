@@ -11,8 +11,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 
@@ -23,12 +21,6 @@ import frc.robot.Constants.IndexerConstants;
  */
 public class IndexerSubsystem extends SubsystemBase {
     private final TalonFX m_motorIndexer = new TalonFX(IndexerConstants.MotorId, new CANBus("rio"));
-
-    private final DoublePublisher velocityPub = NetworkTableInstance.getDefault()
-            .getTable("Indexer")
-            .getDoubleTopic("Velocity")
-            .publish();
-
     /**
      * Initializes the indexer subsystem with motor configuration and PID settings.
      */
@@ -61,10 +53,5 @@ public class IndexerSubsystem extends SubsystemBase {
     /** Stops the indexer motor by commanding zero velocity. */
     public void stop() {
         m_motorIndexer.setControl(new NeutralOut());
-    }
-
-    @Override
-    public void periodic() {
-        velocityPub.set(m_motorIndexer.getVelocity().getValueAsDouble());
     }
 }

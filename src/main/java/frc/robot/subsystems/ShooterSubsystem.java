@@ -19,8 +19,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 // import edu.wpi.first.math.geometry.Pose2d;
 // import edu.wpi.first.math.geometry.Rotation3d;
 // import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
@@ -43,20 +43,21 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX m_motorLeft = new TalonFX(ShooterConstants.LeftMotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
-    private final DoublePublisher leftVelocityPub = NetworkTableInstance.getDefault()
-            .getTable("Shooter")
-            .getDoubleTopic("LeftVelocity")
-            .publish();
+    /** The possible states of the shooter mechanism. */
+    public static enum ShooterState {
+        OFF,
+        AUTOHUB,
+        AUTOPASS,
+        PRIMING,
+        MANUAL
+    }
 
-    private final DoublePublisher rightVelocityPub = NetworkTableInstance.getDefault()
+    private final StringPublisher shooterStatePub = NetworkTableInstance.getDefault()
             .getTable("Shooter")
-            .getDoubleTopic("RightVelocity")
+            .getStringTopic("Shooter?")
             .publish();
-
-    private final DoublePublisher shootRPSPub = NetworkTableInstance.getDefault()
-            .getTable("Shooter")
-            .getDoubleTopic("ShootRPS")
-            .publish();
+    
+    public ShooterState shooterState = ShooterState.OFF;
 
     private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
 
@@ -94,6 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Stops the flywheel by applying neutral output to both motors. */
     public void stop() {
         m_motorRight.setControl(new NeutralOut());
+        shooterState = ShooterState.OFF;
     }
 
     public void increaseShootRPS() {
@@ -236,8 +238,10 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Publish current velocities for telemetry
-        rightVelocityPub.set(m_motorRight.getVelocity().getValueAsDouble());
-        leftVelocityPub.set(m_motorLeft.getVelocity().getValueAsDouble());
-        shootRPSPub.set(shootRPS.in(RotationsPerSecond));
+        if (shooterState != ShooterState.MANUAL) {
+            shooterStatePub.set(shooterState.toString());
+        } else {
+            shooterStatePub.set(shootRPS.in(RotationsPerSecond) + " (MANUAL)");
+        }
     }
 }

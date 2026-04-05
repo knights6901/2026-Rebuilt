@@ -28,7 +28,7 @@ public class RotateToHubCommand extends DriveToTarget {
         driverInputSupplier);
     }
 
-    private static Rotation2d computeHubRotation(Pose2d currentPose) {
+    public static Rotation2d computeHubRotation(Pose2d currentPose) {
         Translation2d targetHub = (DriverStation.getAlliance().get() == Alliance.Blue)
                 ? GameConstants.BlueHubLocation
                 : GameConstants.RedHubLocation;

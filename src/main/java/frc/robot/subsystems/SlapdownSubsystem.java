@@ -12,9 +12,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -35,21 +32,6 @@ public class SlapdownSubsystem extends SubsystemBase {
 
     /** The current state of the slapdown mechanism. */
     public SlapdownState state = SlapdownState.UP;
-
-    private final BooleanPublisher slapdownPub = NetworkTableInstance.getDefault()
-            .getTable("Slapdown")
-            .getBooleanTopic("SlapdownDeployed")
-            .publish();
-
-    private final DoublePublisher slapdownPositionPub = NetworkTableInstance.getDefault()
-            .getTable("Slapdown")
-            .getDoubleTopic("SlapdownPosition")
-            .publish();
-
-    private final DoublePublisher testPub = NetworkTableInstance.getDefault()
-            .getTable("Slapdown")
-            .getDoubleTopic("SlapdownError")
-            .publish();
 
     /**
      * 
@@ -118,13 +100,5 @@ public class SlapdownSubsystem extends SubsystemBase {
     /* Returns the current position of the slapdown motor. */
     public Angle getSlapdownPosition() {
         return m_motorSlapdown.getPosition().getValue();
-    }
-
-    @Override
-    public void periodic() {
-        slapdownPub.set(state == SlapdownState.DOWN);
-        slapdownPositionPub.set(getSlapdownPosition().in(Degrees));
-        testPub.set(
-                (state == SlapdownState.DOWN ? IntakePosition : HomePosition).minus(getSlapdownPosition()).in(Degrees));
     }
 }

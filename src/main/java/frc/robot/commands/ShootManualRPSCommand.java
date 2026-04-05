@@ -51,6 +51,8 @@ public class ShootManualRPSCommand extends Command {
     @Override
     public void execute() {
         shooter.shoot(rpsSupplier.get());
+        shooter.shooterState = ShooterSubsystem.ShooterState.MANUAL;
+
         indexer.enable();
         kicker.kick();
     }

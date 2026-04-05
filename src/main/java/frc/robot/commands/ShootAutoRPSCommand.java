@@ -72,6 +72,8 @@ public class ShootAutoRPSCommand extends Command {
 
         shooter.shoot(shooter.calculateRPS(shotGroundDistance));
 
+        shooter.shooterState = ShooterSubsystem.ShooterState.AUTOHUB;
+
         indexer.enable();
         kicker.kick();
     }

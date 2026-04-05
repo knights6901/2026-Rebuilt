@@ -45,6 +45,7 @@ public class ShootPassRPSCommand extends Command{
         Distance vertDistance = Meters.of(0);
 
         shooter.shoot(shooter.calculateRPS(shotGroundDistance, vertDistance));
+        shooter.shooterState = ShooterSubsystem.ShooterState.AUTOPASS;
 
         indexer.enable();
         kicker.kick();

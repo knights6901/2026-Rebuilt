@@ -50,6 +50,8 @@ public class ShootPrimedRPSCommand extends Command {
     @Override
     public void initialize() {
         shooter.shoot(RotationsPerSecond.of(30));
+        shooter.shooterState = ShooterSubsystem.ShooterState.PRIMING;
+
         kicker.kick();
         timer.restart();
     }
