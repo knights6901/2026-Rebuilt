@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "manor_leftBetterThanNASA_return"
+            "pathName": "dcmp_leftHS_returnBUMP"
           }
         },
         {
@@ -21,15 +21,40 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.5
+                  "name": "autoAimShoot"
                 }
               },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "slapdownTrigger"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
                   "name": "autoAimShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
                 }
               }
             ]
@@ -39,12 +64,6 @@
           "type": "path",
           "data": {
             "pathName": "manor_leftBetterThanNASA_finale"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
           }
         }
       ]
