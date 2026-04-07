@@ -87,12 +87,12 @@ public final class Constants {
                  * The default rotations per second of the shooter to shoot a ball (tested
                  * experimentally).
                  */
-                public final static AngularVelocity DefaultRPS = RotationsPerSecond.of(30.6901);
+                public final static AngularVelocity DefaultRPS = RotationsPerSecond.of(36.901);
 
                 /** The PID and feedforward settings for the shooter motors. */
                 public final static Slot0Configs Gains = new Slot0Configs()
-                                .withKP(0.35).withKI(0).withKD(0.01)
-                                .withKS(0).withKV(0.115);
+                                .withKP(0.36901).withKI(0).withKD(0.01)
+                                .withKS(0).withKV(0.116);
 
                 /** The strength of gravity (9.81 m/s²). */
                 public final static LinearAcceleration G = MetersPerSecondPerSecond.of(9.81);
