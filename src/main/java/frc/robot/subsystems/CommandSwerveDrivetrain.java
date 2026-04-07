@@ -54,8 +54,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    private final SwerveRequest.FieldCentric m_fieldCentricRequest = new SwerveRequest.FieldCentric();
-
     private final Field2d m_field = new Field2d();
     private final StructPublisher<Pose3d> m_posePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("RobotPose", Pose3d.struct).publish();
@@ -212,54 +210,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         configureAutoBuilder();
     }
 
+    public double calculateXVelocity(double currentX, double targetX) {
+        return -xController.calculate(currentX, targetX);
+    }
+
+    public double calculateYVelocity(double currentY, double targetY) {
+        return -yController.calculate(currentY, targetY);
+    }
+
+    public double calculateRotationalRate(double currentTheta, double targetTheta) {
+        return thetaController.calculate(currentTheta, targetTheta);
+    }
+
     /**
-     * Drives the robot toward a target pose using PID controllers on
-     * x, y, and heading. Intended to be called repeatedly (e.g. in
-     * {@code execute()}).
-     *
-     * @param targetPose the field-relative pose to drive toward
-     * @param controllersToUse array of booleans indicating which controllers to use:
-     * 
-     * update 4/3/2026 --> should not override driver completely now
+     * Resets the PID controllers with appropriate tolerances and continuous input
+     * settings for rotation. Should be called whenever the target pose is updated
+     * for path following or the DriveToTarget command.
      */
-    public void driveToPose(Pose2d currentPose, Pose2d targetPose, boolean[] controllersToUse, SwerveRequest.FieldCentric driverInput) {
+    public void resetPIDControllers() {
         xController.setTolerance(0.5);
         yController.setTolerance(0.5);
         thetaController.setTolerance(Math.PI / 18);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        m_fieldCentricRequest.VelocityX = driverInput.VelocityX;
-        m_fieldCentricRequest.VelocityY = driverInput.VelocityY;
-        m_fieldCentricRequest.RotationalRate = driverInput.RotationalRate;
-
-        if (controllersToUse[0]) {
-            m_fieldCentricRequest.VelocityX = -xController.calculate(currentPose.getX(), targetPose.getX());
-        }
-        if (controllersToUse[1]) {;
-            m_fieldCentricRequest.VelocityY = -yController.calculate(currentPose.getY(), targetPose.getY());
-        }
-        if (controllersToUse[2]) {
-            m_fieldCentricRequest.RotationalRate = thetaController.calculate(currentPose.getRotation().getRadians(),
-            targetPose.getRotation().getRadians());
-        }
-
-        setControl(m_fieldCentricRequest);
-    }
-
-    // public void rotateToPose(Pose2d currentPose, Pose2d targetPose) {
-    //     thetaController.setTolerance(.01);
-    //     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    //     double thetaVel = thetaController.calculate(
-    //             currentPose.getRotation().getRadians(),
-    //             targetPose.getRotation().getRadians());
-
-    //     setControl(new SwerveRequest.FieldCentric()
-    //             .withRotationalDeadband(0.1)
-    //             .withRotationalRate(thetaVel));
-    // }
-
-    public void resetPIDControllers() {
         xController.reset();
         yController.reset();
         thetaController.reset();

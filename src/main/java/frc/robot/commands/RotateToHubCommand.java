@@ -24,8 +24,7 @@ public class RotateToHubCommand extends DriveToTarget {
             Translation2d translation = currentPose.getTranslation();
 
             return new Pose2d(translation, rotation);
-        }, new boolean[]{false, false, true},
-        driverInputSupplier);
+        }, driverInputSupplier, Axis.THETA);
     }
 
     public static Rotation2d computeHubRotation(Pose2d currentPose) {
