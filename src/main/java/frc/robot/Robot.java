@@ -18,18 +18,29 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
 
+    // private boolean currentlyLogging = false;
+
     /* log and replay timestamp and joystick data */
     private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
             .withTimestampReplay()
             .withJoystickReplay();
 
     public Robot() {
-        DataLogManager.start();
         m_robotContainer = new RobotContainer();
+
+        // comment out later
+        DataLogManager.start();
     }
 
     @Override
     public void robotPeriodic() {
+        // if (DriverStation.isFMSAttached() && !currentlyLogging) {
+        //     DataLogManager.start();
+        //     currentlyLogging = true;
+        // } else if (!DriverStation.isFMSAttached() && currentlyLogging) {
+        //     DataLogManager.stop();
+        //     currentlyLogging = false;
+        // }
         m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
     }
