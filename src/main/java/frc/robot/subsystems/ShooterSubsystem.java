@@ -162,7 +162,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public AngularVelocity getShootRPS(double axisInput) {
-        return RotationsPerSecond.of(ShooterConstants.DampingCoefficient * axisInput);
+        return RotationsPerSecond.of(ShooterConstants.MaxRPS.times(axisInput));
     }
 
     // /**
