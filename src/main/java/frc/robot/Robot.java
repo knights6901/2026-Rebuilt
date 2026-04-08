@@ -6,10 +6,12 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
+import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -17,6 +19,15 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private final RobotContainer m_robotContainer;
+
+    private final StringPublisher phaseNamePublisher = NetworkTableInstance.getDefault()
+            .getTable("Match Time")
+            .getStringTopic("Phase Name")
+            .publish();
+    private final DoublePublisher phaseTimePublisher = NetworkTableInstance.getDefault()
+            .getTable("Match Time")
+            .getDoubleTopic("Phase Time")
+            .publish();
 
     // private boolean currentlyLogging = false;
 
@@ -64,11 +75,13 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
+
+        phaseNamePublisher.set("Auton");
     }
 
     @Override
     public void autonomousPeriodic() {
-        SmartDashboard.putNumber("Time", DriverStation.getMatchTime());
+        phaseTimePublisher.set(DriverStation.getMatchTime());
     }
 
     @Override
@@ -80,11 +93,50 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
+
+        phaseNamePublisher.set("Teleop");
     }
 
     @Override
     public void teleopPeriodic() {
-        SmartDashboard.putNumber("Time", DriverStation.getMatchTime());
+        double matchTime = DriverStation.getMatchTime();
+        String phaseName = "Unknown";
+        double phaseTime = 0;
+
+
+        if (DriverStation.isFMSAttached()) {
+            String autonWinner = DriverStation.getGameSpecificMessage();
+            String alliance = DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? "R" : "B";
+
+            boolean validData = autonWinner.length() > 0 && (alliance.equals("R") || alliance.equals("B"));
+            
+            
+            if (matchTime > 130) {
+                phaseTime = matchTime - 130;
+                phaseName = "Transition";
+            } else if (matchTime > 105) {
+                phaseTime = matchTime - 105;
+                phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "!!!!ACTIVE!!!!") : "Error LOL";
+            } else if (matchTime > 80) {
+                phaseTime = matchTime - 80;
+                phaseName = validData ? (autonWinner.equals(alliance) ? "!!!!ACTIVE!!!!" : "Inactive") : "Error LOL";
+            } else if (matchTime > 55) {
+                phaseTime = matchTime - 55;
+                phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "!!!!ACTIVE!!!!") : "Error LOL";
+            } else if (matchTime > 30) {
+                phaseTime = matchTime - 30;
+                phaseName = validData ? (autonWinner.equals(alliance) ? "!!!!ACTIVE!!!!" : "Inactive") : "Error LOL";
+            } else {
+                phaseTime = matchTime;
+                phaseName = "!!!!ENDGAME!!!!";
+            }
+        } else {
+            phaseName = "Testing";
+            phaseTime = matchTime;
+        }
+
+        phaseNamePublisher.set(phaseName);
+        phaseTimePublisher.set(phaseTime);
     }
 
     @Override
