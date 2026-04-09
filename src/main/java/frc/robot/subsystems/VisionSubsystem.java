@@ -202,15 +202,16 @@ public class VisionSubsystem extends SubsystemBase {
 
             if (DriverStation.isTeleop()) {
                 adjustDrivetrainPose();
+
+                if (!hasSeededPose) {
+                    hasSeededPose = true;
+
+                    Translation2d translation = getEstimatedPose2d().get().getTranslation();
+
+                    drivetrain.resetTranslation(translation);
+                }
             }
-
-            if (!hasSeededPose) {
-                hasSeededPose = true;
-
-                Translation2d translation = getEstimatedPose2d().get().getTranslation();
-
-                drivetrain.resetTranslation(translation);
-            }
+            
         }
 
         m_hubRotationPublisher.set(computeHubRotation(drivetrain.getState().Pose).getDegrees());
