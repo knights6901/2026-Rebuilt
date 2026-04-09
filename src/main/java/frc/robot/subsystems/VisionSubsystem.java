@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -198,7 +199,10 @@ public class VisionSubsystem extends SubsystemBase {
 
         if (visionEstimatedPose.isPresent()) {
             m_visionfield.setRobotPose(getEstimatedPose2d().get());
-            adjustDrivetrainPose();
+
+            if (DriverStation.isTeleop()) {
+                adjustDrivetrainPose();
+            }
 
             if (!hasSeededPose) {
                 hasSeededPose = true;
