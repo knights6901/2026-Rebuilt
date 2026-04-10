@@ -94,7 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Stops the flywheel by applying neutral output to both motors. */
     public void stop() {
-        m_motorRight.setControl(new NeutralOut());
+        m_motorRight.setControl(new NeutralOut()); 
+        // m_motorRight.setControl(new VelocityVoltage(0));
         shooterState = ShooterState.OFF;
     }
 

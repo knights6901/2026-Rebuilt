@@ -81,10 +81,9 @@ public class RobotContainer {
 
                 dcmp_autoChooser.addOption("dcmp_rightChaos_D", new PathPlannerAuto("dcmp_leftChaos_D", true));
                 dcmp_autoChooser.addOption("dcmp_rightChaos_ND", new PathPlannerAuto("dcmp_leftChaos_ND", true));
-                
+
                 dcmp_autoChooser.addOption("dcmp_rightPass_D", new PathPlannerAuto("dcmp_leftPass_D", true));
                 dcmp_autoChooser.addOption("dcmp_rightPass_ND", new PathPlannerAuto("dcmp_leftPass_ND", true));
-
 
                 SmartDashboard.putData("Auto Chooser", dcmp_autoChooser);
         }
@@ -94,13 +93,14 @@ public class RobotContainer {
                 NamedCommands.registerCommand("stopSubsystems",
                                 new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
-                NamedCommands.registerCommand("reverseShoot", new RunCommand(() -> {
-                        shooter.shoot(RotationsPerSecond.of(-20));
-                        kicker.kick(RotationsPerSecond.of(-20));
-                }, shooter, kicker).withTimeout(Seconds.of(1)));
+                // NamedCommands.registerCommand("reverseShoot", new RunCommand(() -> {
+                //         shooter.shoot(RotationsPerSecond.of(-20));
+                //         kicker.kick(RotationsPerSecond.of(-20));
+                // }, shooter, kicker).withTimeout(Seconds.of(1)));
                 NamedCommands.registerCommand("autoAimShoot",
                                 new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
-                NamedCommands.registerCommand("autoPassShoot", new ShootPassRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
+                NamedCommands.registerCommand("autoPassShoot",
+                                new ShootPassRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
                 NamedCommands.registerCommand("fiftyRPSShoot",
                                 new ShootManualRPSCommand(shooter, kicker, indexer, () -> RotationsPerSecond.of(50)));
                 NamedCommands.registerCommand("primeShooter", new ShootPrimedRPSCommand(shooter, Seconds.of(3)));
@@ -110,8 +110,10 @@ public class RobotContainer {
                 NamedCommands.registerCommand("toggleIntake", new ToggleIntakeCommand(intake));
 
                 NamedCommands.registerCommand("rotateToHub",
-                                new RotateToHubCommand(drivetrain, () -> getEstimatedVisionPose(), this::nullDriverInput));
-                NamedCommands.registerCommand("rotate180", new Rotate180Command(drivetrain, drivetrain::getPose, this::nullDriverInput));
+                                new RotateToHubCommand(drivetrain, () -> getEstimatedVisionPose(),
+                                                this::nullDriverInput));
+                NamedCommands.registerCommand("rotate180",
+                                new Rotate180Command(drivetrain, drivetrain::getPose, this::nullDriverInput));
                 NamedCommands.registerCommand("slapdownTrigger", new ToggleSlapdownCommand(slapdown));
         }
 
@@ -162,9 +164,9 @@ public class RobotContainer {
                                 this::getDriverInput));
 
                 // if (Robot.isSimulation()) {
-                //         driver.x().onTrue(new InstantCommand(() -> {
-                //                 shooter.updateShotVisualization(drivetrain.getPose(), 7, 60);
-                //         })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
+                // driver.x().onTrue(new InstantCommand(() -> {
+                // shooter.updateShotVisualization(drivetrain.getPose(), 7, 60);
+                // })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
                 // }
 
                 driver.povUp().onTrue(new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
@@ -184,7 +186,7 @@ public class RobotContainer {
                                 slapdown));
 
                 driver.leftTrigger().whileTrue(
-                                new ShootManualRPSCommand(shooter, kicker, indexer, () -> shooter.getAPManualRPS(driver.getLeftTriggerAxis())));
+                                new ShootManualRPSCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
 
                 driver.rightTrigger().whileTrue(
                                 new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));

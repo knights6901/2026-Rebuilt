@@ -113,12 +113,7 @@ public final class Constants {
                 public final static int MotorId = 40;
 
                 /** The target rotations per second for the indexer motor during operation. */
-                public final static AngularVelocity Power = RotationsPerSecond.of(85);
-
-                /** The PID and feedforward settings for the indexer motor. */
-                public final static Slot0Configs Gains = new Slot0Configs()
-                                .withKP(0.15).withKI(0).withKD(0.015)
-                                .withKS(0).withKV(0.15);
+                public final static double Power = .85;
         }
 
         public static final class IntakeConstants {
@@ -129,7 +124,7 @@ public final class Constants {
                 public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(100);
 
                 /** The gear ratio of the intake system. */
-                public final static double GearRatio = 5.0;
+                public final static double GearRatio = 9.0;
 
                 /** The PID and feedforward settings for the intake motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
@@ -162,13 +157,7 @@ public final class Constants {
                 /** The CAN ID of the kicker motor. */
                 public final static int KickerMotorId = 37;
 
-                /** The target rotations per second for the kicker motor. */
-                public final static AngularVelocity KickerRPS = RotationsPerSecond.of(85);
-
-                /** The PID and feedforward settings for the kicker motor. */
-                public final static Slot0Configs Gains = new Slot0Configs()
-                                .withKP(0.15).withKI(0).withKD(0.015)
-                                .withKS(0).withKV(0.15);
+                public final static double KickerPower = 0.85;
         }
 
         public static final class PeriodicReverseIndexerConstants {

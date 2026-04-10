@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -24,7 +25,6 @@ import static frc.robot.Constants.KickerConstants.*;
  */
 public class KickerSubsystem extends SubsystemBase {
     private final TalonFX m_motorKicker = new TalonFX(KickerMotorId, new CANBus("rio"));
-    private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private final DoublePublisher kickerPub = NetworkTableInstance.getDefault()
             .getTable("Kicker")
@@ -37,7 +37,6 @@ public class KickerSubsystem extends SubsystemBase {
      */
     public KickerSubsystem() {
         TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = Gains;
         m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         m_motorConfig.CurrentLimits = new CurrentLimitsConfigs()
@@ -46,20 +45,12 @@ public class KickerSubsystem extends SubsystemBase {
         m_motorKicker.getConfigurator().apply(m_motorConfig);
     }
 
-    public void kick(AngularVelocity rps) {
-        m_motorKicker.setControl(m_request.withVelocity(rps));
-    }
-
     /**
      * Spins the kicker wheel at the configured velocity to feed a game piece into
      * the shooter.
      */
     public void kick() {
-        kick(KickerRPS);
-    }
-
-    public void enableInverted() {
-        kick(KickerRPS.times(-0.25));
+        m_motorKicker.setControl(new DutyCycleOut(KickerPower));
     }
 
     /** Stops the kicker motor by applying neutral output. */

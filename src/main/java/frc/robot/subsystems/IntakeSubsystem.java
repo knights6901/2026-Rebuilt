@@ -6,6 +6,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -58,6 +59,7 @@ public class IntakeSubsystem extends SubsystemBase {
     /** Runs the intake rollers inward at the default velocity. */
     public void intake() {
         intake(IntakeRPS);
+        // m_motorIntake.setControl(new DutyCycleOut(.85));
     }
 
     /**
