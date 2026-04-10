@@ -1,21 +1,17 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 
 /**
  * Subsystem controlling the intake rollers, used to pull game pieces into
@@ -23,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * velocity control.
  */
 public class IntakeSubsystem extends SubsystemBase {
-    private final TalonFX m_motorIntake = new TalonFX(IntakeMotorId, new CANBus("rio"));
+    private final TalonFX m_motorIntake = new TalonFX(MotorId, new CANBus("rio"));
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     private boolean intaking = false;
@@ -45,14 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Initializes the intake subsystem with motor configuration and PID settings.
      */
     public IntakeSubsystem() {
-        TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = Gains;
-        m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        m_motorConfig.CurrentLimits = new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(Amps.of(40));
-
-        m_motorIntake.getConfigurator().apply(m_motorConfig);
+        m_motorIntake.getConfigurator().apply(IntakeConstants.MotorConfig);
     }
 
     /** Runs the intake rollers inward at the default velocity. */
