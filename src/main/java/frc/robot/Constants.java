@@ -19,6 +19,8 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.hardware.*;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -102,10 +104,17 @@ public final class Constants {
                 /** The vertical position of the ball exit point from the shooter. */
                 public final static Distance BallExtakeHeight = Meters.of(0.432);
                 /** The angle at which the shooter is mounted above the horizontal plane. */
-                public final static Angle Pitch = Degrees.of(73);
+                public final static Angle Pitch = Degrees.of(71.5);
 
                 /** The scaling constant to correct for damping in the shooter mechanism. */
                 public final static double DampingCoefficient = 2.2 - 0.05;
+
+                /** The complete motor configuration for the shooter system. */
+                public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
+                                .withSlot0(ShooterConstants.Gains)
+                                .withMotorOutput(new MotorOutputConfigs()
+                                                .withNeutralMode(NeutralModeValue.Coast)
+                                                .withInverted(InvertedValue.CounterClockwise_Positive));
         }
 
         public static final class IndexerConstants {
@@ -114,11 +123,19 @@ public final class Constants {
 
                 /** The target rotations per second for the indexer motor during operation. */
                 public final static double Power = .85;
+
+                /** The complete motor configuration for the indexer system. */
+                public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
+                                .withMotorOutput(new MotorOutputConfigs()
+                                                .withNeutralMode(NeutralModeValue.Coast)
+                                                .withInverted(InvertedValue.Clockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withSupplyCurrentLimit(Amps.of(20)));
         }
 
         public static final class IntakeConstants {
                 /** The CAN ID of the intake motor. */
-                public final static int IntakeMotorId = 32;
+                public final static int MotorId = 32;
 
                 /** The rotations per second for actively intaking balls. */
                 public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(100);
@@ -131,11 +148,19 @@ public final class Constants {
                                 .withKP(0.5).withKI(0).withKD(0)
                                 .withKS(0).withKV(0.15);
 
+                /** The complete motor configuration for the intake system. */
+                public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
+                                .withSlot0(IntakeConstants.Gains)
+                                .withMotorOutput(new MotorOutputConfigs()
+                                                .withNeutralMode(NeutralModeValue.Brake)
+                                                .withInverted(InvertedValue.Clockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withSupplyCurrentLimit(Amps.of(40)));
         }
 
         public static final class SlapdownConstants {
                 /** The CAN ID of the slapdown motor. */
-                public final static int SlapdownMotorId = 31;
+                public final static int MotorId = 31;
 
                 /** The position to lower the slapdown to when intaking a ball. */
                 public final static Angle IntakePosition = Rotations.of(-60.901);
@@ -151,13 +176,28 @@ public final class Constants {
                 public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.1).withKI(0).withKD(0.1)
                                 .withKS(0).withKV(0.27);
+
+                /** The complete motor configuration for the slapdown system. */
+                public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
+                                .withSlot0(SlapdownConstants.Gains)
+                                .withMotorOutput(new MotorOutputConfigs()
+                                                .withNeutralMode(NeutralModeValue.Brake)
+                                                .withInverted(InvertedValue.Clockwise_Positive));
         }
 
         public static final class KickerConstants {
                 /** The CAN ID of the kicker motor. */
-                public final static int KickerMotorId = 37;
-
+                public final static int MotorId = 37;
+                
                 public final static double KickerPower = 0.85;
+
+                /** The complete motor configuration for the kicker system. */
+                public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
+                                .withMotorOutput(new MotorOutputConfigs()
+                                                .withNeutralMode(NeutralModeValue.Coast)
+                                                .withInverted(InvertedValue.Clockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withSupplyCurrentLimit(Amps.of(25)));
         }
 
         public static final class PeriodicReverseIndexerConstants {
@@ -219,21 +259,21 @@ public final class Constants {
                 // documentation.
                 private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration()
                                 .withCurrentLimits(new CurrentLimitsConfigs()
-                                        .withStatorCurrentLimit(Amps.of(80))
-                                        .withStatorCurrentLimitEnable(true)
-                                        .withSupplyCurrentLimit(Amps.of(40))
-                                        .withSupplyCurrentLimitEnable(true));
+                                                .withStatorCurrentLimit(Amps.of(80))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(40))
+                                                .withSupplyCurrentLimitEnable(true));
 
                 private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
                                 .withCurrentLimits(new CurrentLimitsConfigs()
-                                        // Swerve azimuth does not require much torque output,
-                                        // so we can set a relatively low
-                                        // stator current limit to help avoid brownouts without
-                                        // impacting performance.
-                                        .withStatorCurrentLimit(Amps.of(40))
-                                        .withStatorCurrentLimitEnable(true)
-                                        .withSupplyCurrentLimit(Amps.of(20))
-                                        .withSupplyCurrentLimitEnable(true));
+                                                // Swerve azimuth does not require much torque output,
+                                                // so we can set a relatively low
+                                                // stator current limit to help avoid brownouts without
+                                                // impacting performance.
+                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(20))
+                                                .withSupplyCurrentLimitEnable(true));
 
                 private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
                 // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs

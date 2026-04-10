@@ -4,16 +4,14 @@ import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.SlapdownConstants.*;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.SlapdownConstants;
 
 /**
  * Subsystem controlling the slapdown mechanism, a hinged arm that deploys
@@ -27,7 +25,7 @@ public class SlapdownSubsystem extends SubsystemBase {
         DOWN
     }
 
-    private final TalonFX m_motorSlapdown = new TalonFX(SlapdownMotorId, new CANBus("rio"));
+    private final TalonFX m_motorSlapdown = new TalonFX(MotorId, new CANBus("rio"));
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     /** The current state of the slapdown mechanism. */
@@ -39,12 +37,7 @@ public class SlapdownSubsystem extends SubsystemBase {
      * Resets the motor position to home.
      */
     public SlapdownSubsystem() {
-        TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = Gains;
-        m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-        m_motorSlapdown.getConfigurator().apply(m_motorConfig);
+        m_motorSlapdown.getConfigurator().apply(SlapdownConstants.MotorConfig);
         resetSlapdownPosition();
     }
 

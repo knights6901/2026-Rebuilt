@@ -6,19 +6,13 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation3d;
-// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -56,7 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
             .getTable("Shooter")
             .getStringTopic("Shooter?")
             .publish();
-    
+
     public ShooterState shooterState = ShooterState.OFF;
 
     private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
@@ -66,13 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * left motor to follow the right motor in the opposed direction.
      */
     public ShooterSubsystem() {
-        TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = ShooterConstants.Gains;
-        m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-        m_motorRight.getConfigurator().apply(m_motorConfig);
-        m_motorLeft.getConfigurator().apply(m_motorConfig);
+        m_motorRight.getConfigurator().apply(ShooterConstants.MotorConfig);
+        m_motorLeft.getConfigurator().apply(ShooterConstants.MotorConfig);
 
         m_motorLeft.setControl(new Follower(ShooterConstants.RightMotorId, MotorAlignmentValue.Opposed));
     }
@@ -102,11 +91,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public void increaseShootRPS() {
         shootRPS = shootRPS.plus(RotationsPerSecond.of(1));
     }
-    
+
     public void decreaseShootRPS() {
         shootRPS = shootRPS.minus(RotationsPerSecond.of(1));
     }
-    
+
     /**
      * Calculates the required flywheel angular velocity to hit the hub target at
      * the given horizontal distance, using projectile kinematics with a fixed
@@ -132,13 +121,13 @@ public class ShooterSubsystem extends SubsystemBase {
         return RotationsPerSecond.of(ShooterConstants.DampingCoefficient * rps);
     }
 
-        /**
+    /**
      * Calculates the required flywheel angular velocity to hit the hub target at
      * the given horizontal distance, using projectile kinematics with a fixed
      * launch pitch angle.
      *
      * @param groundDistance horizontal distance from the robot to the target
-     * @param targetHeight  vertical height of the target from the floor
+     * @param targetHeight   vertical height of the target from the floor
      * @return the flywheel angular velocity needed to reach the target
      */
     public AngularVelocity calculateRPS(Distance groundDistance, Distance targetHeight) {
@@ -167,66 +156,68 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     // /**
-    //  * Publishes a 3D trajectory to NetworkTables for dashboard visualization.
-    //  *
-    //  * <p>
-    //  * Computes a parabolic ball path by combining the robot's field-relative
-    //  * velocity with the shot's launch velocity, then samples positions along the
-    //  * arc at fixed time steps.
-    //  *
-    //  * @param robotPose          current field-relative pose of the robot
-    //  * @param v0_mag             launch speed magnitude in m/s
-    //  * @param launchAngleDegrees angle above horizontal at which the ball is
-    //  *                           launched
-    //  */
-    // public void updateShotVisualization(Pose2d robotPose, double v0_mag, double launchAngleDegrees) {
-    //     // 1. Fetch robot pose (The starting point)
-    //     double robotX = robotPose.getX();
-    //     double robotY = robotPose.getY();
+    // * Publishes a 3D trajectory to NetworkTables for dashboard visualization.
+    // *
+    // * <p>
+    // * Computes a parabolic ball path by combining the robot's field-relative
+    // * velocity with the shot's launch velocity, then samples positions along the
+    // * arc at fixed time steps.
+    // *
+    // * @param robotPose current field-relative pose of the robot
+    // * @param v0_mag launch speed magnitude in m/s
+    // * @param launchAngleDegrees angle above horizontal at which the ball is
+    // * launched
+    // */
+    // public void updateShotVisualization(Pose2d robotPose, double v0_mag, double
+    // launchAngleDegrees) {
+    // // 1. Fetch robot pose (The starting point)
+    // double robotX = robotPose.getX();
+    // double robotY = robotPose.getY();
 
-    //     // placeholders cuz i can't fetch them right now
-    //     double robotVx = Telemetry.currentSpeeds.vxMetersPerSecond;
-    //     double robotVy = Telemetry.currentSpeeds.vyMetersPerSecond;
+    // // placeholders cuz i can't fetch them right now
+    // double robotVx = Telemetry.currentSpeeds.vxMetersPerSecond;
+    // double robotVy = Telemetry.currentSpeeds.vyMetersPerSecond;
 
-    //     // 2. Calculate the Shot's initial velocity (without robot movement)
-    //     double launchAngleRad = Math.toRadians(launchAngleDegrees);
-    //     double headingRad = robotPose.getRotation().getRadians();
+    // // 2. Calculate the Shot's initial velocity (without robot movement)
+    // double launchAngleRad = Math.toRadians(launchAngleDegrees);
+    // double headingRad = robotPose.getRotation().getRadians();
 
-    //     double shotVx = v0_mag * Math.cos(launchAngleRad) * Math.cos(headingRad);
-    //     double shotVy = v0_mag * Math.cos(launchAngleRad) * Math.sin(headingRad);
-    //     double shotVz = v0_mag * Math.sin(launchAngleRad);
+    // double shotVx = v0_mag * Math.cos(launchAngleRad) * Math.cos(headingRad);
+    // double shotVy = v0_mag * Math.cos(launchAngleRad) * Math.sin(headingRad);
+    // double shotVz = v0_mag * Math.sin(launchAngleRad);
 
-    //     // 3. Combine them!
-    //     double totalVx = shotVx + robotVx;
-    //     double totalVy = shotVy + robotVy;
-    //     double totalVz = shotVz;
+    // // 3. Combine them!
+    // double totalVx = shotVx + robotVx;
+    // double totalVy = shotVy + robotVy;
+    // double totalVz = shotVz;
 
-    //     // 3. Create a list of Poses (the "streak")
-    //     int samples = 20; // How many points to draw
-    //     double dt = 0.1; // Time step between points (0.1 seconds)
-    //     Pose3d[] trajectory = new Pose3d[samples];
+    // // 3. Create a list of Poses (the "streak")
+    // int samples = 20; // How many points to draw
+    // double dt = 0.1; // Time step between points (0.1 seconds)
+    // Pose3d[] trajectory = new Pose3d[samples];
 
-    //     for (int i = 0; i < samples; i++) {
-    //         double t = i * dt;
+    // for (int i = 0; i < samples; i++) {
+    // double t = i * dt;
 
-    //         // 4. Basic Kinematics (x = x0 + vt, z = z0 + vt - 0.5gt^2)
-    //         double currX = robotX + (totalVx * t);
-    //         double currY = robotY + (totalVy * t);
-    //         double currZ = 0.5 + (totalVz * t) - (0.5 * 9.81 * t * t); // Starting 0.5m high
+    // // 4. Basic Kinematics (x = x0 + vt, z = z0 + vt - 0.5gt^2)
+    // double currX = robotX + (totalVx * t);
+    // double currY = robotY + (totalVy * t);
+    // double currZ = 0.5 + (totalVz * t) - (0.5 * 9.81 * t * t); // Starting 0.5m
+    // high
 
-    //         // Clamp Z so it doesn't go through the floor in the visualizer
-    //         if (currZ < 0)
-    //             currZ = 0;
+    // // Clamp Z so it doesn't go through the floor in the visualizer
+    // if (currZ < 0)
+    // currZ = 0;
 
-    //         // Create the Pose3d Object
-    //         trajectory[i] = new Pose3d(currX, currY, currZ, new Rotation3d());
-    //     }
+    // // Create the Pose3d Object
+    // trajectory[i] = new Pose3d(currX, currY, currZ, new Rotation3d());
+    // }
 
-    //     // 5. Upload to Network Tables (Using the modern Struct approach)
-    //     NetworkTableInstance.getDefault()
-    //             .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
-    //             .publish()
-    //             .set(trajectory);
+    // // 5. Upload to Network Tables (Using the modern Struct approach)
+    // NetworkTableInstance.getDefault()
+    // .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
+    // .publish()
+    // .set(trajectory);
     // }
 
     /**
@@ -234,10 +225,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * array.
      */
     // public void clearTrajectory() {
-    //     NetworkTableInstance.getDefault()
-    //             .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
-    //             .publish()
-    //             .set(new Pose3d[0]);
+    // NetworkTableInstance.getDefault()
+    // .getStructArrayTopic("Shooter/BallTrajectory", Pose3d.struct)
+    // .publish()
+    // .set(new Pose3d[0]);
     // }
 
     @Override

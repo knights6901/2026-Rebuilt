@@ -1,16 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.IndexerConstants.*;
 
@@ -25,13 +19,7 @@ public class IndexerSubsystem extends SubsystemBase {
      * Initializes the indexer subsystem with motor configuration and PID settings.
      */
     public IndexerSubsystem() {
-        TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        m_motorConfig.CurrentLimits = new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(Amps.of(20));
-
-        m_motorIndexer.getConfigurator().apply(m_motorConfig);
+        m_motorIndexer.getConfigurator().apply(MotorConfig);
     }
 
     /**

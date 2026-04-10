@@ -20,7 +20,6 @@ import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -200,16 +200,21 @@ public class VisionSubsystem extends SubsystemBase {
         if (visionEstimatedPose.isPresent()) {
             m_visionfield.setRobotPose(getEstimatedPose2d().get());
 
-            if (!hasSeededPose) {
-                hasSeededPose = true;
+            if (DriverStation.isTeleop()) {
+                adjustDrivetrainPose();
 
-                Translation2d translation = getEstimatedPose2d().get().getTranslation();
+                if (!hasSeededPose) {
+                    hasSeededPose = true;
 
-                drivetrain.resetTranslation(translation);
+                    Translation2d translation = getEstimatedPose2d().get().getTranslation();
+
+                    drivetrain.resetTranslation(translation);
+                }
             }
         }
 
-        m_hubRotationPublisher.set(computeHubRotation(getEstimatedPose2d().orElse(drivetrain.getState().Pose)).getDegrees());
+        m_hubRotationPublisher.set(computeHubRotation(drivetrain.getState().Pose).getDegrees());
+
     }
 
     public Optional<Pose2d> getEstimatedPose2d() {
@@ -218,8 +223,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     public void adjustDrivetrainPose() {
         if (visionEstimatedPose.isPresent()) {
-            drivetrain.addVisionMeasurement(getEstimatedPose2d().get(), visionEstimatedPose.get().timestampSeconds,
-            VecBuilder.fill(0.2, 0.2, 99999));
+            drivetrain.addVisionMeasurement(getEstimatedPose2d().get(), visionEstimatedPose.get().timestampSeconds);
         }
     }
 

@@ -1,21 +1,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static edu.wpi.first.units.Units.Amps;
 import static frc.robot.Constants.KickerConstants.*;
 
 /**
@@ -24,7 +17,7 @@ import static frc.robot.Constants.KickerConstants.*;
  * Uses a single TalonFX motor with closed-loop velocity control.
  */
 public class KickerSubsystem extends SubsystemBase {
-    private final TalonFX m_motorKicker = new TalonFX(KickerMotorId, new CANBus("rio"));
+    private final TalonFX m_motorKicker = new TalonFX(MotorId, new CANBus("rio"));
 
     private final DoublePublisher kickerPub = NetworkTableInstance.getDefault()
             .getTable("Kicker")
@@ -36,13 +29,7 @@ public class KickerSubsystem extends SubsystemBase {
      * and current limiting.
      */
     public KickerSubsystem() {
-        TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        m_motorConfig.CurrentLimits = new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(Amps.of(25));
-
-        m_motorKicker.getConfigurator().apply(m_motorConfig);
+        m_motorKicker.getConfigurator().apply(MotorConfig);
     }
 
     /**

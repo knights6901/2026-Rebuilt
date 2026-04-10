@@ -20,8 +20,7 @@ public class Rotate180Command extends DriveToTarget {
             Translation2d translation = currentPose.getTranslation();
 
             return new Pose2d(translation, rotation);
-        }, new boolean[]{false, false, true},
-        driverInputSupplier);
+        }, driverInputSupplier, Axis.THETA);
     }
 
     private static Rotation2d compute180Rotation(Pose2d currentPose) {

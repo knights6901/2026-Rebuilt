@@ -17,8 +17,7 @@ public class AlignToTrench extends DriveToTarget {
         super(
                 drivetrain,
                 currentPoseSupplier, () -> getTrenchAlignedPose(currentPoseSupplier.get()),
-                new boolean[]{false, true, false},
-                driverInputSupplier);
+                driverInputSupplier, Axis.Y);
     }
 
     private static Pose2d getTrenchAlignedPose(Pose2d currentPose) {
