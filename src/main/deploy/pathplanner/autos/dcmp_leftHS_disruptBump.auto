@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_disrupt"
+            "pathName": "leftHS_disrupt"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_returnBump"
+            "pathName": "leftHS_returnBUMP"
           }
         },
         {

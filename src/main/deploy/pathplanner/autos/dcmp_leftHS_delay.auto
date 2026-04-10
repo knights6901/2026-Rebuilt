@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Leave"
+            "pathName": "leftHS_Leave"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Return"
+            "pathName": "leftHS_Return"
           }
         },
         {
@@ -75,7 +75,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Finale"
+            "pathName": "leftHS_Finale"
           }
         }
       ]

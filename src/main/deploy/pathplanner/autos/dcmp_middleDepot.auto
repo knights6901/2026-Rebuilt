@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_middleDepotLeave"
+            "pathName": "middleDepotLeave"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_depotExit"
+            "pathName": "depotExit"
           }
         }
       ]

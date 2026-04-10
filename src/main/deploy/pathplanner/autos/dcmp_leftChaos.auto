@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftStraight"
+            "pathName": "leftStraight"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_RightFromLeft"
+            "pathName": "RightFromLeft"
           }
         }
       ]

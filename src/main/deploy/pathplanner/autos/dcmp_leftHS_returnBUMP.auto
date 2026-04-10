@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Leave"
+            "pathName": "leftHS_Leave"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_returnBump"
+            "pathName": "leftHS_returnBUMP"
           }
         },
         {
@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "manor_leftBetterThanNASA_finale"
+            "pathName": "leftHS_Finale"
           }
         }
       ]

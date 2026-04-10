@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Leave"
+            "pathName": "leftHS_Leave"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Pass1"
+            "pathName": "leftHS_Pass1"
           }
         },
         {
@@ -44,13 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_PassBtwn"
+            "pathName": "leftHS_PassBtwn"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dcmp_leftHS_Pass2"
+            "pathName": "leftHS_Pass2"
           }
         },
         {
