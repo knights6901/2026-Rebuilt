@@ -128,7 +128,7 @@ public final class Constants {
                 public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Coast)
-                                                .withInverted(InvertedValue.Clockwise_Positive))
+                                                .withInverted(InvertedValue.CounterClockwise_Positive))
                                 .withCurrentLimits(new CurrentLimitsConfigs()
                                                 .withSupplyCurrentLimit(Amps.of(20)));
         }
@@ -138,7 +138,7 @@ public final class Constants {
                 public final static int MotorId = 32;
 
                 /** The rotations per second for actively intaking balls. */
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(100);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(50);
 
                 /** The gear ratio of the intake system. */
                 public final static double GearRatio = 9.0;
