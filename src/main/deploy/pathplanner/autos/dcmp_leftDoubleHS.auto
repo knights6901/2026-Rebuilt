@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftHS_Disrupt"
+            "pathName": "leftHS_Leave"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "leftHS_ReturnBUMP"
+            "pathName": "leftHS_Return"
           }
         },
         {
@@ -21,15 +21,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 3.0
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "autoAimShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
                 }
               }
             ]
@@ -46,18 +46,36 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 4.5
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "autoAimShoot"
                 }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "toggleIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftHS_SecondLeave"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftHS_Return"
           }
         }
       ]
