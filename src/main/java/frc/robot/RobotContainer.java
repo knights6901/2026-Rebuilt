@@ -16,7 +16,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
-
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -88,8 +89,10 @@ public class RobotContainer {
                 // mirrored left autos for right side, but they're AP's sketchy ideas
                 dcmp_autoChooser.addOption("dcmp_rightDoubleHS", new PathPlannerAuto("dcmp_leftDoubleHS", true));
                 dcmp_autoChooser.addOption("dcmp_rightHS_disrupt", new PathPlannerAuto("dcmp_leftHS_disrupt", true));
-                dcmp_autoChooser.addOption("dcmp_rightHS_disruptBump", new PathPlannerAuto("dcmp_leftHS_disruptBump", true));
-                dcmp_autoChooser.addOption("dcmp_rightHS_returnBump", new PathPlannerAuto("dcmp_leftHS_returnBump", true));
+                dcmp_autoChooser.addOption("dcmp_rightHS_disruptBump",
+                                new PathPlannerAuto("dcmp_leftHS_disruptBump", true));
+                dcmp_autoChooser.addOption("dcmp_rightHS_returnBump",
+                                new PathPlannerAuto("dcmp_leftHS_returnBump", true));
 
                 SmartDashboard.putData("Auto Chooser", dcmp_autoChooser);
         }
@@ -100,8 +103,8 @@ public class RobotContainer {
                                 new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 // NamedCommands.registerCommand("reverseShoot", new RunCommand(() -> {
-                //         shooter.shoot(RotationsPerSecond.of(-20));
-                //         kicker.kick(RotationsPerSecond.of(-20));
+                // shooter.shoot(RotationsPerSecond.of(-20));
+                // kicker.kick(RotationsPerSecond.of(-20));
                 // }, shooter, kicker).withTimeout(Seconds.of(1)));
                 NamedCommands.registerCommand("autoAimShoot",
                                 new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
@@ -169,12 +172,6 @@ public class RobotContainer {
                                 () -> getEstimatedVisionPose(),
                                 this::getDriverInput));
 
-                // if (Robot.isSimulation()) {
-                // driver.x().onTrue(new InstantCommand(() -> {
-                // shooter.updateShotVisualization(drivetrain.getPose(), 7, 60);
-                // })).onFalse(new InstantCommand(() -> shooter.clearTrajectory()));
-                // }
-
                 driver.povUp().onTrue(new InstantCommand(() -> slapdown.retractSlapdown(), slapdown));
                 driver.povDown().onTrue(new InstantCommand(() -> slapdown.slapdown(), slapdown));
 
@@ -191,8 +188,7 @@ public class RobotContainer {
                                 () -> slapdown.stop(),
                                 slapdown));
 
-                driver.leftTrigger().whileTrue(
-                                new ShootManualRPSCommand(shooter, kicker, indexer, () -> shooter.getShootRPS()));
+                driver.leftTrigger().whileTrue(new ShootPrimedRPSCommand(shooter, Seconds.of(60)));
 
                 driver.rightTrigger().whileTrue(
                                 new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
@@ -278,6 +274,10 @@ public class RobotContainer {
          * @return the estimated {@link Pose2d} of the robot on the field
          */
         private Pose2d getEstimatedVisionPose() {
-                return vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose);
+                Translation2d visionTranslation = vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose)
+                                .getTranslation();
+                Rotation2d drivetrainRotation = drivetrain.getPose().getRotation();
+
+                return new Pose2d(visionTranslation, drivetrainRotation);
         }
 }

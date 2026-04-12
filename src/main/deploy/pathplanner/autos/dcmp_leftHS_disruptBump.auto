@@ -48,7 +48,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.5
+                  "waitTime": 3.0
                 }
               },
               {
@@ -58,6 +58,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "toggleIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftHS_Finale"
           }
         }
       ]

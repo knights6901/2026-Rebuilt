@@ -48,15 +48,15 @@
     },
     {
       "anchor": {
-        "x": 4.001282842726934,
+        "x": 3.068659058487874,
         "y": 7.324
       },
       "prevControl": {
-        "x": 4.965803397042411,
+        "x": 4.033179612803352,
         "y": 7.341490652901785
       },
       "nextControl": {
-        "x": 3.038116598803527,
+        "x": 2.1054928145644665,
         "y": 7.306533906215055
       },
       "isLocked": false,
@@ -64,12 +64,12 @@
     },
     {
       "anchor": {
-        "x": 2.68,
-        "y": 6.64
+        "x": 2.266462196861626,
+        "y": 5.4647218259629105
       },
       "prevControl": {
-        "x": 2.9104974739629768,
-        "y": 7.456728960504578
+        "x": 2.4969596708246025,
+        "y": 6.281450786467489
       },
       "nextControl": null,
       "isLocked": false,
@@ -91,7 +91,7 @@
   "eventMarkers": [
     {
       "name": "primeShooter",
-      "waypointRelativePos": 2.9844699527346394,
+      "waypointRelativePos": 1.5557056043214141,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -111,7 +111,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 126.42
+    "rotation": 142.43140797117266
   },
   "reversed": false,
   "folder": null,

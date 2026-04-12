@@ -98,7 +98,7 @@ public class VisionSubsystem extends SubsystemBase {
         Transform3d robotToCam = new Transform3d(new Translation3d(-0.31, 0.0, 0.14),
                 // new Rotation3d(0, Math.PI / 3, Math.PI));
                 new Rotation3d(0, Math.PI / 3, 0));
-                // new Rotation3d(0, -Math.PI / 3, Math.pi)); // maybe it works? - sam
+        // new Rotation3d(0, -Math.PI / 3, Math.pi)); // maybe it works? - sam
 
         if (fieldLayout != null) {
             visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
@@ -178,16 +178,16 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         PhotonPipelineResult latest = results.get(results.size() - 1);
-        
+
         if (latest.hasTargets()) {
             List<PhotonTrackedTarget> targets = latest.getTargets();
             PhotonTrackedTarget bestTarget = latest.getBestTarget();
-            
+
             if (bestTarget.getPoseAmbiguity() < 0.2) {
                 visionEstimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(latest)
                         .or(() -> visionPoseEstimator.estimateLowestAmbiguityPose(latest));
             }
-            
+
             for (PhotonTrackedTarget target : targets) {
                 Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
                 tagPose.ifPresent(visibleTagPoses::add);
@@ -223,7 +223,12 @@ public class VisionSubsystem extends SubsystemBase {
 
     public void adjustDrivetrainPose() {
         if (visionEstimatedPose.isPresent()) {
-            drivetrain.addVisionMeasurement(getEstimatedPose2d().get(), visionEstimatedPose.get().timestampSeconds);
+            Translation2d visionPose = getEstimatedPose2d().get().getTranslation();
+            Rotation2d driveTrainRotation = drivetrain.getPose().getRotation();
+
+            Pose2d pose = new Pose2d(visionPose, driveTrainRotation);
+
+            drivetrain.addVisionMeasurement(pose, visionEstimatedPose.get().timestampSeconds);
         }
     }
 

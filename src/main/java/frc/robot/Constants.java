@@ -82,6 +82,9 @@ public final class Constants {
                 /** The CAN ID of the right shooter motor. */
                 public final static int RightMotorId = 36;
 
+                /** The distance from the center of the robot to the shooter (horizontally). */
+                public final static Distance CenterToShooter = Inches.of(8);
+
                 /** The maximum rotations per second that the shooter can achieve. */
                 public final static AngularVelocity MaxRPS = RotationsPerSecond.of(80);
                 /**
@@ -106,7 +109,7 @@ public final class Constants {
                 public final static Angle Pitch = Degrees.of(71.5);
 
                 /** The scaling constant to correct for damping in the shooter mechanism. */
-                public final static double DampingCoefficient = 2.2 - 0.05;
+                public final static double DampingCoefficient = 2;
 
                 /** The complete motor configuration for the shooter system. */
                 public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
@@ -137,7 +140,7 @@ public final class Constants {
                 public final static int MotorId = 32;
 
                 /** The rotations per second for actively intaking balls. */
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(50);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(70);
 
                 /** The gear ratio of the intake system. */
                 public final static double GearRatio = 9.0;
