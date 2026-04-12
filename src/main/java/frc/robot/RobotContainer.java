@@ -4,11 +4,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -20,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,10 +26,26 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
-import frc.robot.Constants.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.TunerConstants;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.Rotate180Command;
+import frc.robot.commands.RotateToHubCommand;
+import frc.robot.commands.ShootAutoRPSCommand;
+import frc.robot.commands.ShootManualRPSCommand;
+import frc.robot.commands.ShootPassRPSCommand;
+import frc.robot.commands.ShootPrimedRPSCommand;
+import frc.robot.commands.StopSubsystemsCommand;
+import frc.robot.commands.ToggleIntakeCommand;
+import frc.robot.commands.ToggleSlapdownCommand;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.KickerSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SlapdownSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 /**
  * Declares all subsystems, operator-interface devices, and command bindings.
@@ -152,7 +166,7 @@ public class RobotContainer {
                                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
                 driver.a().onTrue(new ToggleIntakeCommand(intake));
-                driver.x().whileTrue(new OuttakeCommand(intake));
+                driver.x().onTrue(new ShootPrimedRPSCommand(shooter, Seconds.of(100)));
                 driver.y().onTrue(new InstantCommand(() -> vision.reseedPose()));
                 driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -188,7 +202,7 @@ public class RobotContainer {
                                 () -> slapdown.stop(),
                                 slapdown));
 
-                driver.leftTrigger().whileTrue(new ShootPrimedRPSCommand(shooter, Seconds.of(60)));
+                driver.leftTrigger().whileTrue(new ShootPassRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));
 
                 driver.rightTrigger().whileTrue(
                                 new ShootAutoRPSCommand(shooter, kicker, indexer, () -> getEstimatedVisionPose()));

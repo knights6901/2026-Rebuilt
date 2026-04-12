@@ -140,7 +140,7 @@ public final class Constants {
                 public final static int MotorId = 32;
 
                 /** The rotations per second for actively intaking balls. */
-                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(70);
+                public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(80);
 
                 /** The gear ratio of the intake system. */
                 public final static double GearRatio = 9.0;
@@ -165,7 +165,7 @@ public final class Constants {
                 public final static int MotorId = 31;
 
                 /** The position to lower the slapdown to when intaking a ball. */
-                public final static Angle IntakePosition = Rotations.of(-60.901);
+                public final static Angle IntakePosition = Rotations.of(-56);
                 /** The default home position of slapdown system. */
                 public final static Angle HomePosition = Rotations.of(0);
                 /**
@@ -191,7 +191,7 @@ public final class Constants {
                 /** The CAN ID of the kicker motor. */
                 public final static int MotorId = 37;
 
-                public final static double KickerPower = 0.85;
+                public final static double KickerPower = 0.70;
 
                 /** The complete motor configuration for the kicker system. */
                 public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
