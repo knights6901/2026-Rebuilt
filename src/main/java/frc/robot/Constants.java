@@ -165,7 +165,7 @@ public final class Constants {
                 public final static int MotorId = 31;
 
                 /** The position to lower the slapdown to when intaking a ball. */
-                public final static Angle IntakePosition = Rotations.of(-56);
+                public final static Angle IntakePosition = Rotations.of(35);
                 /** The default home position of slapdown system. */
                 public final static Angle HomePosition = Rotations.of(0);
                 /**
@@ -176,7 +176,7 @@ public final class Constants {
 
                 /** The PID and feedforward settings for the slapdown motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
-                                .withKP(0.1).withKI(0).withKD(0.1)
+                                .withKP(0.15).withKI(0).withKD(0.1)
                                 .withKS(0).withKV(0.27);
 
                 /** The complete motor configuration for the slapdown system. */
@@ -184,7 +184,7 @@ public final class Constants {
                                 .withSlot0(SlapdownConstants.Gains)
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Brake)
-                                                .withInverted(InvertedValue.Clockwise_Positive));
+                                                .withInverted(InvertedValue.CounterClockwise_Positive));
         }
 
         public static final class KickerConstants {

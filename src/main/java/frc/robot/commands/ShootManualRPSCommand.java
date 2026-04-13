@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.units.measure.AngularVelocity;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
@@ -53,8 +54,10 @@ public class ShootManualRPSCommand extends Command {
         shooter.shoot(rpsSupplier.get());
         shooter.shooterState = ShooterSubsystem.ShooterState.MANUAL;
 
-        indexer.enable();
-        kicker.kick();
+        if (shooter.isPrimed()) {
+            indexer.enable();
+            kicker.kick();
+        }
     }
 
     @Override

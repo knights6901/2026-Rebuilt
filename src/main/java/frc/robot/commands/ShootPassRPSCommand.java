@@ -47,8 +47,10 @@ public class ShootPassRPSCommand extends Command{
         shooter.shoot(shooter.calculateRPS(shotGroundDistance, vertDistance));
         shooter.shooterState = ShooterSubsystem.ShooterState.AUTOPASS;
 
-        indexer.enable();
-        kicker.kick();
+        if (shooter.isPrimed()) {
+            indexer.enable();
+            kicker.kick();
+        }
     }
 
     @Override

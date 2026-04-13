@@ -46,7 +46,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static enum ShooterState {
         OFF,
         AUTOHUB,
+        AUTOHUB_PRIMING,
         AUTOPASS,
+        AUTOPASS_PRIMING,
         PRIMING,
         MANUAL
     }
@@ -70,7 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
 
-    private AngularVelocity targetRPS;
+    public AngularVelocity targetRPS;
 
     /**
      * Configures both shooter motors with PID gains from constants and sets the
@@ -178,6 +180,14 @@ public class ShooterSubsystem extends SubsystemBase {
         return ShooterConstants.MaxRPS.times(axisInput);
     }
 
+    public double getCurrentRPS() {
+        return m_motorLeft.getVelocity().getValueAsDouble();
+    }
+
+    public boolean isPrimed() {
+        return Math.abs(getCurrentRPS() - targetRPS.in(RotationsPerSecond)) <= 3;
+    }
+
     /**
      * Clears the dashboard trajectory visualization by publishing an empty pose
      * array.
@@ -192,13 +202,17 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Publish current velocities for telemetry
-        if (shooterState != ShooterState.MANUAL) {
-            shooterStatePub.set(shooterState.toString());
-        } else {
+        if (shooterState == ShooterState.MANUAL) {
             shooterStatePub.set(shootRPS.in(RotationsPerSecond) + " (MANUAL)");
+        } else if (shooterState == ShooterState.AUTOHUB_PRIMING) {
+            shooterStatePub.set("PRIMING AUTOHUB");
+        } else if (shooterState == ShooterState.AUTOPASS_PRIMING) {
+            shooterStatePub.set("PRIMING AUTOPASS");
+        } else {
+            shooterStatePub.set(shooterState.toString());
         }
 
-        actualRPSPub.set(m_motorLeft.getVelocity().getValueAsDouble());
+        actualRPSPub.set(getCurrentRPS());
 
         targetRPSPub.set(targetRPS != null ? targetRPS.in(RotationsPerSecond) : 0);
     }
