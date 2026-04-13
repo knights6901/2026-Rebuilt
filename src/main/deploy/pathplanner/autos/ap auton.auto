@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "leftHS_Return"
+            "pathName": "ap auton - i wanna test at itkan this can be like the last thing we do"
           }
         },
         {
@@ -48,13 +42,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "slapdownTrigger"
+                  "name": "autoAimShoot"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 1.5
                 }
               }
             ]
@@ -63,13 +57,13 @@
         {
           "type": "named",
           "data": {
-            "name": "toggleIntake"
+            "name": "slapdownTrigger"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "leftHS_Finale"
+            "name": "autoAimShoot"
           }
         }
       ]
