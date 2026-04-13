@@ -127,11 +127,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * launch pitch angle.
      *
      * @param groundDistance horizontal distance from the robot to the target
+     * @param targetHeight   vertical height of the target from the floor
      * @return the flywheel angular velocity needed to reach the target
      */
-    public AngularVelocity calculateRPS(Distance groundDistance) {
-        double dx = groundDistance.minus(ShooterConstants.CenterToShooter).in(Meters);
-        double dy = ShooterConstants.HubTargetHeight.minus(ShooterConstants.BallExtakeHeight).in(Meters);
+    public AngularVelocity calculateRPS(Distance groundDistance, Distance targetHeight) {
+        double dx = groundDistance.in(Meters);
+        double dy = targetHeight.minus(ShooterConstants.BallExtakeHeight).in(Meters);
 
         double gVal = ShooterConstants.G.in(MetersPerSecondPerSecond);
         double pitchRad = ShooterConstants.Pitch.in(Radians);
@@ -152,25 +153,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * launch pitch angle.
      *
      * @param groundDistance horizontal distance from the robot to the target
-     * @param targetHeight   vertical height of the target from the floor
      * @return the flywheel angular velocity needed to reach the target
      */
-    public AngularVelocity calculateRPS(Distance groundDistance, Distance targetHeight) {
-        double dx = groundDistance.in(Meters);
-        double dy = targetHeight.minus(ShooterConstants.BallExtakeHeight).in(Meters);
-
-        double gVal = ShooterConstants.G.in(MetersPerSecondPerSecond);
-        double pitchRad = ShooterConstants.Pitch.in(Radians);
-
-        double velocity = Math.sqrt(
-                (gVal * dx * dx) /
-                        (2 * Math.pow(Math.cos(pitchRad), 2) *
-                                (dx * Math.tan(pitchRad) - dy)));
-
-        double rps = velocity / (2 * Math.PI * 0.051);
-
-        return RotationsPerSecond.of(ShooterConstants.DampingCoefficient * rps);
+    public AngularVelocity calculateRPS(Distance groundDistance) {
+        return calculateRPS(groundDistance, ShooterConstants.HubTargetHeight);
     }
+
 
     public AngularVelocity getShootRPS() {
         return shootRPS;
