@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "leftHS_disrupt"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "leftHS_returnBUMP"
           }
         },
         {
