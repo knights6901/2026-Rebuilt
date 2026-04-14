@@ -17,8 +17,14 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.hardware.*;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
@@ -33,13 +39,24 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.numbers.*;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -98,7 +115,7 @@ public final class Constants {
                 /** The PID and feedforward settings for the shooter motors. */
                 public final static Slot0Configs Gains = new Slot0Configs()
                                 .withKP(0.36901).withKI(0).withKD(0.0085)
-                                .withKS(0).withKV(0.116);
+                                .withKS(0).withKV(0.119);
 
                 /** The strength of gravity (9.81 m/s²). */
                 public final static LinearAcceleration G = MetersPerSecondPerSecond.of(9.81);
@@ -111,14 +128,19 @@ public final class Constants {
                 public final static Angle Pitch = Degrees.of(71.5);
 
                 /** The scaling constant to correct for damping in the shooter mechanism. */
-                public final static double DampingCoefficient = 2;
+                public final static double DampingCoefficient = 1.6901;
 
                 /** The complete motor configuration for the shooter system. */
                 public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
                                 .withSlot0(ShooterConstants.Gains)
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Coast)
-                                                .withInverted(InvertedValue.CounterClockwise_Positive));
+                                                .withInverted(InvertedValue.CounterClockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimitEnable(true));
         }
 
         public static final class IndexerConstants {
@@ -126,15 +148,18 @@ public final class Constants {
                 public final static int MotorId = 40;
 
                 /** The target rotations per second for the indexer motor during operation. */
-                public final static double Power = .85;
+                public final static AngularVelocity Power = RotationsPerSecond.of(85);
 
                 /** The complete motor configuration for the indexer system. */
                 public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Coast)
-                                                .withInverted(InvertedValue.CounterClockwise_Positive));
-                // .withCurrentLimits(new CurrentLimitsConfigs()
-                // .withSupplyCurrentLimit(Amps.of(20)));
+                                                .withInverted(InvertedValue.CounterClockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimitEnable(true));
         }
 
         public static final class IntakeConstants {
@@ -157,9 +182,12 @@ public final class Constants {
                                 .withSlot0(IntakeConstants.Gains)
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Brake)
-                                                .withInverted(InvertedValue.Clockwise_Positive));
-                // .withCurrentLimits(new CurrentLimitsConfigs()
-                // .withSupplyCurrentLimit(Amps.of(40)));
+                                                .withInverted(InvertedValue.Clockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimitEnable(true));
         }
 
         public static final class SlapdownConstants {
@@ -174,7 +202,7 @@ public final class Constants {
                  * The tolerance for determining whether the slapdown is in the deployed
                  * position.
                  */
-                public final static Angle PositionTolerance = Degrees.of(4.0);
+                public final static Angle PositionTolerance = Rotations.of(2.0);
 
                 /** The PID and feedforward settings for the slapdown motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
@@ -186,7 +214,12 @@ public final class Constants {
                                 .withSlot0(SlapdownConstants.Gains)
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Brake)
-                                                .withInverted(InvertedValue.CounterClockwise_Positive));
+                                                .withInverted(InvertedValue.CounterClockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimitEnable(true));
         }
 
         public static final class KickerConstants {
@@ -199,9 +232,12 @@ public final class Constants {
                 public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Coast)
-                                                .withInverted(InvertedValue.Clockwise_Positive));
-                // .withCurrentLimits(new CurrentLimitsConfigs()
-                // .withSupplyCurrentLimit(Amps.of(25)));
+                                                .withInverted(InvertedValue.Clockwise_Positive))
+                                .withCurrentLimits(new CurrentLimitsConfigs()
+                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimitEnable(true)
+                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimitEnable(true));
         }
 
         public static final class PeriodicReverseIndexerConstants {

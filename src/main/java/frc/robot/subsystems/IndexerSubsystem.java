@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,6 +15,7 @@ import static frc.robot.Constants.IndexerConstants.*;
  */
 public class IndexerSubsystem extends SubsystemBase {
     private final TalonFX m_motorIndexer = new TalonFX(MotorId, new CANBus("rio"));
+
     /**
      * Initializes the indexer subsystem with motor configuration and PID settings.
      */
@@ -27,14 +28,14 @@ public class IndexerSubsystem extends SubsystemBase {
      * toward the shooter.
      */
     public void enable() {
-        m_motorIndexer.setControl(new DutyCycleOut(Power));
+        m_motorIndexer.setControl(new VelocityVoltage(Power));
     }
 
     /**
      * Runs the indexer motor in the reverse direction at the configured velocity.
      */
     public void enableInverted() {
-        m_motorIndexer.setControl(new DutyCycleOut(-Power));
+        m_motorIndexer.setControl(new VelocityVoltage(Power.unaryMinus()));
     }
 
     /** Stops the indexer motor by commanding zero velocity. */

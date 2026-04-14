@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import static frc.robot.commands.RotateToHubCommand.computeHubRotation;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -27,7 +25,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -74,10 +71,6 @@ public class VisionSubsystem extends SubsystemBase {
     public boolean hasSeededPose = true;
 
     public final Field2d m_visionfield = new Field2d();
-    private final DoublePublisher m_hubRotationPublisher = NetworkTableInstance.getDefault()
-            .getTable("Debug")
-            .getDoubleTopic("hub_dtheta")
-            .publish();
 
     /**
      * Creates the vision subsystem, initializing PhotonVision cameras and the
@@ -95,10 +88,10 @@ public class VisionSubsystem extends SubsystemBase {
             System.out.println("Could not find the field file!");
         }
 
-        Transform3d robotToCam = new Transform3d(new Translation3d(-0.31, 0.0, 0.14),
+        // Transform3d robotToCam = new Transform3d(new Translation3d(-0.31, 0.0, 0.14),
+        Transform3d robotToCam = new Transform3d(new Translation3d(0, 0.0, 0.),
                 // new Rotation3d(0, Math.PI / 3, Math.PI));
                 new Rotation3d(0, Math.PI / 3, 0));
-        // new Rotation3d(0, -Math.PI / 3, Math.pi)); // maybe it works? - sam
 
         if (fieldLayout != null) {
             visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
@@ -212,9 +205,6 @@ public class VisionSubsystem extends SubsystemBase {
                 }
             }
         }
-
-        m_hubRotationPublisher.set(computeHubRotation(drivetrain.getState().Pose).getDegrees());
-
     }
 
     public Optional<Pose2d> getEstimatedPose2d() {

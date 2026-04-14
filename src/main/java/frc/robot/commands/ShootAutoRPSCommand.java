@@ -74,10 +74,10 @@ public class ShootAutoRPSCommand extends Command {
 
         shooter.shooterState = ShooterSubsystem.ShooterState.AUTOHUB;
 
-        if (shooter.isPrimed()) {
-            indexer.enable();
-            kicker.kick();
-        }
+        // if (shooter.isPrimed()) {
+        indexer.enable();
+        kicker.kick();
+        // }
     }
 
     @Override

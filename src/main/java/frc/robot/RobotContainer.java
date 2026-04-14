@@ -69,7 +69,7 @@ public class RobotContainer {
         private final CommandXboxController operator = new CommandXboxController(ControllerConstants.OperatorPort);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-        private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+        // private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
         private final ShooterSubsystem shooter = new ShooterSubsystem();
         private final IntakeSubsystem intake = new IntakeSubsystem();
         private final IndexerSubsystem indexer = new IndexerSubsystem();
@@ -161,7 +161,7 @@ public class RobotContainer {
 
                 driver.a().onTrue(new ToggleIntakeCommand(intake));
                 driver.x().onTrue(new ShootPrimedRPSCommand(shooter, Seconds.of(100)));
-                driver.y().onTrue(new InstantCommand(() -> vision.reseedPose()));
+                // driver.y().onTrue(new InstantCommand(() -> vision.reseedPose()));
                 driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
 
                 // Run SysId routines when holding back/start and X/Y.
@@ -183,11 +183,11 @@ public class RobotContainer {
                 driver.leftStick().onTrue(
                                 new InstantCommand(() -> drivetrain.applyRequest(() -> getDriverInput()), drivetrain));
 
-                driver.povRight().whileTrue(Commands.startEnd(
+                driver.povLeft().whileTrue(Commands.startEnd(
                                 () -> slapdown.setPower(0.36901),
                                 () -> slapdown.stop(),
                                 slapdown));
-                driver.povLeft().whileTrue(Commands.startEnd(
+                driver.povRight().whileTrue(Commands.startEnd(
                                 () -> slapdown.setPower(-0.36901),
                                 () -> slapdown.stop(),
                                 slapdown));
@@ -228,9 +228,17 @@ public class RobotContainer {
 
                 operator.x().onTrue(DriveToTarget.rotateBy180(drivetrain, this::nullDriverInput));
 
-                operator.b().whileTrue(new RunCommand(() -> {
-                        indexer.enableInverted();
-                }, indexer));
+                operator.y().onTrue(DriveToTarget.alignToTrench(drivetrain, this::getDriverInput));
+
+                // operator.b().whileTrue(new RunCommand(() -> {
+                // indexer.enableInverted();
+                // }, indexer));
+
+                operator.b().onTrue(new InstantCommand(
+                                () -> {
+
+                                        // drivetrain.resetPose();
+                                }));
         }
 
         /**
@@ -273,10 +281,12 @@ public class RobotContainer {
          * @return the estimated {@link Pose2d} of the robot on the field
          */
         private Pose2d getEstimatedVisionPose() {
-                Translation2d visionTranslation = vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose)
-                                .getTranslation();
-                Rotation2d drivetrainRotation = drivetrain.getPose().getRotation();
+                // Translation2d visionTranslation =
+                // vision.getEstimatedPose2d().orElse(drivetrain.getState().Pose)
+                // .getTranslation();
+                // Rotation2d drivetrainRotation = drivetrain.getPose().getRotation();
 
-                return new Pose2d(visionTranslation, drivetrainRotation);
+                // return new Pose2d(visionTranslation, drivetrainRotation);
+                return drivetrain.getPose();
         }
 }
