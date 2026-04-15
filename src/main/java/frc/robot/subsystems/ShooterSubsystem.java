@@ -207,11 +207,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * Creates a command that primes the shooter to the default prime RPS.
      */
     public Command prime() {
-        return new ShootCommand(
-                this, null, null,
-                () -> ShooterConstants.DefaultPrimeRPS,
-                ShooterState.PRIMING,
-                ShooterState.PRIMING);
+        return run(() -> {
+            shoot(ShooterConstants.DefaultPrimeRPS);
+            shooterState = ShooterState.PRIMING;
+        });
     }
 
     public Command manuallyShoot(
