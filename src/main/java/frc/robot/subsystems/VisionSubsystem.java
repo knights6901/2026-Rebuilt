@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import java.io.IOException;
 
 import org.photonvision.EstimatedRobotPose;
@@ -88,9 +91,8 @@ public class VisionSubsystem extends SubsystemBase {
             System.out.println("Could not find the field file!");
         }
 
-        // Transform3d robotToCam = new Transform3d(new Translation3d(-0.31, 0.0, 0.14),
-        Transform3d robotToCam = new Transform3d(new Translation3d(0, 0.0, 0.),
-                // new Rotation3d(0, Math.PI / 3, Math.PI));
+        Transform3d robotToCam = new Transform3d(
+                new Translation3d(Inches.of(-13), Meters.of(0.0), Meters.of(0.14)),
                 new Rotation3d(0, Math.PI / 3, 0));
 
         if (fieldLayout != null) {
