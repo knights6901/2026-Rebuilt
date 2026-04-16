@@ -158,7 +158,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double rps = velocity / (2 * Math.PI * 0.051);
 
-        return RotationsPerSecond.of(ShooterConstants.DampingCoefficient * rps);
+        double damping = groundDistance.lte(ShooterConstants.NearHubDistance)
+                ? ShooterConstants.DampingNearCoefficient
+                : ShooterConstants.DampingFarCoefficient;
+
+        return RotationsPerSecond.of(damping * rps);
     }
 
     /**

@@ -33,6 +33,10 @@ public class KickerSubsystem extends SubsystemBase {
         m_motorKicker.setControl(new DutyCycleOut(KickerPower));
     }
 
+    public void kickReversed() {
+        m_motorKicker.setControl(new DutyCycleOut(-0.85));
+    }
+
     /** Stops the kicker motor by applying neutral output. */
     public void stop() {
         m_motorKicker.setControl(new NeutralOut());
