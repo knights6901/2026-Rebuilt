@@ -36,6 +36,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SlapdownSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -132,7 +133,6 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("slapdownTrigger", slapdown.slapdownCommand());
                 NamedCommands.registerCommand("slapdownRetract", slapdown.retractSlapdownCommand());
-
         }
 
         /** Binds all the default commands. */
@@ -161,10 +161,12 @@ public class RobotContainer {
 
                 driver.a().onTrue(new ToggleIntakeCommand(intake));
                 driver.x().onTrue(shooter.prime());
-                // driver.y().onTrue(new InstantCommand(() -> vision.reseedPose()));
+                driver.y().onTrue(new InstantCommand(() -> vision.reseedPose()));
                 driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
                 driver.leftStick().onTrue(
                                 new InstantCommand(() -> drivetrain.applyRequest(() -> getDriverInput()), drivetrain));
+
+                driver.y().whileTrue(new RunCommand(() -> indexer.enable(), indexer));
 
                 // Run SysId routines when holding back/start and X/Y.
                 // Note that each routine should be run exactly once in a single log.

@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,15 +28,17 @@ public class IndexerSubsystem extends SubsystemBase {
      * toward the shooter.
      */
     public void enable() {
-        System.out.println("HERE");
-        m_motorIndexer.setControl(new VelocityVoltage(Power));
+        // m_motorIndexer.setControl(m_request.withVelocity(Power));
+        m_motorIndexer.setControl(new DutyCycleOut(0.85));
     }
 
     /**
      * Runs the indexer motor in the reverse direction at the configured velocity.
      */
     public void enableInverted() {
-        m_motorIndexer.setControl(new VelocityVoltage(Power.unaryMinus()));
+        // m_motorIndexer.setControl(new VelocityVoltage(Power.times(-1)));
+        // m_motorIndexer.setControl(m_request.withVelocity(Power.times(-1)));
+        m_motorIndexer.setControl(new DutyCycleOut(-0.25));
     }
 
     /** Stops the indexer motor by commanding zero velocity. */
