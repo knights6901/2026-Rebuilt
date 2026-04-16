@@ -88,17 +88,6 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "slapdownTrigger",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "slapdownTrigger"
-        }
-      }
-    },
-    {
       "name": "toggleIntake",
       "waypointRelativePos": 1.5916309931506847,
       "endWaypointRelativePos": null,

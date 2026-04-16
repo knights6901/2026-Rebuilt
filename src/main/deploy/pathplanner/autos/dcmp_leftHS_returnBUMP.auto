@@ -5,6 +5,18 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "slapdownTrigger"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "leftHS_Leave"

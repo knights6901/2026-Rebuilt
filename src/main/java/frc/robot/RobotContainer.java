@@ -103,6 +103,9 @@ public class RobotContainer {
                 dcmp_autoChooser.addOption("dcmp_rightHS_returnBump",
                                 new PathPlannerAuto("dcmp_leftHS_returnBump", true));
 
+                dcmp_autoChooser.addOption("dcmp_right_ap_sketchy_auton",
+                                new PathPlannerAuto("dcmp_left_ap_sketchy_auton", true));
+
                 SmartDashboard.putData("Auto Chooser", dcmp_autoChooser);
         }
 

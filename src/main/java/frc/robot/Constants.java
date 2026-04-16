@@ -161,11 +161,11 @@ public final class Constants {
                                 .withMotorOutput(new MotorOutputConfigs()
                                                 .withNeutralMode(NeutralModeValue.Coast)
                                                 .withInverted(InvertedValue.CounterClockwise_Positive));
-                                // .withCurrentLimits(new CurrentLimitsConfigs()
-                                //                 .withStatorCurrentLimit(Amps.of(40))
-                                //                 .withStatorCurrentLimitEnable(true)
-                                //                 .withSupplyCurrentLimit(Amps.of(60))
-                                //                 .withSupplyCurrentLimitEnable(true));
+                // .withCurrentLimits(new CurrentLimitsConfigs()
+                // .withStatorCurrentLimit(Amps.of(40))
+                // .withStatorCurrentLimitEnable(true)
+                // .withSupplyCurrentLimit(Amps.of(60))
+                // .withSupplyCurrentLimitEnable(true));
         }
 
         public static final class IntakeConstants {
@@ -201,8 +201,8 @@ public final class Constants {
                 public final static int MotorId = 31;
 
                 /** The position to lower the slapdown to when intaking a ball. */
-                public final static Angle IntakePosition = Rotations.of(42);
-                /** The default home position of slapdown system. */
+                public final static Angle IntakePosition = Rotations.of(56);
+                /** The default home position of slapdown system. */    
                 public final static Angle HomePosition = Rotations.of(0);
                 /**
                  * The tolerance for determining whether the slapdown is in the deployed
@@ -215,8 +215,8 @@ public final class Constants {
 
                 /** The PID and feedforward settings for the slapdown motor. */
                 public final static Slot0Configs Gains = new Slot0Configs()
-                                .withKP(0.15).withKI(0).withKD(0.1)
-                                .withKS(0).withKV(0.37);
+                                .withKP(0.4).withKI(0).withKD(0.1)
+                                .withKS(0).withKV(1.3);
 
                 /** The complete motor configuration for the slapdown system. */
                 public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()

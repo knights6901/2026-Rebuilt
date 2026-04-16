@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "slapdownTrigger"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "ap_sketchy_path"
