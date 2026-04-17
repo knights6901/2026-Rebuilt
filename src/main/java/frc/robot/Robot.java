@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.networktables.StringPublisher;
@@ -11,7 +13,9 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -86,6 +90,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
+        m_robotContainer.led.runPattern(LEDPattern.solid(Color.kPurple)).withTimeout(Seconds.of(1));
     }
 
     @Override

@@ -185,6 +185,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return m_motorLeft.getVelocity().getValue();
     }
 
+    public AngularVelocity getTargetRPS() {
+        return targetRPS;
+    }
+
     @Override
     public void periodic() {
         // Publish current velocities for telemetry
@@ -216,9 +220,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command manuallyShoot(
             Supplier<AngularVelocity> rpsSupplier,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
+            IndexerSubsystem indexer,
+            LEDSubsystem led) {
         return new ShootCommand(
-                this, kicker, indexer,
+                this, kicker, indexer, led,
                 rpsSupplier,
                 ShooterState.PRIMING,
                 ShooterState.MANUAL);
@@ -233,6 +238,7 @@ public class ShooterSubsystem extends SubsystemBase {
             Translation3d target,
             KickerSubsystem kicker,
             IndexerSubsystem indexer,
+            LEDSubsystem led,
             ShooterState primingState,
             ShooterState shootingState) {
         Supplier<AngularVelocity> rpsSupplier = () -> {
@@ -247,7 +253,7 @@ public class ShooterSubsystem extends SubsystemBase {
         };
 
         return new ShootCommand(
-                this, kicker, indexer,
+                this, kicker, indexer, led,
                 rpsSupplier,
                 primingState, shootingState);
     }
@@ -255,7 +261,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command autoAimShoot(
             Supplier<Pose2d> currentPoseSupplier,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
+            IndexerSubsystem indexer,
+            LEDSubsystem led) {
         Translation2d hubXY = GameConstants.getHubLocation();
         Translation3d hub = new Translation3d(
                 hubXY.getMeasureX(),
@@ -265,18 +272,19 @@ public class ShooterSubsystem extends SubsystemBase {
         return shootAtTarget(
                 currentPoseSupplier,
                 hub,
-                kicker, indexer,
+                kicker, indexer, led,
                 ShooterState.AUTOHUB_PRIMING, ShooterState.AUTOHUB);
     }
 
     public Command passShoot(
             Supplier<Pose2d> currentPoseSupplier,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
+            IndexerSubsystem indexer,
+            LEDSubsystem led) {
         return shootAtTarget(
                 currentPoseSupplier,
                 new Translation3d(GameConstants.getPassLocation(currentPoseSupplier.get())),
-                kicker, indexer,
+                kicker, indexer, led,
                 ShooterState.AUTOPASS_PRIMING, ShooterState.AUTOPASS);
     }
 }

@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.StopSubsystemsCommand;
@@ -70,7 +71,7 @@ public class RobotContainer {
         private final IndexerSubsystem indexer = new IndexerSubsystem();
         private final SlapdownSubsystem slapdown = new SlapdownSubsystem();
         private final KickerSubsystem kicker = new KickerSubsystem();
-        private final LEDSubsystem led = new LEDSubsystem();
+        public final LEDSubsystem led = new LEDSubsystem(drivetrain);
 
         private final SendableChooser<Command> dcmp_autoChooser;
 
@@ -115,13 +116,13 @@ public class RobotContainer {
                                 new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 NamedCommands.registerCommand("autoAimShoot",
-                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer));
+                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer, led));
 
                 NamedCommands.registerCommand("autoPassShoot",
-                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer));
+                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer, led));
 
                 NamedCommands.registerCommand("fiftyRPSShoot",
-                                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker, indexer));
+                                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker, indexer, led));
 
                 NamedCommands.registerCommand("primeShooter", shooter.prime().withTimeout(Seconds.of(3)));
 
@@ -198,9 +199,9 @@ public class RobotContainer {
                                 slapdown));
 
                 driver.leftTrigger().whileTrue(
-                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer));
+                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer, led));
                 driver.rightTrigger().whileTrue(
-                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer));
+                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer, led));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -210,6 +211,8 @@ public class RobotContainer {
          * shooting, intake, and auto-aim.
          */
         private void configureOperatorBindings() {
+                led.runPattern(LEDConstants.RainbowPattern);
+
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
                 operator.povLeft().onTrue(new InstantCommand(() -> {
@@ -220,12 +223,12 @@ public class RobotContainer {
                 }));
 
                 operator.rightTrigger().whileTrue(
-                                shooter.manuallyShoot(() -> shooter.getShootRPS(), kicker, indexer));
+                                shooter.manuallyShoot(() -> shooter.getShootRPS(), kicker, indexer, led));
 
                 operator.rightBumper().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
                 operator.leftTrigger().whileTrue(
-                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer));
+                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer, led));
 
                 operator.povUp().onTrue(shooter.prime());
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
