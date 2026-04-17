@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Seconds;
+import java.util.Optional;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
@@ -14,9 +14,8 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -102,7 +101,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        // m_robotContainer.led.runPattern(LEDPattern.solid(Color.kPurple)).withTimeout(Seconds.of(1));
     }
 
     @Override
@@ -122,32 +120,30 @@ public class Robot extends TimedRobot {
         String phaseName = "Unknown";
         double phaseTime = 0;
 
-
         if (DriverStation.isFMSAttached()) {
             String autonWinner = DriverStation.getGameSpecificMessage();
             String alliance = DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? "R" : "B";
 
             boolean validData = autonWinner.length() > 0 && (alliance.equals("R") || alliance.equals("B"));
-            
-            
+
             if (matchTime > 130) {
                 phaseTime = matchTime - 130;
                 phaseName = "Transition";
             } else if (matchTime > 105) {
                 phaseTime = matchTime - 105;
-                phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "!!!!ACTIVE!!!!") : "Error LOL";
+                phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "Active") : "Error LOL";
                 activeStatus = validData ? (autonWinner.equals(alliance) ? false : true) : false;
             } else if (matchTime > 80) {
                 phaseTime = matchTime - 80;
-                phaseName = validData ? (autonWinner.equals(alliance) ? "!!!!ACTIVE!!!!" : "Inactive") : "Error LOL";
+                phaseName = validData ? (autonWinner.equals(alliance) ? "Active" : "Inactive") : "Error LOL";
                 activeStatus = validData ? (autonWinner.equals(alliance) ? true : false) : false;
             } else if (matchTime > 55) {
                 phaseTime = matchTime - 55;
-                phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "!!!!ACTIVE!!!!") : "Error LOL";
+                phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "Active") : "Error LOL";
                 activeStatus = validData ? (autonWinner.equals(alliance) ? false : true) : false;
             } else if (matchTime > 30) {
                 phaseTime = matchTime - 30;
-                phaseName = validData ? (autonWinner.equals(alliance) ? "!!!!ACTIVE!!!!" : "Inactive") : "Error LOL";
+                phaseName = validData ? (autonWinner.equals(alliance) ? "Active" : "Inactive") : "Error LOL";
                 activeStatus = validData ? (autonWinner.equals(alliance) ? true : false) : false;
             } else {
                 phaseTime = matchTime;
@@ -158,10 +154,65 @@ public class Robot extends TimedRobot {
             phaseName = "Testing";
             phaseTime = matchTime;
             activeStatus = true;
-        }                                                                                                                                                                                   
+        }
 
         phaseNamePublisher.set(phaseName);
         phaseTimePublisher.set(phaseTime);
+    }
+
+    public static boolean isHubActive() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isEmpty()) {
+            return false;
+        }
+        if (DriverStation.isAutonomousEnabled()) {
+            return true;
+        }
+        if (!DriverStation.isTeleopEnabled()) {
+            return false;
+        }
+
+        double matchTime = DriverStation.getMatchTime();
+        String gameData = DriverStation.getGameSpecificMessage();
+
+        if (gameData.isEmpty()) {
+            return true;
+        }
+        boolean redInactiveFirst = false;
+        switch (gameData.charAt(0)) {
+            case 'R' -> redInactiveFirst = true;
+            case 'B' -> redInactiveFirst = false;
+            default -> {
+                // If we have invalid game data, assume hub is active.
+                return true;
+            }
+        }
+
+        // Shift was is active for blue if red won auto, or red if blue won auto.
+        boolean shift1Active = switch (alliance.get()) {
+            case Red -> !redInactiveFirst;
+            case Blue -> redInactiveFirst;
+        };
+
+        if (matchTime > 130) {
+            // Transition shift, hub is active.
+            return true;
+        } else if (matchTime > 105) {
+            // Shift 1
+            return shift1Active;
+        } else if (matchTime > 80) {
+            // Shift 2
+            return !shift1Active;
+        } else if (matchTime > 55) {
+            // Shift 3
+            return shift1Active;
+        } else if (matchTime > 30) {
+            // Shift 4
+            return !shift1Active;
+        } else {
+            // End game, hub always active.
+            return true;
+        }
     }
 
     @Override

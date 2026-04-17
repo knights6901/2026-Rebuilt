@@ -6,9 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.Constants.LEDConstants.Purple;
-import static frc.robot.Constants.LEDConstants.RainbowPattern;
-import static frc.robot.Constants.LEDConstants.ScrollRaindbowPattern;
+
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -20,6 +19,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.StopSubsystemsCommand;
@@ -65,7 +66,6 @@ public class RobotContainer {
 
         private final CommandXboxController driver = new CommandXboxController(ControllerConstants.DriverPort);
         private final CommandXboxController operator = new CommandXboxController(ControllerConstants.OperatorPort);
-        private final CommandXboxController debug = new CommandXboxController(ControllerConstants.DebugPort);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
@@ -83,7 +83,6 @@ public class RobotContainer {
         public RobotContainer() {
                 configureDriverBindings();
                 configureOperatorBindings();
-                configureDebugBindings();
 
                 configureDefaultCommands();
                 configurePathPlannerCommands();
@@ -120,13 +119,13 @@ public class RobotContainer {
                                 new StopSubsystemsCommand(shooter, kicker, intake, indexer));
 
                 NamedCommands.registerCommand("autoAimShoot",
-                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer, led));
+                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer));
 
                 NamedCommands.registerCommand("autoPassShoot",
-                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer, led));
+                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer));
 
                 NamedCommands.registerCommand("fiftyRPSShoot",
-                                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker, indexer, led));
+                                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker, indexer));
 
                 NamedCommands.registerCommand("primeShooter", shooter.prime().withTimeout(Seconds.of(3)));
                 NamedCommands.registerCommand("stopShooter",
@@ -162,14 +161,19 @@ public class RobotContainer {
                 }, intake));
                 shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
 
-                // led.setDefaultCommand(led.runPattern(ScrollRaindbowPattern));
+                Supplier<LEDPattern> hubActivePattern = () -> {
+                        return Robot.isHubActive() ? LEDConstants.ScrollRainbowPattern : LEDConstants.Purple;
+                };
+
                 led.setDefaultCommand(led.runAllPatterns(
-                        RainbowPattern,
-                        led.shooterPattern(
-                                () -> RotationsPerSecond.of(Math.abs(debug.getRightY())), 
-                                RotationsPerSecond.of(1)
-                        ),
-                        ScrollRaindbowPattern
+                        hubActivePattern,
+                        () -> {
+                                if (vision.getEstimatedPose2d().isPresent())
+                                        return LEDConstants.ScrollRainbowPattern;
+                                else
+                                        return LEDConstants.Purple;
+                        },
+                        hubActivePattern
                 ));
         }
 
@@ -217,9 +221,9 @@ public class RobotContainer {
                                 slapdown));
 
                 driver.leftTrigger().whileTrue(
-                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer, led));
+                                shooter.passShoot(this::getEstimatedVisionPose, kicker, indexer));
                 driver.rightTrigger().whileTrue(
-                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer, led));
+                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -241,12 +245,12 @@ public class RobotContainer {
                 }));
 
                 operator.rightTrigger().whileTrue(
-                                shooter.manuallyShoot(() -> shooter.getShootRPS(), kicker, indexer, led));
+                                shooter.manuallyShoot(() -> shooter.getShootRPS(), kicker, indexer));
 
                 operator.rightBumper().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
 
                 operator.leftTrigger().whileTrue(
-                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer, led));
+                                shooter.autoAimShoot(this::getEstimatedVisionPose, kicker, indexer));
 
                 operator.povUp().onTrue(shooter.prime());
                 operator.povDown().whileTrue(new StopSubsystemsCommand(shooter, kicker, intake, indexer));
@@ -255,12 +259,6 @@ public class RobotContainer {
                 operator.y().onTrue(drivetrain.alignToTrench(this::getDriverInput));
 
                 operator.a().whileTrue(new RunCommand(() -> kicker.kickReversed(), kicker));
-        }
-
-        public void configureDebugBindings() {
-                debug.a().whileTrue(
-                        led.runPattern(Purple)
-                );
         }
 
         /**

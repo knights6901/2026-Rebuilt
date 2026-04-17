@@ -649,12 +649,13 @@ public final class Constants {
 
                 public static final LEDPattern RainbowPattern = LEDPattern
                                 .rainbow(255, 128);
-                public static final LEDPattern ScrollRaindbowPattern = RainbowPattern.scrollAtRelativeSpeed(
-                        Percent.per(Second).of(50)
+                public static final LEDPattern ScrollRainbowPattern = RainbowPattern.scrollAtRelativeSpeed(
+                        Percent.per(Second).of(70)
                 );
 
                 public static final LEDPattern Off = LEDPattern.solid(Color.kBlack);
                 public static final LEDPattern Purple = LEDPattern.solid(Color.kPurple);
+                public static final LEDPattern Red = LEDPattern.solid(Color.kRed);
 
                 public static final LinearVelocity RainbowSpeed = MetersPerSecond.of(2);
                 public static final Distance LEDSpacing = Meters.of(1.0 / 120.0);

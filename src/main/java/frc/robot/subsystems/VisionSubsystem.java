@@ -184,7 +184,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         PhotonPipelineResult latest = results.get(results.size() - 1);
 
-        if (!latest.hasTargets()) {
+        if (!latest.hasTargets() || Timer.getTimestamp() - latest.getTimestampSeconds() > 0.6901) {
             estimatedPose = Optional.empty();
             return;
         }
