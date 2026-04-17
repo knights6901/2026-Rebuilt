@@ -29,7 +29,7 @@ public class ShootCommand extends SequentialCommandGroup {
                 new RunCommand(() -> {
                     shooter.shoot(rpsSupplier.get());
                     shooter.shooterState = primingState;
-                    led.shooterPattern(shooter.getCurrentRPS(), shooter.getTargetRPS());
+                    led.shooterPattern(() -> shooter.getCurrentRPS(), shooter.getTargetRPS());
                 }, shooter, led).until(shooter.primed),
                 new ParallelCommandGroup(
                         new RunCommand(() -> {
