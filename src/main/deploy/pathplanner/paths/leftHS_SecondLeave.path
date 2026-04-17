@@ -63,11 +63,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.9327800829875543,
-      "rotationDegrees": 180.0
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 1.6307053941908713,
-      "rotationDegrees": 180.0
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 1.9,
@@ -80,7 +80,7 @@
       "minWaypointRelativePos": 2.581637717121588,
       "maxWaypointRelativePos": 3.0,
       "constraints": {
-        "maxVelocity": 0.3,
+        "maxVelocity": 0.6,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -93,7 +93,7 @@
   "eventMarkers": [
     {
       "name": "slapdownTrigger",
-      "waypointRelativePos": 2.2481389578163826,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

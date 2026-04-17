@@ -37,7 +37,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
-import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SlapdownSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -235,6 +234,8 @@ public class RobotContainer {
 
                 operator.x().onTrue(drivetrain.rotateBy180(this::nullDriverInput));
                 operator.y().onTrue(drivetrain.alignToTrench(this::getDriverInput));
+
+                operator.a().whileTrue(new RunCommand(() -> kicker.kickReversed(), kicker));
         }
 
         /**

@@ -135,8 +135,19 @@ public final class Constants {
                 /** The angle at which the shooter is mounted above the horizontal plane. */
                 public final static Angle Pitch = Degrees.of(76);
 
-                /** The scaling constant to correct for damping in the shooter mechanism. */
-                public final static double DampingCoefficient = 1.6901 + 0.02;
+                /**
+                 * The scaling constant to correct for damping in the shooter mechanism when the
+                 * robot is "far" from the hub.
+                 */
+                public final static double DampingFarCoefficient = 1.6901 + 0.02;
+                /**
+                 * The scaling constant to correct for damping in the shooter mechanism when the
+                 * robot is "near" from the hub.
+                 */
+                public final static double DampingNearCoefficient = 1.6901 + 0.1;
+
+                /** The maximum distance to be considered "near" to the hub. */
+                public final static Distance NearHubDistance = Meters.of(2);
 
                 /** The complete motor configuration for the shooter system. */
                 public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
@@ -237,7 +248,7 @@ public final class Constants {
                 /** The CAN ID of the kicker motor. */
                 public final static int MotorId = 37;
 
-                public final static double KickerPower = 0.70;
+                public final static double KickerPower = 0.8506901;
 
                 /** The complete motor configuration for the kicker system. */
                 public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
@@ -245,9 +256,9 @@ public final class Constants {
                                                 .withNeutralMode(NeutralModeValue.Coast)
                                                 .withInverted(InvertedValue.Clockwise_Positive))
                                 .withCurrentLimits(new CurrentLimitsConfigs()
-                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimit(Amps.of(60))
                                                 .withStatorCurrentLimitEnable(true)
-                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimit(Amps.of(80))
                                                 .withSupplyCurrentLimitEnable(true));
         }
 

@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -24,6 +25,8 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
 
+    private boolean activeStatus = false;
+
     private final StringPublisher phaseNamePublisher = NetworkTableInstance.getDefault()
             .getTable("Match Time")
             .getStringTopic("Phase Name")
@@ -31,6 +34,10 @@ public class Robot extends TimedRobot {
     private final DoublePublisher phaseTimePublisher = NetworkTableInstance.getDefault()
             .getTable("Match Time")
             .getDoubleTopic("Phase Time")
+            .publish();
+    private final BooleanPublisher activeShiftPublisher = NetworkTableInstance.getDefault()
+            .getTable("QoL")
+            .getBooleanTopic("Active")
             .publish();
 
     // private boolean currentlyLogging = false;
@@ -58,6 +65,8 @@ public class Robot extends TimedRobot {
         // }
         m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
+
+        activeShiftPublisher.set(activeStatus);
     }
 
     @Override
@@ -80,6 +89,8 @@ public class Robot extends TimedRobot {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
 
+        activeStatus = true;
+
         phaseNamePublisher.set("Auton");
     }
 
@@ -98,6 +109,8 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
+
+        activeStatus = true;
 
         phaseNamePublisher.set("Teleop");
     }
@@ -122,23 +135,29 @@ public class Robot extends TimedRobot {
             } else if (matchTime > 105) {
                 phaseTime = matchTime - 105;
                 phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "!!!!ACTIVE!!!!") : "Error LOL";
+                activeStatus = validData ? (autonWinner.equals(alliance) ? false : true) : false;
             } else if (matchTime > 80) {
                 phaseTime = matchTime - 80;
                 phaseName = validData ? (autonWinner.equals(alliance) ? "!!!!ACTIVE!!!!" : "Inactive") : "Error LOL";
+                activeStatus = validData ? (autonWinner.equals(alliance) ? true : false) : false;
             } else if (matchTime > 55) {
                 phaseTime = matchTime - 55;
                 phaseName = validData ? (autonWinner.equals(alliance) ? "Inactive" : "!!!!ACTIVE!!!!") : "Error LOL";
+                activeStatus = validData ? (autonWinner.equals(alliance) ? false : true) : false;
             } else if (matchTime > 30) {
                 phaseTime = matchTime - 30;
                 phaseName = validData ? (autonWinner.equals(alliance) ? "!!!!ACTIVE!!!!" : "Inactive") : "Error LOL";
+                activeStatus = validData ? (autonWinner.equals(alliance) ? true : false) : false;
             } else {
                 phaseTime = matchTime;
                 phaseName = "!!!!ENDGAME!!!!";
+                activeStatus = true;
             }
         } else {
             phaseName = "Testing";
             phaseTime = matchTime;
-        }
+            activeStatus = true;
+        }                                                                                                                                                                                   
 
         phaseNamePublisher.set(phaseName);
         phaseTimePublisher.set(phaseTime);

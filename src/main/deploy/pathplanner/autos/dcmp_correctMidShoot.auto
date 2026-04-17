@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftHS_Leave"
+            "pathName": "midShootCorrect"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "leftHS_Return"
+            "name": "toggleIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "slapdownTrigger"
           }
         },
         {
@@ -29,7 +35,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 5.0
                 }
               }
             ]
@@ -61,21 +67,21 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "leftHS_SecondLeave"
+            "name": "slapdownTrigger"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "leftHS_SecondReturn"
+            "name": "autoAimShoot"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Left",
+  "folder": "Middle",
   "choreoAuto": false
 }
