@@ -73,7 +73,7 @@ public class RobotContainer {
         private final SlapdownSubsystem slapdown = new SlapdownSubsystem();
         private final KickerSubsystem kicker = new KickerSubsystem();
 
-        private final SendableChooser<Command> dcmp_autoChooser;
+        private final SendableChooser<Command> sam_autoChooser;
 
         boolean isCompetition = false;
 
@@ -84,30 +84,30 @@ public class RobotContainer {
                 configureDefaultCommands();
                 configurePathPlannerCommands();
 
-                dcmp_autoChooser = AutoBuilder.buildAutoChooser("zero");
+                sam_autoChooser = AutoBuilder.buildAutoChooser("zero");
 
                 // mirrored left autos for right side
-                dcmp_autoChooser.addOption("dcmp_rightHS", new PathPlannerAuto("dcmp_leftHS", true));
-                dcmp_autoChooser.addOption("dcmp_rightHS_delay", new PathPlannerAuto("dcmp_leftHS_delay", true));
+                sam_autoChooser.addOption("sam_rightHS", new PathPlannerAuto("sam_leftHS", true));
+                sam_autoChooser.addOption("sam_rightHS_delay", new PathPlannerAuto("sam_leftHS_delay", true));
 
-                dcmp_autoChooser.addOption("dcmp_rightChaos", new PathPlannerAuto("dcmp_leftChaos", true));
-                dcmp_autoChooser.addOption("dcmp_rightChaos_delay", new PathPlannerAuto("dcmp_leftChaos_delay", true));
+                sam_autoChooser.addOption("sam_rightChaos", new PathPlannerAuto("sam_leftChaos", true));
+                sam_autoChooser.addOption("sam_rightChaos_delay", new PathPlannerAuto("sam_leftChaos_delay", true));
 
-                dcmp_autoChooser.addOption("dcmp_rightPass", new PathPlannerAuto("dcmp_leftPass", true));
-                dcmp_autoChooser.addOption("dcmp_rightPass_delay", new PathPlannerAuto("dcmp_leftPass_delay", true));
+                sam_autoChooser.addOption("sam_rightPass", new PathPlannerAuto("sam_leftPass", true));
+                sam_autoChooser.addOption("sam_rightPass_delay", new PathPlannerAuto("sam_leftPass_delay", true));
 
                 // mirrored left autos for right side, but they're AP's sketchy ideas
-                dcmp_autoChooser.addOption("dcmp_rightDoubleHS", new PathPlannerAuto("dcmp_leftDoubleHS", true));
-                dcmp_autoChooser.addOption("dcmp_rightHS_disrupt", new PathPlannerAuto("dcmp_leftHS_disrupt", true));
-                dcmp_autoChooser.addOption("dcmp_rightHS_disruptBump",
-                                new PathPlannerAuto("dcmp_leftHS_disruptBump", true));
-                dcmp_autoChooser.addOption("dcmp_rightHS_returnBump",
-                                new PathPlannerAuto("dcmp_leftHS_returnBump", true));
+                sam_autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
+                sam_autoChooser.addOption("sam_rightHS_disrupt", new PathPlannerAuto("sam_leftHS_disrupt", true));
+                sam_autoChooser.addOption("sam_rightHS_disruptBump",
+                                new PathPlannerAuto("sam_leftHS_disruptBump", true));
+                sam_autoChooser.addOption("sam_rightHS_returnBump",
+                                new PathPlannerAuto("sam_leftHS_returnBump", true));
 
-                dcmp_autoChooser.addOption("dcmp_right_ap_sketchy_auton",
-                                new PathPlannerAuto("dcmp_left_ap_sketchy_auton", true));
+                sam_autoChooser.addOption("sam_right_ap_sketchy_auton",
+                                new PathPlannerAuto("sam_left_ap_sketchy_auton", true));
 
-                SmartDashboard.putData("Auto Chooser", dcmp_autoChooser);
+                SmartDashboard.putData("Auto Chooser", sam_autoChooser);
         }
 
         /** Registers named commands used by PathPlanner autonomous routines. */
@@ -269,7 +269,7 @@ public class RobotContainer {
          * @return the selected autonomous {@link Command}
          */
         public Command getAutonomousCommand() {
-                return dcmp_autoChooser.getSelected();
+                return sam_autoChooser.getSelected();
         }
 
         /**
