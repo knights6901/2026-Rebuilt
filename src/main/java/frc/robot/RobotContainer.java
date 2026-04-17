@@ -66,12 +66,12 @@ public class RobotContainer {
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+        public final LEDSubsystem led = new LEDSubsystem(drivetrain);
         private final ShooterSubsystem shooter = new ShooterSubsystem();
         private final IntakeSubsystem intake = new IntakeSubsystem();
         private final IndexerSubsystem indexer = new IndexerSubsystem();
         private final SlapdownSubsystem slapdown = new SlapdownSubsystem();
         private final KickerSubsystem kicker = new KickerSubsystem();
-        public final LEDSubsystem led = new LEDSubsystem(drivetrain);
 
         private final SendableChooser<Command> dcmp_autoChooser;
 
@@ -151,6 +151,8 @@ public class RobotContainer {
                                 intake.stop();
                 }, intake));
                 shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
+
+                led.setDefaultCommand(led.runPattern(LEDConstants.RainbowPattern));
         }
 
         /**
@@ -211,8 +213,6 @@ public class RobotContainer {
          * shooting, intake, and auto-aim.
          */
         private void configureOperatorBindings() {
-                led.runPattern(LEDConstants.RainbowPattern);
-
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
                 operator.povLeft().onTrue(new InstantCommand(() -> {

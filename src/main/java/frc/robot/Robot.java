@@ -26,6 +26,7 @@ public class Robot extends TimedRobot {
     private final RobotContainer m_robotContainer;
 
     private boolean activeStatus = false;
+    private boolean currentlyLogging = false;
 
     private final StringPublisher phaseNamePublisher = NetworkTableInstance.getDefault()
             .getTable("Match Time")
@@ -50,19 +51,19 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
 
-        // comment out later
-        DataLogManager.start();
+        // bring back after comp
+        // DataLogManager.start();
     }
 
     @Override
     public void robotPeriodic() {
-        // if (DriverStation.isFMSAttached() && !currentlyLogging) {
-        //     DataLogManager.start();
-        //     currentlyLogging = true;
-        // } else if (!DriverStation.isFMSAttached() && currentlyLogging) {
-        //     DataLogManager.stop();
-        //     currentlyLogging = false;
-        // }
+        if (DriverStation.isFMSAttached() && !currentlyLogging) {
+            DataLogManager.start();
+            currentlyLogging = true;
+        } else if (!DriverStation.isFMSAttached() && currentlyLogging) {
+            DataLogManager.stop();
+            currentlyLogging = false;
+        }
         m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
 
@@ -101,7 +102,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        m_robotContainer.led.runPattern(LEDPattern.solid(Color.kPurple)).withTimeout(Seconds.of(1));
+        // m_robotContainer.led.runPattern(LEDPattern.solid(Color.kPurple)).withTimeout(Seconds.of(1));
     }
 
     @Override

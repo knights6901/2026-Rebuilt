@@ -20,61 +20,65 @@ import static frc.robot.Constants.LEDConstants.*;
 import java.util.Map;
 
 public class LEDSubsystem extends SubsystemBase {
-    private final AddressableLED led;
-    private final AddressableLEDBuffer buffer;
+    // private final AddressableLED led;
+    // private final AddressableLEDBuffer buffer;
 
     public LEDSubsystem(CommandSwerveDrivetrain drivetrain) {
-        led = new AddressableLED(Port);
-        buffer = new AddressableLEDBuffer(Length);
-        led.setLength(Length);
+        // led = new AddressableLED(Port);
+        // buffer = new AddressableLEDBuffer(Length);
+        // led.setLength(Length);
 
-        led.start();
+        // led.start();
 
         // setDefaultCommand(new RunCommand(() -> {
-        //     double vx = drivetrain.getState().Speeds.vxMetersPerSecond;
-        //     double vy = drivetrain.getState().Speeds.vyMetersPerSecond;
+        // double vx = drivetrain.getState().Speeds.vxMetersPerSecond;
+        // double vy = drivetrain.getState().Speeds.vyMetersPerSecond;
 
-        //     double speed = Math.sqrt(vx * vx + vy * vy);
-        //     double maxSpeed = DrivetrainConstants.MaxSpeed.in(MetersPerSecond)
-        //             * DrivetrainConstants.TeleopMovementSensitivity;
+        // double speed = Math.sqrt(vx * vx + vy * vy);
+        // double maxSpeed = DrivetrainConstants.MaxSpeed.in(MetersPerSecond)
+        // * DrivetrainConstants.TeleopMovementSensitivity;
 
-        //     double percent = speed / maxSpeed;
+        // double percent = speed / maxSpeed;
 
-        //     LEDPattern rainbow = LEDConstants.RainbowPattern
-        //         .scrollAtRelativeSpeed(Percent.per(Second).of(20));
+        // LEDPattern rainbow = LEDConstants.RainbowPattern
+        // .scrollAtRelativeSpeed(Percent.per(Second).of(20));
 
-        //     LEDPattern purple = LEDPattern.solid(Color.kPurple)
-        //         .scrollAtRelativeSpeed(Percent.per(Second).of(20));
+        // LEDPattern purple = LEDPattern.solid(Color.kPurple)
+        // .scrollAtRelativeSpeed(Percent.per(Second).of(20));
 
-        //     // Mask that alternates every other LED (0=show base, 1=show overlay)
-        //     LEDPattern mask = LEDPattern.steps(Map.of(0.0, Color.kWhite, 0.5, Color.kBlack))
-        //         .scrollAtRelativeSpeed(Percent.per(Second).of(20));
+        // // Mask that alternates every other LED (0=show base, 1=show overlay)
+        // LEDPattern mask = LEDPattern.steps(Map.of(0.0, Color.kWhite, 0.5,
+        // Color.kBlack))
+        // .scrollAtRelativeSpeed(Percent.per(Second).of(20));
 
-        //     purple.mask(mask).overlayOn(rainbow).applyTo(buffer);
+        // purple.mask(mask).overlayOn(rainbow).applyTo(buffer);
         // }, this));
 
-        setDefaultCommand(new RunCommand(() -> {
-    long t = System.currentTimeMillis();
-    double scroll = (t % 5000) / 5000.0; // full cycle every 5 seconds
-    int segmentLength = Length / 4; // 4 segments: P R P R
+        // setDefaultCommand(new RunCommand(() -> {
+        // long t = System.currentTimeMillis();
+        // double scroll = (t % 5000) / 5000.0; // full cycle every 5 seconds
+        // int segmentLength = Length / 4; // 4 segments: P R P R
 
-    for (int i = 0; i < Length; i++) {
-        // offset by scroll amount
-        double pos = ((i / (double) Length) + scroll) % 1.0;
-        int segment = (int)(pos * 4) % 4;
+        // for (int i = 0; i < Length; i++) {
+        // // offset by scroll amount
+        // double pos = ((i / (double) Length) + scroll) % 1.0;
+        // int segment = (int)(pos * 4) % 4;
 
-        if (segment % 2 == 0) {
-            buffer.setLED(i, Color.kPurple);
-        } else {
-            // rainbow hue based on position within segment
-            double hue = (pos * 2 % 1.0) * 180.0;
-            buffer.setHSV(i, (int) hue, 255, 255);
-        }
-    }
-}, this));
+        // if (segment % 2 == 0) {
+        // buffer.setLED(i, Color.kPurple);
+        // } else {
+        // // rainbow hue based on position within segment
+        // double hue = (pos * 2 % 1.0) * 180.0;
+        // buffer.setHSV(i, (int) hue, 255, 255);
+        // }
+        // }
+        // }, this));
+
+        // setDefaultCommand(runPattern(Purple));
     }
 
     /* sketchy claude code */
+    /* update, it works */
     public LEDPattern fireUpPattern(double t) {
         t = Math.max(0.0, Math.min(1.0, t)); // clamp
 
@@ -99,16 +103,21 @@ public class LEDSubsystem extends SubsystemBase {
      * @param pattern the LED pattern to run
      */
     public Command runPattern(LEDPattern pattern) {
-        return run(() -> pattern.applyTo(buffer));
+        // return run(() -> pattern.applyTo(buffer));
+        return run(() -> {
+        });
     }
 
     public Command shooterPattern(AngularVelocity current, AngularVelocity target) {
-        return run(() -> fireUpPattern(current.in(RotationsPerSecond) / target.in(RotationsPerSecond))
-                .applyTo(buffer));
+        // return run(() -> fireUpPattern(current.in(RotationsPerSecond) /
+        // target.in(RotationsPerSecond))
+        // .applyTo(buffer));
+        return run(() -> {
+        });
     }
 
-    @Override
-    public void periodic() {
-        led.setData(buffer);
-    }
+    // @Override
+    // public void periodic() {
+    // led.setData(buffer);
+    // }
 }

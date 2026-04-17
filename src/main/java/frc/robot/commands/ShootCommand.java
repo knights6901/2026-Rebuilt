@@ -32,12 +32,11 @@ public class ShootCommand extends SequentialCommandGroup {
                     led.shooterPattern(shooter.getCurrentRPS(), shooter.getTargetRPS());
                 }, shooter, led).until(shooter.primed),
                 new ParallelCommandGroup(
-                new RunCommand(() -> {
-                    indexer.enable();
-                    kicker.kick();
-                    shooter.shooterState = shootingState;
-                }, shooter, indexer, kicker),
-                led.runPattern(LEDConstants.RainbowPattern)
-                ));
+                        new RunCommand(() -> {
+                            indexer.enable();
+                            kicker.kick();
+                            shooter.shooterState = shootingState;
+                        }, shooter, indexer, kicker),
+                        led.runPattern(LEDConstants.RainbowPattern)));
     }
 }

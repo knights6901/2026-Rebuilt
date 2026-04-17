@@ -621,14 +621,15 @@ public final class Constants {
 
         public static final class LEDConstants {
                 /** The PWM port that the led bus is connected to the RIO on. */
-                public static final int Port = 0;
+                public static final int Port = 1;
                 /** The length (in number of LED connections on the strip). */
-                public static final int Length = 300;
+                public static final int Length = 5;
 
                 public static final LEDPattern RainbowPattern = LEDPattern
                                 .rainbow(255, 128);
 
                 public static final LEDPattern Off = LEDPattern.solid(Color.kBlack);
+                public static final LEDPattern Purple = LEDPattern.solid(Color.kPurple);
 
                 public static final LinearVelocity RainbowSpeed = MetersPerSecond.of(2);
                 public static final Distance LEDSpacing = Meters.of(1.0 / 120.0);
