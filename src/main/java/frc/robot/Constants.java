@@ -254,9 +254,9 @@ public final class Constants {
                                                 .withNeutralMode(NeutralModeValue.Coast)
                                                 .withInverted(InvertedValue.Clockwise_Positive))
                                 .withCurrentLimits(new CurrentLimitsConfigs()
-                                                .withStatorCurrentLimit(Amps.of(40))
+                                                .withStatorCurrentLimit(Amps.of(60))
                                                 .withStatorCurrentLimitEnable(true)
-                                                .withSupplyCurrentLimit(Amps.of(60))
+                                                .withSupplyCurrentLimit(Amps.of(80))
                                                 .withSupplyCurrentLimitEnable(true));
         }
 

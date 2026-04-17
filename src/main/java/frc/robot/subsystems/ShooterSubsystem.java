@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -72,10 +73,16 @@ public class ShooterSubsystem extends SubsystemBase {
             .getTable("Shooter")
             .getDoubleTopic("ActualRPS")
             .publish();
+    
+    private final DoublePublisher manualRPSPub = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("NaveenRPS")
+            .publish();
 
     public ShooterState shooterState = ShooterState.OFF;
 
-    private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
+    // private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
+    private AngularVelocity shootRPS = calculateRPS(Meters.of(3));
     public AngularVelocity targetRPS;
 
     public final Trigger primed = new Trigger(() -> {
@@ -205,6 +212,8 @@ public class ShooterSubsystem extends SubsystemBase {
         actualRPSPub.set(getCurrentRPS().in(RotationsPerSecond));
 
         targetRPSPub.set(targetRPS != null ? targetRPS.in(RotationsPerSecond) : 0);
+
+        manualRPSPub.set(shootRPS.in(RotationsPerSecond));
     }
 
     /**
