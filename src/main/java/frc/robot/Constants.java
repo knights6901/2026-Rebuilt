@@ -11,8 +11,10 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.CANBus;
@@ -86,6 +88,9 @@ public final class Constants {
                 public static final int OperatorPort = 1;
                 /** The deadband threshold for controller joysticks (0-1 scale). */
                 public static final double Deadband = 0.1;
+
+                public static final int DebugPort = 5;
+
         }
 
         public static final class DrivetrainConstants {
@@ -640,10 +645,13 @@ public final class Constants {
                 /** The PWM port that the led bus is connected to the RIO on. */
                 public static final int Port = 1;
                 /** The length (in number of LED connections on the strip). */
-                public static final int Length = 5;
+                public static final int Length = 186;
 
                 public static final LEDPattern RainbowPattern = LEDPattern
                                 .rainbow(255, 128);
+                public static final LEDPattern ScrollRaindbowPattern = RainbowPattern.scrollAtRelativeSpeed(
+                        Percent.per(Second).of(50)
+                );
 
                 public static final LEDPattern Off = LEDPattern.solid(Color.kBlack);
                 public static final LEDPattern Purple = LEDPattern.solid(Color.kPurple);

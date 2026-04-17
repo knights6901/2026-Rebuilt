@@ -1,32 +1,44 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static frc.robot.Constants.LEDConstants.Length;
+import static frc.robot.Constants.LEDConstants.Port;
+import static frc.robot.Constants.LEDConstants.RainbowPattern;
+import static frc.robot.Constants.LEDConstants.ScrollRaindbowPattern;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.units.measure.AngularVelocity;
-// import edu.wpi.first.wpilibj.AddressableLED;
-// import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-// import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.robot.Constants.DrivetrainConstants;
-// import frc.robot.Constants.LEDConstants;
-
-// import static edu.wpi.first.units.Units.MetersPerSecond;
-// import static edu.wpi.first.units.Units.Percent;
-// import static edu.wpi.first.units.Units.RotationsPerSecond;
-// import static edu.wpi.first.units.Units.Second;
-// import static frc.robot.Constants.LEDConstants.*;
-
-// import java.util.Map;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class LEDSubsystem extends SubsystemBase {
-    // private final AddressableLED led;
-    // private final AddressableLEDBuffer buffer;
+    private final AddressableLED led;
+    private final AddressableLEDBuffer buffer;
+    private final AddressableLEDBufferView left;
+    private final AddressableLEDBufferView middle;
+    private final AddressableLEDBufferView right;
 
     public LEDSubsystem(CommandSwerveDrivetrain drivetrain) {
-        // led = new AddressableLED(Port);
-        // buffer = new AddressableLEDBuffer(Length);
-        // led.setLength(Length);
+        led = new AddressableLED(Port);
+        buffer = new AddressableLEDBuffer(Length);
+        led.setLength(Length);
+
+        left = buffer.createView(0, Length / 3);
+        middle = buffer.createView(Length / 3, 2 * Length / 3);
+        right = buffer.createView(2 * Length / 3 + 1, Length - 1);
 
         // led.start();
 
@@ -55,26 +67,25 @@ public class LEDSubsystem extends SubsystemBase {
         // }, this));
 
         // setDefaultCommand(new RunCommand(() -> {
-        // long t = System.currentTimeMillis();
-        // double scroll = (t % 5000) / 5000.0; // full cycle every 5 seconds
-        // int segmentLength = Length / 4; // 4 segments: P R P R
+        //     long t = System.currentTimeMillis();
+        //     double scroll = (t % 5000) / 5000.0; // full cycle every 5 seconds
 
-        // for (int i = 0; i < Length; i++) {
-        // // offset by scroll amount
-        // double pos = ((i / (double) Length) + scroll) % 1.0;
-        // int segment = (int)(pos * 4) % 4;
+        //     for (int i = 0; i < Length; i++) {
+        //         // offset by scroll amount
+        //         double pos = ((i / (double) Length) + scroll) % 1.0;
+        //         int segment = (int)(pos * 4) % 4;
 
-        // if (segment % 2 == 0) {
-        // buffer.setLED(i, Color.kPurple);
-        // } else {
-        // // rainbow hue based on position within segment
-        // double hue = (pos * 2 % 1.0) * 180.0;
-        // buffer.setHSV(i, (int) hue, 255, 255);
-        // }
-        // }
+        //         if (segment % 2 == 0) {
+        //             buffer.setLED(i, Color.kPurple);
+        //         } else {
+        //             // rainbow hue based on position within segment
+        //             double hue = (pos * 2 % 1.0) * 180.0;
+        //             buffer.setHSV(i, (int) hue, 255, 255);
+        //         }
+        //     }
         // }, this));
 
-        // setDefaultCommand(runPattern(Purple));
+        // setDefaultCommand(runPattern(ScrollRaindbowPattern));
     }
 
     /* sketchy claude code */
@@ -108,12 +119,29 @@ public class LEDSubsystem extends SubsystemBase {
         });
     }
 
-    public Command shooterPattern(AngularVelocity current, AngularVelocity target) {
-        // return run(() -> fireUpPattern(current.in(RotationsPerSecond) /
-        // target.in(RotationsPerSecond))
-        // .applyTo(buffer));
-        return run(() -> {
-        });
+    public Command runPatternLeft(LEDPattern pattern) {
+        return new RunCommand(() -> pattern.applyTo(left));
+    }
+
+    public Command runPatternMiddle(LEDPattern pattern) {
+        return new RunCommand(() -> pattern.applyTo(middle));
+    }
+
+    public Command runPatternRight(LEDPattern pattern) {
+        return new RunCommand(() -> pattern.applyTo(right));
+    }
+
+    public Command runAllPatterns(LEDPattern patternLeft, LEDPattern patternMiddle, LEDPattern patternRight) {
+        return new ParallelCommandGroup(
+            runPatternLeft(patternLeft),
+            runPatternMiddle(patternMiddle),
+            runPatternRight(patternRight),
+            new RunCommand(() -> {}, this)
+        );
+    }
+
+    public LEDPattern shooterPattern(Supplier<AngularVelocity> current, AngularVelocity target) {
+        return fireUpPattern(current.get().in(RotationsPerSecond) / target.in(RotationsPerSecond));
     }
 
     // @Override

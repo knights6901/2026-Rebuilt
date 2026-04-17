@@ -6,6 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.Constants.LEDConstants.Purple;
+import static frc.robot.Constants.LEDConstants.RainbowPattern;
+import static frc.robot.Constants.LEDConstants.ScrollRaindbowPattern;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -28,8 +31,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.GameConstants;
-import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.StopSubsystemsCommand;
@@ -64,6 +65,7 @@ public class RobotContainer {
 
         private final CommandXboxController driver = new CommandXboxController(ControllerConstants.DriverPort);
         private final CommandXboxController operator = new CommandXboxController(ControllerConstants.OperatorPort);
+        private final CommandXboxController debug = new CommandXboxController(ControllerConstants.DebugPort);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
@@ -81,6 +83,7 @@ public class RobotContainer {
         public RobotContainer() {
                 configureDriverBindings();
                 configureOperatorBindings();
+                configureDebugBindings();
 
                 configureDefaultCommands();
                 configurePathPlannerCommands();
@@ -162,7 +165,15 @@ public class RobotContainer {
                 }, intake));
                 shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
 
-                led.setDefaultCommand(led.runPattern(LEDConstants.RainbowPattern));
+                // led.setDefaultCommand(led.runPattern(ScrollRaindbowPattern));
+                led.setDefaultCommand(led.runAllPatterns(
+                        RainbowPattern,
+                        led.shooterPattern(
+                                () -> RotationsPerSecond.of(Math.abs(debug.getRightY())), 
+                                RotationsPerSecond.of(1)
+                        ),
+                        ScrollRaindbowPattern
+                ));
         }
 
         /**
@@ -221,6 +232,8 @@ public class RobotContainer {
          * shooting, intake, and auto-aim.
          */
         private void configureOperatorBindings() {
+                // led.runPattern(LEDConstants.RainbowPattern);
+
                 operator.leftBumper().onTrue(new ToggleIntakeCommand(intake));
 
                 operator.povLeft().onTrue(new InstantCommand(() -> {
@@ -245,9 +258,12 @@ public class RobotContainer {
                 operator.y().onTrue(drivetrain.alignToTrench(this::getDriverInput));
 
                 operator.a().whileTrue(new RunCommand(() -> kicker.kickReversed(), kicker));
+        }
 
-                operator.b().onTrue(new InstantCommand(
-                                () -> drivetrain.resetPose(GameConstants.getLeftDepotPose()), drivetrain));
+        public void configureDebugBindings() {
+                debug.a().whileTrue(
+                        led.runPattern(Purple)
+                );
         }
 
         /**
