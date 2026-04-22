@@ -82,7 +82,7 @@
             }
           },
           {
-            "title": "photonvision_Port_1182_Output_MJPEG_Server",
+            "title": "Cam Stream",
             "x": 0.0,
             "y": 0.0,
             "width": 384.0,
