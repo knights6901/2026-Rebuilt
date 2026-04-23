@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 
 import java.io.IOException;
 
@@ -100,7 +99,7 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         Transform3d robotToCam = new Transform3d(
-                new Translation3d(Inches.of(-13), Meters.of(0.0), Inches.of(6.5)),
+                new Translation3d(Inches.of(-13), Inches.of(0.0), Inches.of(6.5)),
                 new Rotation3d(0, Math.PI / 3, Math.PI));
 
         if (fieldLayout != null) {
