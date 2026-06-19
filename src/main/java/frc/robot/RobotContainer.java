@@ -109,7 +109,7 @@ public class RobotContainer {
 
                 sam_autoChooser.addOption("sam_right_ap_sketchy_auton",
                                 new PathPlannerAuto("sam_left_ap_sketchy_auton", true));
-                
+
                 // newer mirrored autons
                 sam_autoChooser.addOption("sam_rightQualHS", new PathPlannerAuto("sam_leftQualHS"));
 
@@ -153,31 +153,44 @@ public class RobotContainer {
 
         /** Binds all the default commands. */
         private void configureDefaultCommands() {
-                drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriverInput()));
-                kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
-                indexer.setDefaultCommand(new RunCommand(() -> indexer.stop(), indexer));
-                intake.setDefaultCommand(new RunCommand(() -> {
-                        if (intake.currentlyIntaking())
-                                intake.intake();
-                        else
-                                intake.stop();
-                }, intake));
-                shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
+                // drivetrain.setDefaultCommand(drivetrain.applyRequest(() ->
+                // getDriverInput()));
+                // kicker.setDefaultCommand(new RunCommand(() -> kicker.stop(), kicker));
+                // indexer.setDefaultCommand(new RunCommand(() -> indexer.stop(), indexer));
+                // intake.setDefaultCommand(new RunCommand(() -> {
+                // if (intake.currentlyIntaking())
+                // intake.intake();
+                // else
+                // intake.stop();
+                // }, intake));
+                // shooter.setDefaultCommand(new RunCommand(() -> shooter.stop(), shooter));
+
+                // shooter.setDefaultCommand(shooter.run(() -> shooter.shoot(RotationsPerSecond.of(100))));
 
                 Supplier<LEDPattern> hubActivePattern = () -> {
-                        return Robot.isHubActive() ? LEDConstants.ScrollRainbowPattern : LEDConstants.Purple;
+                        return switch (GameState.get()) {
+                                case ACTIVE -> LEDConstants.ScrollRainbowPattern;
+                                case TRANSITION -> LEDConstants.FlashingPurple;
+                                case INACTIVE -> LEDConstants.Purple;
+                        };
                 };
 
-                led.setDefaultCommand(led.runAllPatterns(
-                        hubActivePattern,
-                        () -> {
-                                if (vision.getEstimatedPose2d().isPresent())
-                                        return LEDConstants.ScrollRainbowPattern;
-                                else
-                                        return LEDConstants.Purple;
-                        },
-                        hubActivePattern
-                ));
+                // led.setDefaultCommand(led.runAllPatterns(
+                // hubActivePattern,
+                // () -> {
+                // if (vision.getEstimatedPose2d().isPresent())
+                // return LEDConstants.ScrollRainbowPattern;
+                // else
+                // return LEDConstants.Purple;
+                // },
+                // hubActivePattern));
+
+                led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
+
+                // led.setDefaultCommand(led.runAllPatterns(
+                // () -> LEDConstants.ScrollRainbowPattern,
+                // () -> LEDConstants.ScrollRainbowPattern,
+                // () -> LEDConstants.ScrollRainbowPattern));
         }
 
         /**

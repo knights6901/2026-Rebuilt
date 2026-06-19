@@ -1,8 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static frc.robot.Constants.LEDConstants.Length;
-import static frc.robot.Constants.LEDConstants.Port;
+import static frc.robot.Constants.LEDConstants.*;
 
 import java.util.function.Supplier;
 
@@ -28,9 +27,9 @@ public class LEDSubsystem extends SubsystemBase {
         buffer = new AddressableLEDBuffer(Length);
         led.setLength(Length);
 
-        left = buffer.createView(0, Length / 3);
-        middle = buffer.createView(Length / 3, 2 * Length / 3);
-        right = buffer.createView(2 * Length / 3 + 1, Length - 1);
+        left = buffer.createView(0, 36);
+        middle = buffer.createView(37, 166);
+        right = buffer.createView(167, 185);
 
         led.start();
     }
@@ -75,14 +74,13 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public Command runAllPatterns(
-        Supplier<LEDPattern> patternLeft, 
-        Supplier<LEDPattern> patternMiddle, 
-        Supplier<LEDPattern> patternRight) {
+            Supplier<LEDPattern> patternLeft,
+            Supplier<LEDPattern> patternMiddle,
+            Supplier<LEDPattern> patternRight) {
         return run(() -> {
             patternLeft.get().applyTo(left);
             patternMiddle.get().applyTo(middle);
             patternRight.get().applyTo(right);
-            // pope naveen sai joseph dwane the rock johnsohn kizhcackel the viola the third of the holy roman empire has blessed this code
         });
     }
 

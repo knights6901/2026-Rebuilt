@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftHS_Leave"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "leftHS_Return"
+            "pathName": "leftHS_Unload"
           }
         },
         {
@@ -29,7 +23,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -54,16 +48,22 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.5
+                  "waitTime": 2.0
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "slapdownTrigger"
+            "pathName": "leftHS_SecondLeave"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "leftHS_SecondReturn"
           }
         },
         {
@@ -79,7 +79,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 3.0
                 }
               }
             ]
@@ -88,13 +88,44 @@
         {
           "type": "named",
           "data": {
-            "name": "stopShooter"
+            "name": "slapdownRetract"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoAimShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "toggleIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "slapdownTrigger"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "leftHS_SecondLeave"
+            "pathName": "leftHS_Finale"
           }
         }
       ]
